@@ -26,7 +26,7 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ed_id.append("윤상이 바보");
+                ed_id.append("정성연 바보");
 
             }
         });
