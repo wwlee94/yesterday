@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import org.apache.http.*;
 
+
+import com.example.yesterday.yesterday.DBConnector.Connector;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -36,6 +39,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 client = new ClientLoginInfo(sId,sPw); // 로그인 클라이언트 객체 생성
                 String json = new Gson().toJson(client);
+                new Connector().execute();
                 Log.i("info","login");
             }
         });
