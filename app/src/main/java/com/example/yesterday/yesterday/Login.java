@@ -27,21 +27,18 @@ public class Login extends AppCompatActivity {
     private static final String  WEBIP = "192.168.0.72";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_login);
 
-        ed_id = (EditText) findViewById(R.id.IDText);
-        ed_pw = (EditText) findViewById(R.id.PassText);
-        btn_login = (Button) findViewById(R.id.loginBtn);
-        jsonText = (TextView) findViewById(R.id.jsontext);
+            ed_id = (EditText) findViewById(R.id.IDText);
+            ed_pw = (EditText) findViewById(R.id.PassText);
+            btn_login = (Button) findViewById(R.id.loginBtn);
+            jsonText = (TextView) findViewById(R.id.jsontext);
 
         btn_login.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
             public void onClick(View v) {
-                //client = new ClientLoginInfo(sId,sPw); // 로그인 클라이언트 객체 생성
-                // 로그인 값 gson 파싱
-                //String loginJson = new Gson().toJson(client);
                 // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
                 sId = ed_id.getText().toString();   // id
                 sPw = ed_pw.getText().toString();   // password
@@ -97,84 +94,10 @@ public class Login extends AppCompatActivity {
             super.onPostExecute(s);
             //로그인 성공 여부 확인
             if(s.equals("success"))
-                Log.d("loginCheck",s);
-            else Log.d("loginCheck","fail");
+                Log.i("loginCheck",s);
+            else Log.i("loginCheck","fail");
 
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
         }
-
-
     }
-//    class getList extends AsyncTask<String,Void,String>{
-//        String json;
-//        public  getList(String json){
-//            this.json = json;
-//        }
-//        @Override
-//        protected String doInBackground(Void... voids) {
-//            try {
-//
-//                URL Url = new URL(URL_ADDRESS); //url화
-//                HttpURLConnection conn = (HttpURLConnection) Url.openConnection(); //url을 연결한 객체 생성
-//                conn.setRequestMethod("POST"); // post방식 설정
-//                conn.setDoOutput(true);  //쓰기모드
-//                conn.setDoInput(true);  // 읽기모드
-//                conn.setUseCaches(false);  //캐싱데이터 수신 여부
-//                conn.setDefaultUseCaches(false); // 캐싱데이터 디폴트 값 설정
-//
-//                InputStream is = conn.getInputStream();  // input stream 개방
-//                OutputStream os = conn.getOutputStream(); // outputstream 개방
-//
-//                //os.write(json);
-//               // os.flush();
-//
-//                StringBuffer builder = new StringBuffer(); //문자열을 담기 위한 객체
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"UTF-8"));  // 문자열 셋팅
-//                String line=null;
-//
-//                line = reader.readLine();
-//                jsonText.setText(line);
-//                //Log.i("LoadData",LoadData);
-//                //JSONArray jsonArray
-//
-////                while((line = reader.readLine()) != null){
-////                    builder.append(line+"\n");
-////                    Log.i("LoadData","ddddddd");
-////                }
-//
-//                //builder.append(json);  // 빌더에 json 추가
-//
-//                //LoadData = builder.toString();
-//                //jsonText.setText(LoadData);
-//                //Log.i("LoadData",LoadData);
-//
-//            }catch(MalformedURLException | ProtocolException e){
-//                e.printStackTrace();
-//            }catch(IOException e){
-//                e.printStackTrace();
-//            } catch(Exception e){
-//                e.printStackTrace();
-//            }
-//
-//            return line;
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            //jsonObject = this.jsonObject;
-////            pDialog = new ProgressDialog(Login.this);
-////            pDialog.setMessage("검색중입니다...");
-////            pDialog.setCancelable(true);
-////            pDialog.show();
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            //pDialog.dismiss();
-//            super.onPostExecute(result);
-//            System.out.println(result);
-//
-//        }
-//    }
 }
