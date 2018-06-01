@@ -1,5 +1,7 @@
 package com.example.yesterday.yesterday;
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.kakao.auth.ErrorCode;
+import com.kakao.auth.ISessionCallback;
+import com.kakao.auth.KakaoSDK;
+import com.kakao.network.ErrorResult;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.MeResponseCallback;
+import com.kakao.usermgmt.response.model.UserProfile;
+import com.kakao.util.exception.KakaoException;
+
 import java.io.IOException;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -19,7 +31,7 @@ import okhttp3.Response;
 
 public class Login extends AppCompatActivity {
     EditText ed_id, ed_pw;
-    Button btn_login;
+    Button btn_login,kakaoLogoutBtn;
     TextView jsonText;
     String sId, sPw;
     ClientLoginInfo client;
@@ -34,7 +46,8 @@ public class Login extends AppCompatActivity {
             ed_id = (EditText) findViewById(R.id.IDText);
             ed_pw = (EditText) findViewById(R.id.PassText);
             btn_login = (Button) findViewById(R.id.loginBtn);
-            jsonText = (TextView) findViewById(R.id.jsontext);
+            kakaoLogoutBtn = (Button) findViewById(R.id.kakaoLogoutBtn);
+            //jsonText = (TextView) findViewById(R.id.jsonText);
 
         btn_login.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
@@ -50,7 +63,18 @@ public class Login extends AppCompatActivity {
                 Log.i("info","login");
             }
         });
+
+        kakaoLogoutBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
+
+        //카카오톡 로그인
+        requestMe();
     }
+
     public class LoginServer extends AsyncTask<Void,Void,String>{
         String parent_id;
         String parent_pw;
@@ -99,5 +123,87 @@ public class Login extends AppCompatActivity {
 
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
         }
+
+    }
+
+    // 카카오톡 로그인을 위한 콜백 클래스
+    private class SessionCallback implements ISessionCallback {
+        @Override
+        public void onSessionOpened() {
+            UserManagement.requestMe(new MeResponseCallback() {
+
+                @Override
+                public void onFailure(ErrorResult errorResult) {
+                    String message = "failed to get user info. msg=" + errorResult;
+
+                    ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
+                    if (result == ErrorCode.CLIENT_ERROR_CODE) {
+                        //에러로 인한 로그인 실패
+//                        finish();
+                    } else {
+                        //redirectMainActivity();
+                    }
+                }
+
+                @Override
+                public void onSessionClosed(ErrorResult errorResult) {
+                }
+
+                @Override
+                public void onNotSignedUp() {
+
+                }
+
+                @Override
+                public void onSuccess(UserProfile userProfile) {
+                    //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
+                    //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
+
+//                    Log.e("UserProfile", userProfile.toString());
+//                    Log.e("UserProfile", userProfile.getId() + "");
+
+                    long number = userProfile.getId();
+
+                    Log.i("userProfile",Long.toString(number));
+                }
+            });
+        }
+
+        @Override
+        public void onSessionOpenFailed(KakaoException exception) {
+            // 세션 연결이 실패했을때
+            // 어쩔때 실패되는지는 테스트를 안해보았음 ㅜㅜ
+
+        }
+    }
+
+
+    public void requestMe() {
+        //카카오톡 로그인 유저의 정보를 받아오는 함수
+
+        UserManagement.requestMe(new MeResponseCallback() {
+            @Override //실패 하였을 시
+            public void onFailure(ErrorResult errorResult) {
+                Log.e("Fail", "error message=" + errorResult);
+//                super.onFailure(errorResult);
+            }
+
+            @Override
+            public void onSessionClosed(ErrorResult errorResult) {
+                Log.d("onSessionClosed", "onSessionClosed1 =" + errorResult);
+            }
+
+            @Override
+            public void onNotSignedUp() {
+                //카카오톡 회원이 아닐시
+                Log.d("NotSignedUp", "onNotSignedUp ");
+            }
+
+            @Override
+            public void onSuccess(UserProfile result) {
+                Log.e("UserProfile", result.toString());
+                Log.e("UserProfile", result.getId() + "");
+            }
+        });
     }
 }
