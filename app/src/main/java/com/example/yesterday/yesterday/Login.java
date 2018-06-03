@@ -67,7 +67,7 @@ public class Login extends AppCompatActivity {
         kakaoLogoutBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                
+
             }
         });
 
