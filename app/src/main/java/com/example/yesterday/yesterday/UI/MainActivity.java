@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday;
+package com.example.yesterday.yesterday.UI;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -10,6 +10,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.yesterday.yesterday.R;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         btn_go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 getHashKey();
             }

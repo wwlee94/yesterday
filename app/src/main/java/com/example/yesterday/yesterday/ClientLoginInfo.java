@@ -1,12 +1,7 @@
 package com.example.yesterday.yesterday;
 
 public class ClientLoginInfo {
-    String id,pass;
-
-    public ClientLoginInfo(String id, String pass){
-        this.id = id;
-        this.pass = pass;
-    }
+    private String id,pass,name;
 
     public String getId() {
         return id;
@@ -22,5 +17,13 @@ public class ClientLoginInfo {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
