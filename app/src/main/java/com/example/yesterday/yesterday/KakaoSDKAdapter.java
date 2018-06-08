@@ -28,7 +28,6 @@ public class KakaoSDKAdapter extends KakaoAdapter{
                 return false;
             }
 
-
             @Override
             public ApprovalType getApprovalType() {
                 return ApprovalType.INDIVIDUAL;
@@ -36,7 +35,7 @@ public class KakaoSDKAdapter extends KakaoAdapter{
 
             @Override
             public boolean isSaveFormData() {
-                return true;
+                return false;
             }
         };
     }

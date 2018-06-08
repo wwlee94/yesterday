@@ -17,6 +17,7 @@ import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.KakaoSDK;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
@@ -55,7 +56,6 @@ public class Login extends AppCompatActivity {
                 // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
                 sId = ed_id.getText().toString();   // id
                 sPw = ed_pw.getText().toString();   // password
-                System.out.println(sId + "  dfdfdfdfdf   " + sPw);
 
                 // AsyncTask 객체 생성, 호출
                 LoginServer loginServer=new LoginServer(sId,sPw);
@@ -75,11 +75,22 @@ public class Login extends AppCompatActivity {
         requestMe();
     }
 
+    //카카오톡 로그아웃
+    private void onClickLogout(){
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+
+            }
+        });
+    }
+
+
+    //로그인 서버와 연결하는 클래스
     public class LoginServer extends AsyncTask<Void,Void,String>{
         String parent_id;
         String parent_pw;
         String answer;
-
 
         public LoginServer(String parent_id,String parent_pw) { //로그인 id, pw 받기
             this.parent_id = parent_id;
