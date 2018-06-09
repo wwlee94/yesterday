@@ -1,9 +1,6 @@
 package com.example.yesterday.yesterday.UI;
 
-import android.app.Activity;
-import android.app.Application;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
+import com.example.yesterday.yesterday.server.LoginServer;
 import com.example.yesterday.yesterday.R;
-import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
-import com.kakao.auth.KakaoSDK;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
@@ -25,53 +21,71 @@ import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 
-import java.io.IOException;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class LoginActivity extends AppCompatActivity {
-    EditText ed_id, ed_pw;
-    Button btn_login,kakaoLogoutBtn;
+    EditText id_text, pw_text;
+    Button login_btn,kakaoLogout_btn,join_btn;
     TextView jsonText;
     String sId, sPw;
     ClientLoginInfo client;
-    private ProgressDialog pDialog;
-    private static final String  WEBIP = "192.168.0.72";
+    String result = "";
+    Intent intent;
+
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_login);
 
-            ed_id = (EditText) findViewById(R.id.IDText);
-            ed_pw = (EditText) findViewById(R.id.PassText);
-            btn_login = (Button) findViewById(R.id.loginBtn);
-            kakaoLogoutBtn = (Button) findViewById(R.id.kakaoLogoutBtn);
+            id_text = (EditText) findViewById(R.id.id_text);
+            pw_text = (EditText) findViewById(R.id.pw_text);
+            login_btn = (Button) findViewById(R.id.login_btn);
+            kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
+            join_btn = (Button) findViewById(R.id.join_btn);
 
-        btn_login.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
+        login_btn.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
             public void onClick(View v) {
                 // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
-                sId = ed_id.getText().toString();   // id
-                sPw = ed_pw.getText().toString();   // password
+                sId = id_text.getText().toString();   // id
+                sPw = pw_text.getText().toString();   // password
 
                 // AsyncTask 객체 생성, 호출
-                LoginServer loginServer=new LoginServer(sId,sPw);
-                loginServer.execute();
-                Log.i("info","login");
+                try {
+                   result  = new LoginServer(sId,sPw).execute().get();
+                } catch (Exception e){
+                    e.getMessage();
+                }
+
+                if(result.equals("fail")){
+                    Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
+                }
+                else{
+
+                    intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.putExtra("name",result);
+                    startActivity(intent);
+
+                }
             }
         });
 
-        kakaoLogoutBtn.setOnClickListener(new View.OnClickListener(){
+
+        join_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                intent = new Intent(getApplicationContext(), JoinActivity.class);
+                startActivity(intent);
             }
         });
+
+
+
+//        kakaoLogout_btn.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
         //카카오톡 로그인
         requestMe();
@@ -88,61 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    //로그인 서버와 연결하는 클래스
-    public class LoginServer extends AsyncTask<Void,Void,String>{
-        String parent_id;
-        String parent_pw;
-        String answer;
 
-        public LoginServer(String parent_id,String parent_pw) { //로그인 id, pw 받기
-            this.parent_id = parent_id;
-            this.parent_pw = parent_pw;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            //request 를 보내줄 클라이언트 생성   (okhttp 라이브러리 사용)
-            OkHttpClient client = new OkHttpClient();
-            Response response;
-            RequestBody requestBody = null;
-
-            //보낼 데이터를 파라미터 형식으로 body에 넣음
-            requestBody = new FormBody.Builder().add("parent_id",parent_id).add("parent_pw",parent_pw).build();
-
-            // post형식으로 url로 만든 body를 보냄
-            Request request = new Request.Builder()
-                    .url("http://"+ WEBIP + ":8080/skuniv/login")
-                    .post(requestBody)
-                    .build();
-            try {
-                response = client.newCall(request).execute();
-                /////////////////////////////////// newcall 하고 응답받기를 기다리는중
-                answer = response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return answer;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-//            //로그인 성공 여부 확인
-//            if(s.equals("success"))
-//                Log.i("loginCheck",s);
-//            else Log.i("loginCheck","fail");
-//
-            if(s.equals("fail")) // 로그인 실패 시 토스트 메시지 띄움
-                Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
-
-            else {  //로그인이 성공하면 doInBackground()로 넘어온 값이 사용자의 이름 ====> s
-                client = new ClientLoginInfo();
-                client.setName(s);
-
-            }
-        }
-
-    }
 
     // 카카오톡 로그인을 위한 콜백 클래스
     private class SessionCallback implements ISessionCallback {
@@ -192,8 +152,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(UserProfile result) { //로그인 성공, 원하는 정보 가져오기
                 Log.e("UserProfile", result.toString());
                 Log.e("UserProfile", result.getId() + "");
-                client = new ClientLoginInfo();
-                client.setName(result.getNickname());
+                //client = new ClientLoginInfo();
+                //client.setName(result.getNickname());
+                intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("name",result.getNickname());
+                startActivity(intent);
             }
         });
     }

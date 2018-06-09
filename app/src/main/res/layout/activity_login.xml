@@ -38,13 +38,13 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/IDText"
+                    android:id="@+id/id_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
 
                 <EditText
-                    android:id="@+id/PassText"
+                    android:id="@+id/pw_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword" />
@@ -56,7 +56,7 @@
                 android:layout_weight="1">
 
             <Button
-                android:id="@+id/loginBtn"
+                android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="로그인" />
@@ -70,13 +70,13 @@
             android:layout_weight="3">
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/join_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="회원가입" />
 
             <Button
-                android:id="@+id/kakaoLogoutBtn"
+                android:id="@+id/kakaoLogout_btn"
                 android:layout_width="117dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

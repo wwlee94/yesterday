@@ -31,7 +31,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.LoginActivity" />
-        <activity android:name=".UI.HomeActivity"></activity>
+        <activity android:name=".UI.HomeActivity" />
+        <activity android:name=".UI.JoinActivity"></activity>
     </application>
 
 </manifest>
