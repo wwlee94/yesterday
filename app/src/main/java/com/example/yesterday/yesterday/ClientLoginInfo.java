@@ -26,4 +26,5 @@ public class ClientLoginInfo {
     public void setName(String name) {
         this.name = name;
     }
+    //윤상이 멍청
 }
