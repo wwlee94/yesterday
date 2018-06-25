@@ -27,4 +27,5 @@ public class ClientLoginInfo {
         this.name = name;
     }
     //윤상이 멍청
+    //인정
 }
