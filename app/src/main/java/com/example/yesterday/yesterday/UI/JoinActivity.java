@@ -18,6 +18,7 @@ public class JoinActivity extends AppCompatActivity {
     String new_id,new_pw,new_name;
     private static final String  WEBIP = "192.168.0.72";
     String result;
+
     Intent intent;
 
     @Override

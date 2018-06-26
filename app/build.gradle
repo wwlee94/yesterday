@@ -30,4 +30,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     //kakao
     compile group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
 }
