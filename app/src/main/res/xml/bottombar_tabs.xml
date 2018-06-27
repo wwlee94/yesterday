@@ -4,14 +4,17 @@
         <tab
             id="@+id/tab_call_log"
             icon="@drawable/ic_call_black_24dp"
-            title="call"/>
+            title="call"
+            />
         <tab
             id="@+id/tab_contacts"
             icon="@drawable/ic_contact_mail_black_24dp"
-            title="contacts"/>
+            title="contacts"
+            />
         <tab
             id="@+id/tab_macro_setting"
             icon="@drawable/ic_message_black_24dp"
-            title="macro"/>
+            title="macro"
+            />
     </tabs>
 </PreferenceScreen>

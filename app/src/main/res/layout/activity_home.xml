@@ -6,17 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".UI.HomeActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp" />
+
     <FrameLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/contentContainer"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_above="@+id/bottomBar"/>
 
-        <com.roughike.bottombar.BottomBar
-            android:id="@+id/bottomBar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            app:bb_tabXmlResource="@xml/bottombar_tabs"/>
-
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+       />
 </RelativeLayout>
