@@ -12,7 +12,7 @@ import okhttp3.Response;
 
 public class JoinServer extends AsyncTask<Void,Void,String> {
     String new_id,new_pw,new_name;
-    private static final String  WEBIP = "192.168.0.72";
+    private static final String  WEBIP = "117.17.142.207";
 
     public JoinServer(String id,String pw,String name){
         new_id = id;
@@ -33,7 +33,7 @@ public class JoinServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":8080/skuniv/join")
+                .url("http://"+ WEBIP + ":80/skuniv/join")
                 .post(requestBody)
                 .build();
         try {
