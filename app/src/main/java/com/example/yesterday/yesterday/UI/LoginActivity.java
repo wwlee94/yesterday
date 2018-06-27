@@ -79,13 +79,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
-//        kakaoLogout_btn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        //카카오톡 로그아웃 나중에 메인화면 안에서 다시 구성
+        kakaoLogout_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onClickLogout();
+                Toast.makeText(getApplicationContext(), "카카오톡 로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        });
 
         //카카오톡 로그인
         requestMe();
@@ -130,9 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
-            // 세션 연결이 실패했을때
-            // 어쩔때 실패되는지는 테스트를 안해보았음 ㅜㅜ
-
+            Log.i("SessionError","kakaoSession failed");
         }
     }
 
