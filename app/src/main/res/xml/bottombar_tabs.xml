@@ -2,19 +2,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <tabs>
         <tab
-            id="@+id/tab_call_log"
-            icon="@drawable/ic_call_black_24dp"
-            title="call"
+            id="@+id/tab_home"
+            icon="@drawable/ic_home_black_24dp"
+            title="Home"
             />
         <tab
-            id="@+id/tab_contacts"
-            icon="@drawable/ic_contact_mail_black_24dp"
-            title="contacts"
+            id="@+id/tab_add"
+            icon="@drawable/ic_library_add_black_24dp"
+            title="Addition"
             />
         <tab
-            id="@+id/tab_macro_setting"
-            icon="@drawable/ic_message_black_24dp"
-            title="macro"
+            id="@+id/tab_goal"
+            icon="@drawable/ic_library_books_black_24dp"
+            title="Goal"
+            />
+        <tab
+            id="@+id/tab_statistics"
+            icon="@drawable/ic_insert_chart_black_24dp"
+            title="Statistics"
             />
     </tabs>
 </PreferenceScreen>

@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
-public class ContactsFragment extends Fragment {
+//통계 화면 Fragment
+public class StatisticsFragment extends Fragment {
 
-    public ContactsFragment() {
+    private ViewGroup rootView;
+
+    public StatisticsFragment() {
         // Required empty public constructor
     }
 
@@ -20,7 +23,9 @@ public class ContactsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_statistics,container,false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+        return rootView;
     }
 }

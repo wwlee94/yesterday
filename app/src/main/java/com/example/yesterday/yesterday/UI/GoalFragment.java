@@ -1,7 +1,5 @@
 package com.example.yesterday.yesterday.UI;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,9 +8,12 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
-public class SetMacroFragment extends Fragment {
+//목표 화면 Fragment
+public class GoalFragment extends Fragment {
 
-    public SetMacroFragment() {
+    private ViewGroup rootView;
+
+    public GoalFragment() {
         // Required empty public constructor
     }
 
@@ -20,7 +21,8 @@ public class SetMacroFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_goal,container,false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_set_macro, container, false);
+        return rootView;
     }
 }

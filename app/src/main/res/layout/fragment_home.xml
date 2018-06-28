@@ -3,25 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.CallLogFragment">
+    tools:context=".UI.HomeFragment">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_gravity="center"
         >
-    <!-- TODO: Update blank fragment layout -->
+
         <TextView
             android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="전화_log 탭을 선택하였습니다."
-            android:textSize="20dp" />
+            android:layout_gravity="center"
+            android:text="홈 화면"
+            android:textSize="40dp" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Go" />
 
     </LinearLayout>

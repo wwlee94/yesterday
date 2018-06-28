@@ -10,8 +10,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp" />
+        android:background="#DE000000"
+        android:elevation="4dp"
+        android:theme="@style/MaterialTheme.Light.DarkToolbar"
+        app:titleTextColor="#ffffff"
+        />
 
     <FrameLayout
         android:id="@+id/contentContainer"
