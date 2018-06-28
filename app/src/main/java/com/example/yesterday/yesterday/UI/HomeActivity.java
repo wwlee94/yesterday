@@ -30,6 +30,8 @@ public class HomeActivity extends AppCompatActivity {
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp);
     private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp);
     private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp);
+    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp);
+
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -47,6 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
@@ -77,20 +80,23 @@ public class HomeActivity extends AppCompatActivity {
                         item1, item2, item3,
                         new DividerDrawerItem(),
                         sectionHeader,
-                        item4
+                        item4,item5
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
-
                         return true;
                     }
                 })
+                .withTranslucentStatusBar(false)
+                //.withFullscreen(true)
+                .withDrawerLayout(R.layout.material_drawer_fits_not)
                 .build();
 
         //BottomBar
+
         homeFragment = new HomeFragment();
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();

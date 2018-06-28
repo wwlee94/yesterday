@@ -43,9 +43,8 @@ public class HomeFragment extends Fragment {
                 view.setText("hello");
                 Log.d(TAG, "onClick ");
                 Toast.makeText((HomeActivity)getActivity(), "버튼 클릭 됌", Toast.LENGTH_LONG).show();
-                intent = new Intent((HomeActivity)getActivity(), LoginActivity.class);
+                intent = new Intent((HomeActivity)getActivity(), MainActivity.class);
                 startActivity(intent);
-
             }
         });
         // Inflate the layout for this fragment

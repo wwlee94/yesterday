@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.yesterday.yesterday">
 
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="8" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -23,7 +19,8 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
         <activity
-            android:name=".UI.MainActivity"
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,8 +30,8 @@
         </activity>
 
         <activity
-            android:name=".UI.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:name=".UI.MainActivity"
+           />
 
         <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity"/>
