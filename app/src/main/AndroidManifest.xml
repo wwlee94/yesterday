@@ -22,17 +22,22 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
-
-        <activity android:name=".UI.MainActivity">
+        <activity
+            android:name=".UI.MainActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity android:name=".UI.LoginActivity" />
-        <activity android:name=".UI.HomeActivity" />
-        <activity android:name=".UI.JoinActivity"></activity>
+        <activity android:name=".UI.JoinActivity"/>
     </application>
 
 </manifest>
