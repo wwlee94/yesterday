@@ -32,7 +32,6 @@ public class JoinActivity extends AppCompatActivity {
         join_btn = (Button) findViewById(R.id.join_btn);
 
 
-
         join_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
