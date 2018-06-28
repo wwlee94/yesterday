@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
     </style>
 
     <!-- 폰 가장 상단(statusbar) 바로 아래에 toolbar or actionbar-->
@@ -21,7 +20,6 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-
     </style>
 
     <style name="CustomTheme" parent="MaterialDrawerTheme">
@@ -43,7 +41,7 @@
     </style>
 
     <style name="BottomBarText">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">17sp</item>
        <!-- <item name="android:textStyle">bold</item>-->
     </style>
 
