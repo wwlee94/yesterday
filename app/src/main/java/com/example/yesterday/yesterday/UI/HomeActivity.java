@@ -1,6 +1,7 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -9,6 +10,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.example.yesterday.yesterday.R;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -26,12 +30,11 @@ import com.roughike.bottombar.OnTabSelectListener;
 public class HomeActivity extends AppCompatActivity {
 
     //MaterialDrawer
-    private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_black_24dp);
-    private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp);
-    private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp);
-    private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp);
-    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp);
-
+    private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_white_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -44,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     private StatisticsFragment statisticsFragment;
     //
     private String name;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +57,18 @@ public class HomeActivity extends AppCompatActivity {
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-        toolbar.setTitle("HomeActivity");
 
-        //Intent로 로그인 이름 가져옴
+        //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
+
+        imageView=(ImageView)findViewById(R.id.toolbar_calendar_button);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Calendar버튼 클릭", Toast.LENGTH_LONG).show();
+            }
+        });
 
         // Create the AccountHeader -> 사용자 계정(이미지,이름,이메일)헤더 생성
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -66,6 +77,7 @@ public class HomeActivity extends AppCompatActivity {
                 .withCompactStyle(true)                         //소형스타일
                 .withProfileImagesClickable(false)              //프로필이미지선택X
                 .withCloseDrawerOnProfileListClick(true)
+                .withSavedInstance(savedInstanceState)
                 .addProfiles(
                         new ProfileDrawerItem().withName("woowonLee").withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
                 )
@@ -93,10 +105,10 @@ public class HomeActivity extends AppCompatActivity {
                 .withTranslucentStatusBar(false)
                 //.withFullscreen(true)
                 .withDrawerLayout(R.layout.material_drawer_fits_not)
+                .withSavedInstance(savedInstanceState)
                 .build();
 
         //BottomBar
-
         homeFragment = new HomeFragment();
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();

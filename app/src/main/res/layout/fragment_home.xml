@@ -6,10 +6,9 @@
     tools:context=".UI.HomeFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_gravity="center"
         >
 
         <TextView
@@ -17,15 +16,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="50dp"
             android:text="홈 화면"
             android:textSize="40dp" />
+
+        <TextView
+            android:id="@+id/goaltext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="목표 설정 공지 란"
+            android:textSize="25dp" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Go" />
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="50dp"
+            android:text="먹은 메뉴" />
+
+        <TextView
+            android:id="@+id/viewpager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="120dp"
+            android:text="ViewPager"
+            android:textSize="30dp" />
 
     </LinearLayout>
 

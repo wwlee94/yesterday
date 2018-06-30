@@ -10,19 +10,28 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="?android:attr/actionBarSize"
         android:background="#5D4037"
         android:elevation="4dp"
-        android:theme="@style/MaterialTheme.Light.DarkToolbar"
+        android:theme="@style/MaterialDrawerTheme"
         android:layout_marginTop="24dp"
-        app:titleTextColor="#ffffff"
-        />
+        app:title="HomeActivity"
+        app:titleTextColor="#FFFFFF">
+        <ImageView
+            android:id="@+id/toolbar_calendar_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_event_note_white_24dp"
+            />
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_above="@+id/bottomBar"
         />
 

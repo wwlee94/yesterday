@@ -40,11 +40,10 @@ public class HomeFragment extends Fragment {
         btn_go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                view.setText("hello");
-                Log.d(TAG, "onClick ");
-                Toast.makeText((HomeActivity)getActivity(), "버튼 클릭 됌", Toast.LENGTH_LONG).show();
-                intent = new Intent((HomeActivity)getActivity(), MainActivity.class);
-                startActivity(intent);
+
+                Toast.makeText((HomeActivity)getActivity(), "먹은 메뉴 버튼 클릭", Toast.LENGTH_LONG).show();
+                //intent = new Intent((HomeActivity)getActivity(), MainActivity.class);
+                //startActivity(intent);
             }
         });
         // Inflate the layout for this fragment
