@@ -46,30 +46,48 @@ public class HomeActivity extends AppCompatActivity {
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
     //
+    private CalendarFragment calendarFragment;
+    //
     private String name;
     private ImageView imageView;
+    //
+    Intent intent;
+
+    //현재 fragment가 어딘지 보기 위함
+    int tabid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
 
+        //BottomBar
+        homeFragment = new HomeFragment();
+        addFragment = new AddFragment();
+        goalFragment = new GoalFragment();
+        statisticsFragment = new StatisticsFragment();
+
+        //Calendar
+        calendarFragment = new CalendarFragment();
+
         //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
-        Intent intent = getIntent();
+        intent = getIntent();
         name = intent.getStringExtra("name");
 
+        //Calendar
         imageView=(ImageView)findViewById(R.id.toolbar_calendar_button);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Calendar버튼 클릭", Toast.LENGTH_LONG).show();
+                replaceFragment(calendarFragment);
             }
         });
 
+        // MaterialDrawer
         // Create the AccountHeader -> 사용자 계정(이미지,이름,이메일)헤더 생성
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -108,18 +126,13 @@ public class HomeActivity extends AppCompatActivity {
                 .withSavedInstance(savedInstanceState)
                 .build();
 
-        //BottomBar
-        homeFragment = new HomeFragment();
-        addFragment = new AddFragment();
-        goalFragment = new GoalFragment();
-        statisticsFragment = new StatisticsFragment();
-
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
 
         BottomBar bottomBar=(BottomBar)findViewById(R.id.bottomBar);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(int tabId) {
+
                 //transaction 객체를 가져옴
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if(tabId==R.id.tab_home){
