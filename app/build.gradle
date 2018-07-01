@@ -33,9 +33,9 @@ dependencies {
     implementation group: project.KAKAO_SDK_GROUP, name: 'usermgmt', version: project.KAKAO_SDK_VERSION
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     //BottomBar
-    implementation 'com.android.support:design:27.1.0'
+    implementation 'com.android.support:design:27.1.1'
     implementation 'com.roughike:bottom-bar:2.3.1'
-    //navigation Drawer
+    //MaterialDrawer - Navigation drawer
     implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
         transitive = true
     }
@@ -43,4 +43,6 @@ dependencies {
     //icon font
     implementation 'com.mikepenz:google-material-typeface:3.0.1.2.original@aar'
     implementation 'com.mikepenz:fontawesome-typeface:5.0.13.0@aar'
+    //Simple Indicator
+    implementation 'com.pm10:indicator:1.0.2'
 }

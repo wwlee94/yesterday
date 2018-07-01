@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- * 추후 BottomBar 아이콘 크기 키우고 색상 변경 *-->
     <tabs>
         <tab
             id="@+id/tab_home"
