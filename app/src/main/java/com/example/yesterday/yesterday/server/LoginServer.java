@@ -51,6 +51,5 @@ public class LoginServer extends AsyncTask<Void,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-
     }
 }

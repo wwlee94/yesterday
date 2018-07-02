@@ -1,16 +1,20 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
+import com.example.yesterday.yesterday.LoginSharedPreference;
 import com.example.yesterday.yesterday.server.LoginServer;
 import com.example.yesterday.yesterday.R;
 import com.kakao.auth.ISessionCallback;
@@ -24,11 +28,13 @@ import com.kakao.util.exception.KakaoException;
 public class LoginActivity extends AppCompatActivity {
     EditText id_text, pw_text;
     Button login_btn,kakaoLogout_btn,join_btn;
+    CheckBox auto_check;
     TextView jsonText;
     String sId, sPw;
     ClientLoginInfo client;
     String result = "";
     Intent intent;
+
 
 
     @Override
@@ -41,6 +47,10 @@ public class LoginActivity extends AppCompatActivity {
             login_btn = (Button) findViewById(R.id.login_btn);
             kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
             join_btn = (Button) findViewById(R.id.join_btn);
+            auto_check = (CheckBox) findViewById(R.id.auto_check);
+            //회원 정보 담기
+            client = new ClientLoginInfo();
+             SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
 
         login_btn.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
@@ -51,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // AsyncTask 객체 생성, 호출
                 try {
-                   result  = new LoginServer(sId,sPw).execute().get();
+                    result  = new LoginServer(sId,sPw).execute().get();
                 } catch (Exception e){
                     e.getMessage();
                 }
@@ -60,11 +70,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
                 }
                 else{
-
+                    client.setType("회원");
+                    client.setName(result);
                     intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.putExtra("name",result);
                     startActivity(intent);
-
                 }
             }
         });
@@ -77,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         //카카오톡 로그아웃 나중에 메인화면 안에서 다시 구성
         kakaoLogout_btn.setOnClickListener(new View.OnClickListener(){
@@ -101,9 +110,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     // 카카오톡 로그인을 위한 콜백 클래스
     private class SessionCallback implements ISessionCallback {
@@ -151,10 +157,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(UserProfile result) { //로그인 성공, 원하는 정보 가져오기
                 Log.e("UserProfile", result.toString());
                 Log.e("UserProfile", result.getId() + "");
-                //client = new ClientLoginInfo();
-                //client.setName(result.getNickname());
                 intent = new Intent(getApplicationContext(), HomeActivity.class);
                 intent.putExtra("name",result.getNickname());
+                client.setName(result.getNickname());
+                client.setType("카카오");
+                //client.setBirth(result.get);
                 startActivity(intent);
             }
         });
