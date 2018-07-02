@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.yesterday.yesterday.R;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
