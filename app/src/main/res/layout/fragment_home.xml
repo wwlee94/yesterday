@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@drawable/mountain"
         >
 
         <TextView
@@ -16,29 +17,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:text="홈 화면"
-            android:textSize="40sp" />
+            android:layout_marginTop="45dp"
+            android:text="Home Fragment"
+            android:textSize="25sp"
+            android:textColor="#FFFFFF"
+            />
 
         <TextView
             android:id="@+id/goaltext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:text="목표 설정 공지 란"
-            android:textSize="25sp" />
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            />
 
         <Button
             android:id="@+id/button"
-            android:layout_width="70dp"
-            android:layout_height="35dp"
+            android:layout_width="75dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="80dp"
             android:text="먹은 메뉴"
-            android:textSize="10sp"
-
+            android:textSize="12sp"
+            android:textColor="#000000"
+            android:background="@drawable/border_button"
             />
 
         <RelativeLayout
@@ -47,13 +53,13 @@
             android:layout_height="300dp"
             android:layout_marginTop="25dp"
             android:background="@drawable/border"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            >
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
             </android.support.v4.view.ViewPager>
 
         </RelativeLayout>
