@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,28 +44,17 @@ public class HomeFragment extends Fragment {
     private Handler handler;
     private autoChangeViewPager runnable;
     private Thread thread;
+    private boolean isrun;
 
     private int posit=0;        //페이지 번호
+    int tnum=100;
 
     public HomeFragment() {
         // Required empty public constructor
         handler = new Handler();
         runnable = new autoChangeViewPager();
+        isrun=true;
 
-        thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while(true) {
-                        Thread.sleep(5000);
-                        handler.post(runnable);
-                    }
-                }catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
         //pause , continue 언제?
     }
 
@@ -74,6 +64,27 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         //인플레이트(inflate) 한다는 것은 동작 가능한 view의 객체로 생성한다는 의미
         //rootView가 플래그먼트 화면으로 보이게 된다.
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(isrun) {
+                        Thread.sleep(5000);
+                        Log.d(TAG, ""+ tnum--);
+                        //UI 스레드
+                        handler.post(runnable);
+                    }
+                        Log.d(TAG, "마지막");
+                        isrun=true;
+                }catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+
+        Log.d(TAG, "onCreateView: Thread onCreateView");
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_home,container,false);
 
         arrFragment = new Fragment[3];
@@ -115,16 +126,19 @@ public class HomeFragment extends Fragment {
                 Log.d(TAG, "****Thread 실행 중****");
             }
     }
-    /*
+
     @Override
     public void onStop() {
         super.onStop();
-        try {
-            // 일시 정지.. 왜 안돼
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+
         Log.d(TAG, "onStop: Thread 실행 중지");
     }
-    */
+    @Override
+    public void onPause(){
+        super.onPause();
+        isrun=false;
+        Log.d(TAG, "onPause: Thread 일시 중지");
+    }
+
+
 }
