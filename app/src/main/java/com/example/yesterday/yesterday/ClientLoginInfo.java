@@ -1,6 +1,8 @@
 package com.example.yesterday.yesterday;
 
-public class ClientLoginInfo {
+import java.io.Serializable;
+
+public class ClientLoginInfo implements Serializable{
     private String name,type,gender,birth,id,pass;
 
     public String getId() {

@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +36,9 @@ public class LoginActivity extends AppCompatActivity {
     ClientLoginInfo client;
     String result = "";
     Intent intent;
-
-
+    //자동 로그인 SharedPreferences 객체 생성
+    SharedPreferences loginSetting;
+    SharedPreferences.Editor editor;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,33 @@ public class LoginActivity extends AppCompatActivity {
             kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
             join_btn = (Button) findViewById(R.id.join_btn);
             auto_check = (CheckBox) findViewById(R.id.auto_check);
-            //회원 정보 담기
+
             client = new ClientLoginInfo();
-             SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
+            loginSetting = getSharedPreferences("loginSetting",0);
+            editor = loginSetting.edit();
+
+            if(loginSetting.getBoolean("Auto_Login_enabled",false)){
+                id_text.setText(loginSetting.getString("ID",""));
+                pw_text.setText(loginSetting.getString("PW",""));
+                auto_check.setChecked(true);
+            }
+
+            auto_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        editor.putString("ID",id_text.getText().toString());
+                        editor.putString("PW",pw_text.getText().toString());
+                        editor.putBoolean("Auto_Login_enabled",true);
+                        editor.commit();
+                    }
+                    else{
+                        editor.clear();
+                        editor.commit();
+                    }
+                }
+            });
 
         login_btn.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
@@ -58,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
                 sId = id_text.getText().toString();   // id
                 sPw = pw_text.getText().toString();   // password
+
 
                 // AsyncTask 객체 생성, 호출
                 try {
@@ -73,12 +101,11 @@ public class LoginActivity extends AppCompatActivity {
                     client.setType("회원");
                     client.setName(result);
                     intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.putExtra("name",result);
+                    intent.putExtra("client",client);
                     startActivity(intent);
                 }
             }
         });
-
 
         join_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,10 +184,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(UserProfile result) { //로그인 성공, 원하는 정보 가져오기
                 Log.e("UserProfile", result.toString());
                 Log.e("UserProfile", result.getId() + "");
-                intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.putExtra("name",result.getNickname());
+                //회원 정보 입력
                 client.setName(result.getNickname());
                 client.setType("카카오");
+                //homeActivity로 전달
+                intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("client",client);
                 //client.setBirth(result.get);
                 startActivity(intent);
             }

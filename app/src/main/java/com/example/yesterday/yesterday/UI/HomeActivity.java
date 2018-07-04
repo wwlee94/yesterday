@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.R;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -52,6 +53,8 @@ public class HomeActivity extends AppCompatActivity {
     private ImageView imageView;
     //
     Intent intent;
+    //넘겨받은 클라이언트 객체
+    ClientLoginInfo client;
 
     //현재 fragment가 어딘지 보기 위함
     int tabid;
@@ -75,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
         intent = getIntent();
-        name = intent.getStringExtra("name");
+        client = (ClientLoginInfo)intent.getSerializableExtra("client");
 
         //Calendar
         imageView=(ImageView)findViewById(R.id.toolbar_calendar_button);
