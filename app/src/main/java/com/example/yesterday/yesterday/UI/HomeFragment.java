@@ -98,8 +98,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText((HomeActivity)getActivity(), "먹은 메뉴 버튼 클릭", Toast.LENGTH_LONG).show();
-                //intent = new Intent((HomeActivity)getActivity(), MainActivity.class);
-                //startActivity(intent);
+                intent = new Intent((HomeActivity)getActivity(), TodayMenu.class);
+                startActivity(intent);
             }
         });
         // Inflate the layout for this fragment
