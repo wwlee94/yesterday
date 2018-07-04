@@ -36,6 +36,11 @@ public class StatisticsFragment extends Fragment {
     public StatisticsFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+    }
 
     //생성자와 onCreateView만 있어도 ok
     @Override

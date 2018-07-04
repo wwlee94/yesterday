@@ -59,6 +59,11 @@ public class HomeFragment extends Fragment {
         //배경화면 colormanager
         configureBackground();
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+    }
     //생성자와 onCreateView만 있어도 ok
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,8 +131,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText((HomeActivity)getActivity(), "먹은 메뉴 버튼 클릭", Toast.LENGTH_LONG).show();
-                //intent = new Intent((HomeActivity)getActivity(), MainActivity.class);
-                //startActivity(intent);
+                intent = new Intent((HomeActivity)getActivity(), TodayMenuActivity.class);
+                startActivity(intent);
             }
         });
         // Inflate the layout for this fragment
