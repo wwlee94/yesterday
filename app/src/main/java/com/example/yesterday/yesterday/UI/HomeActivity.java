@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +14,10 @@ import android.view.View;
 import android.widget.ImageView;
 import com.example.yesterday.yesterday.R;
 
+import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
+import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
+import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
+import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -37,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
 
     //MaterialDrawer
-    private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_white_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
@@ -47,19 +50,18 @@ public class HomeActivity extends AppCompatActivity {
 
     Drawer result;
     AccountHeader headerResult;
-    private Handler handler;
+    //private Handler handler;
 
     //BottomBar
     BottomBar bottomBar;
     //Fragment
-    HomeFragment homeFragment;
+    private HomeFragment homeFragment;
     private AddFragment addFragment;
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
-    private CalendarFragment calendarFragment;
     //
     String name;
-    ImageView imageView;
+    ImageView calendarView;
     //
     Intent intent;
 
@@ -71,45 +73,44 @@ public class HomeActivity extends AppCompatActivity {
 
         //FragmentManager
         fragmentManager = getSupportFragmentManager();
-        handler = new Handler();
+        //handler = new Handler();
 
         //Fragment
         homeFragment = new HomeFragment();
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();
         statisticsFragment = new StatisticsFragment();
-        calendarFragment = new CalendarFragment();
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        Log.d("TAG","onStart / 시작");
+        Log.d("TAG","HomeActivity onStart / 시작");
     }
     @Override
     protected void onRestart(){
         super.onRestart();
-        Log.d("TAG","onRestart / 다시 실행");
+        Log.d("TAG","HomeActivity onRestart / 다시 실행");
     }
     @Override
     protected void onResume(){
         super.onResume();
-        Log.d("TAG","onResume / 다시 시작");
+        Log.d("TAG","HomeActivity onResume / 다시 시작");
     }
     @Override
     protected void onPause(){
         super.onPause();
-        Log.d("TAG","onPause / 일시 정지");
+        Log.d("TAG","HomeActivity onPause / 일시 정지");
     }
     @Override
     protected void onStop(){
         super.onStop();
-        Log.d("TAG","onStop / 정지");
+        Log.d("TAG","HomeActivity onStop / 정지");
     }
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        Log.d("TAG","onDestroy / 종료");
+        Log.d("TAG","HomeActivity onDestroy / 종료");
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,11 +128,12 @@ public class HomeActivity extends AppCompatActivity {
 
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
-        imageView=(ImageView)findViewById(R.id.toolbar_calendar_button);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        calendarView=(ImageView)findViewById(R.id.toolbar_calendar_button);
+        calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragment(calendarFragment);
+               Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+               startActivity(intent);
             }
         });
 
@@ -166,8 +168,10 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
                     }
                 })
-                .withTranslucentStatusBar(false)
                 //.withFullscreen(true)
+                //반투명화 시켜줌.. style에 statusBar랑 같이 쓰면
+                .withTranslucentStatusBar(false)
+                //색 안 넣으면 투명화 layout
                 .withDrawerLayout(R.layout.material_drawer_fits_not)
                 //.withSavedInstance(savedInstanceState)
                 .build();

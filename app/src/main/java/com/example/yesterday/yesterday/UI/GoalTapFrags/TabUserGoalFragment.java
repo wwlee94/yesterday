@@ -1,5 +1,7 @@
-package com.example.yesterday.yesterday.UI.HomeViewPager;
+package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,11 +10,11 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
-public class Chart1Fragment extends Fragment {
+public class TabUserGoalFragment extends Fragment {
 
     private ViewGroup rootView;
 
-    public Chart1Fragment() {
+    public TabUserGoalFragment() {
         // Required empty public constructor
     }
 
@@ -20,7 +22,7 @@ public class Chart1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_chart1,container,false);
+        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_tab_user_goal,container,false);
 
         // Inflate the layout for this fragment
         return rootView;

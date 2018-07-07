@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday.UI;
+package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,16 +7,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.UI.ViewPager.Chart1Fragment;
-import com.example.yesterday.yesterday.UI.ViewPager.Chart2Fragment;
-import com.example.yesterday.yesterday.UI.ViewPager.Chart3Fragment;
+import com.example.yesterday.yesterday.UI.HomeActivity;
+import com.example.yesterday.yesterday.UI.HomeViewPager.Chart1Fragment;
+import com.example.yesterday.yesterday.UI.HomeViewPager.Chart2Fragment;
+import com.example.yesterday.yesterday.UI.HomeViewPager.Chart3Fragment;
+import com.example.yesterday.yesterday.UI.TodayMenuActivity;
 import com.matthewtamlin.sliding_intro_screen_library.background.BackgroundManager;
 import com.matthewtamlin.sliding_intro_screen_library.background.ColorBlender;
 
@@ -26,14 +30,16 @@ import static android.content.ContentValues.TAG;
 public class HomeFragment extends Fragment {
 
     private static final int[] BACKGROUND_COLORS = {0xff304FFE, 0xffcc0066, 0xff9900ff};
+
     private BackgroundManager backgroundManager = null;
 
     private Intent intent;
     private ViewGroup rootView;
 
     private ViewPager viewPager = null;
+    private ImageView[] imageViews;
 
-    private Button btn_go;
+    private Button menuButton;
 
     private Fragment[] arrFragment;
 
@@ -50,6 +56,9 @@ public class HomeFragment extends Fragment {
         arrFragment[0] = new Chart1Fragment();
         arrFragment[1] = new Chart2Fragment();
         arrFragment[2] = new Chart3Fragment();
+
+        //indicator
+        imageViews = new ImageView[arrFragment.length];
 
         //핸들러 생성 -> UI 변경하려면 무조건 핸들러
         handler = new Handler();
@@ -93,6 +102,7 @@ public class HomeFragment extends Fragment {
 
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_home,container,false);
 
+        //ViewPager
         viewPager=(ViewPager)rootView.findViewById(R.id.viewpager);
         viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
@@ -112,12 +122,51 @@ public class HomeFragment extends Fragment {
                 }
             }
             @Override
-            public void onPageSelected(int position) { }
+            public void onPageSelected(int position) {
+
+                for(int i=0;i<arrFragment.length;i++){
+                    if(i==position) {
+                        imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
+                    }
+                    else{
+                        imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
+                    }
+                }
+            }
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
         //| 좌 2 | 중앙 | 우 2 |  이미지를 미리 로딩시키는 메소드
-        viewPager.setOffscreenPageLimit(2);
+        //viewPager.setOffscreenPageLimit(2);
+
+        //* ViewPager Indicator *
+        LinearLayout linearLayout=rootView.findViewById(R.id.linear_root);
+        //layout_gravity -> center * layout_gravity의 경우 View 자체의 위치를 지정한 위치로 정렬 시키는 것 *
+        //생성한 가져온 Gravity -> center * gravity는 View 안의 내용물을 지정한 위치로 정렬 시키는 것 *
+        linearLayout.setGravity(Gravity.CENTER);
+        //각각의 이미지의 layout 설정할 linearParams 생성
+        LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //이미지들 사이의 간격 좌,우 10씩
+        linearParams.setMargins(10,0,10,0);
+
+        //viewPager indicator 초기화 설정
+        for(int i=0;i<arrFragment.length;i++) {
+            //해당되는 Activity에서 ImageView 생성
+            imageViews[i]=new ImageView(getActivity());
+            //생성한 LinearLayout의 Gravity 설정 -> center
+            //imageView의 레이아웃 설정 , 배경화면 설정
+            imageViews[i].setLayoutParams(linearParams);
+            if(i==0){
+                //초기 indicator 지정 처음 보이는 ViewPager는 checked 되어 있도록
+                imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
+            }
+            else {
+                imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
+            }
+            linearLayout.addView(imageViews[i]);
+        }
+
+
         //ViewPager의 mScroller를 이용, 권한 허용하여 원하는 myPager에 duration 설정
         /*
         try {
@@ -126,11 +175,11 @@ public class HomeFragment extends Fragment {
             mScroller.set(viewPager, new setScrollerDuration(viewPager.getContext(),sInterpolator,1000));
         }catch(Exception e){ e.printStackTrace(); }
         */
-        btn_go = (Button)rootView.findViewById(R.id.button);
-        btn_go.setOnClickListener(new View.OnClickListener() {
+
+        menuButton = (Button)rootView.findViewById(R.id.menubutton);
+        menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText((HomeActivity)getActivity(), "먹은 메뉴 버튼 클릭", Toast.LENGTH_LONG).show();
                 intent = new Intent((HomeActivity)getActivity(), TodayMenuActivity.class);
                 startActivity(intent);
             }
@@ -161,16 +210,16 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        Log.d(TAG, "onStop: Thread 실행 중지");
+        Log.d(TAG, "onStop: HomeFragment 실행 중지");
     }
     @Override
     public void onPause(){
         super.onPause();
         isrun=false;
-        Log.d(TAG, "onPause: Thread 일시 중지");
+        Log.d(TAG, "onPause: HomeFragment Thread 일시 중지");
     }
 
-    //전역 변수로 선언한 backgroundManager = configureBackground로 설정한 backgroundManager
+    //전역 변수로 backgroundManager 초기화 메소드
     private void configureBackground() {
         this.backgroundManager= new ColorBlender(BACKGROUND_COLORS);
     }

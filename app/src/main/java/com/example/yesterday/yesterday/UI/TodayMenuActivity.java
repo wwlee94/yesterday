@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.example.yesterday.yesterday.R;
 
-public class TodayMenu extends AppCompatActivity {
+public class TodayMenuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class TodayMenu extends AppCompatActivity {
     }
 
     public void updateBtn(View v){
-        Intent myIntent=new Intent(getApplicationContext(),UpdateMenu.class);
+        Intent myIntent=new Intent(getApplicationContext(),UpdateMenuActivity.class);
         startActivity(myIntent);
     }
 

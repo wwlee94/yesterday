@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeFragment">
+    tools:context=".UI.HomeFrags.HomeFragment"
+    android:layout_marginTop="24dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginTop="?android:actionBarSize"
         >
 
         <TextView
@@ -16,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="90dp"
             android:text="Home Fragment"
+            android:layout_marginTop="10dp"
             android:textSize="25sp"
             android:textColor="#FFFFFF"
             />
@@ -34,9 +37,9 @@
             />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/menubutton"
             android:layout_width="75dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="80dp"
@@ -62,6 +65,17 @@
             </android.support.v4.view.ViewPager>
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_root"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            >
+
+        </LinearLayout>
 
     </LinearLayout>
 

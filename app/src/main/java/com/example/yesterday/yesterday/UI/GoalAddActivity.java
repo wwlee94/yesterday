@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.example.yesterday.yesterday.R;
 
-public class CalendarActivity extends AppCompatActivity {
+public class GoalAddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+        setContentView(R.layout.activity_goal_add);
     }
 }

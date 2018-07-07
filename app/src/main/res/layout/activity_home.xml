@@ -14,7 +14,7 @@
         android:elevation="4dp"
         android:theme="@style/MaterialDrawerTheme"
         android:layout_marginTop="24dp"
-        app:title="HomeActivity"
+        app:title="Home Activity"
         app:titleTextColor="#FFFFFF">
         <ImageView
             android:id="@+id/toolbar_calendar_button"

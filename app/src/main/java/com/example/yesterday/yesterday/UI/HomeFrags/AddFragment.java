@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday.UI;
+package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
+
 //추가 화면 Fragment
 public class AddFragment extends Fragment {
 
     private ViewGroup rootView;
 
     public AddFragment() {
-        // Required empty public constructor
     }
 
     @Override
