@@ -207,4 +207,13 @@ public class HomeActivity extends AppCompatActivity {
         transaction.replace(R.id.contentContainer, fragment);
         transaction.commit();
     }
+    /*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int request = requestCode & 0xffff;
+
+        // 프래그먼트에서 결과값을 받아야 한다면 아래와 같이...
+        Fragment fragment =  getSupportFragmentManager().findFragmentByTag("tabTotalFragment");
+        fragment.onActivityResult(request, resultCode, data);
+    }*/
 }

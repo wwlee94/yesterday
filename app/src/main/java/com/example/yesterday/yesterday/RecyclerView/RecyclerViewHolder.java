@@ -8,12 +8,12 @@ import com.example.yesterday.yesterday.R;
 
 public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
-    public View itemview;
+    public View itemView;
     public TextView name;
 
     public RecyclerViewHolder(View itemView) {
         super(itemView);
-        this.itemview = itemView;
+        this.itemView = itemView;
         name = itemView.findViewById(R.id.recycler_name);
     }
 }

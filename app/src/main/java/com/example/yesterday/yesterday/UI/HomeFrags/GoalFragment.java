@@ -7,18 +7,16 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
-import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
+
 import com.example.yesterday.yesterday.UI.GoalAddActivity;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabGoalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabSuccessFragment;
@@ -27,6 +25,8 @@ import com.example.yesterday.yesterday.UI.GoalTapFrags.TabUserGoalFragment;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 
 import java.util.ArrayList;
+
+import static android.app.Activity.RESULT_OK;
 
 //목표 화면 Fragment
 public class GoalFragment extends Fragment {
@@ -39,11 +39,21 @@ public class GoalFragment extends Fragment {
     private TabLayout tabLayout;
     private PagerAdapter pagerAdapter;
 
+    private TabTotalFragment tabTotalFragment;
+    private TabGoalFragment tabGoalFragment;
+    private TabUserGoalFragment tabUserGoalFragment;
+    private TabSuccessFragment tabSuccessFragment;
+
     //FloatingActionButton
     private FloatingActionButton floatingActionButton;
 
-    public GoalFragment() {
+    public int REQUEST_ACT=1234;
 
+    public GoalFragment() {
+        tabTotalFragment = new TabTotalFragment();
+        tabGoalFragment = new TabGoalFragment();
+        tabUserGoalFragment = new TabUserGoalFragment();
+        tabSuccessFragment = new TabSuccessFragment();
     }
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -91,18 +101,18 @@ public class GoalFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent((HomeActivity)getActivity(),GoalAddActivity.class);
-                startActivity(intent);
+                //fragment의 startActivityForResult !!
+                startActivityForResult(intent,REQUEST_ACT);
             }
         });
         // Inflate the layout for this fragment
         return rootView;
     }
+
     //FragmentPagerAdapter -> 정적인 뷰페이저에 어울림 미리 페이지를 load 해두기 때문
     //FragmentStatePagerAdapter -> 동적인 뷰페이저에 어울림 페이지 focus가 사라지면 destroy하기 때문
     //즉 FragmentStatePagerAdapter는 getItem 할 때 객체를 새로 생성하고 return해주어야함 생성자에 생성해서 하면 오류남
     public class PagerAdapter extends FragmentPagerAdapter {
-
-        private int tabCount;
 
         public PagerAdapter(FragmentManager fm){
             super(fm);
@@ -112,13 +122,13 @@ public class GoalFragment extends Fragment {
 
             switch (position){
                 case 0:
-                    return new TabTotalFragment();
+                    return tabTotalFragment;
                 case 1:
-                    return  new TabGoalFragment();
+                    return  tabGoalFragment;
                 case 2:
-                    return new TabUserGoalFragment();
+                    return tabUserGoalFragment;
                 case 3:
-                    return new TabSuccessFragment();
+                    return tabSuccessFragment;
                     default:
                         return null;
             }
@@ -126,6 +136,31 @@ public class GoalFragment extends Fragment {
         @Override
         public int getCount() {
             return 4;
+        }
+    }
+
+    //
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("TAG","GoalFragment onActivityResult");
+        // Check which request we're responding to
+        if (requestCode == REQUEST_ACT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                    //GoalAddActivity로 부터 데이터 받음!!
+                    String name = data.getStringExtra("NAME");
+                    Log.d("VALUE",name);
+
+                    //TabTotalFragment로 데이터 전달
+                    Bundle bundle = new Bundle();
+                    bundle.putString("NAME",name);
+                    tabTotalFragment.setArguments(bundle);
+
+                // Do something with the contact here (bigger example below)
+            }
         }
     }
 }

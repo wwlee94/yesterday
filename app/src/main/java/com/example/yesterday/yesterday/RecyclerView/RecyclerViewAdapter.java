@@ -2,7 +2,6 @@ package com.example.yesterday.yesterday.RecyclerView;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,17 +32,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //View의 내용을 해당 포지션의 데이터로 set
+    //recyclerview 가 처음 보이면 작동(여러번)
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         //final을 써줘야 동작.. ??
-        final int itemPosition = position;
+        final RecyclerViewHolder viewholder = holder;
         //Log.d("TAG",""+itemPosition);
 
         holder.name.setText(items.get(position).getName());
+        //추가 이벤트
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,(itemPosition+1)+" 번째 : "+items.get(itemPosition).getName(),Toast.LENGTH_SHORT).show();
+                deleteItem(viewholder.getAdapterPosition());
+            }
+        });
+        //삭제 이벤트
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(context,(viewholder.getAdapterPosition()+1)+" 번째 : "+items.get(viewholder.getAdapterPosition()).getName(),Toast.LENGTH_SHORT).show();
+                //삭제 명령
+                return true;
             }
         });
     }
@@ -52,5 +62,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    //아이템 추가
+    public void addItem(String name){
+        //items ArrayList<RecyclerItem> 에 데이터 넣고
+        items.add(new RecyclerItem(name));
+        //아이템이 추가 되었다고 통지함 -> holder에다가 ?
+        notifyItemInserted(getItemCount());
+    }
+    //아이템 삭제
+    public void deleteItem(int position){
+        try {
+            items.remove(position);
+            notifyItemRemoved(position);
+        }catch(IndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
     }
 }

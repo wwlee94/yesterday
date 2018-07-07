@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -46,7 +48,11 @@ public class HomeFragment extends Fragment {
     private Handler handler;
     private setAutoChangeViewPager setAutoChangeViewPager;
     private Thread thread;
-    private boolean isrun;
+
+    //현재 HomeFragment가 화면에 보이면 isrun :true 안보이면 false
+    private boolean isRun;
+    //터치 or 드래그 중이면 true 아니면 false
+    private boolean isTouched;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -64,7 +70,9 @@ public class HomeFragment extends Fragment {
         handler = new Handler();
         //핸들러의 runnable (스레드) 작동 (setAutoChangeViewPager)
         setAutoChangeViewPager = new setAutoChangeViewPager();
-        isrun=true;
+
+        isRun=true;
+        isTouched=false;
         //배경화면 colormanager
         configureBackground();
     }
@@ -72,6 +80,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Log.d("TAG","onCreate : Home Fragment");
     }
     //생성자와 onCreateView만 있어도 ok
     @Override
@@ -83,14 +92,18 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "Thread 시작");
-                    while(isrun) {
+                    Log.d("TAG", "Thread 시작");
+                    while(isRun) {
+
                         Thread.sleep(5000);
-                        //UI 스레드
-                        handler.post(setAutoChangeViewPager);
+                        //현재 상태가 드래그가 중이면 화면 전환 X
+                        if(!isTouched) {
+                            //UI 스레드
+                            handler.post(setAutoChangeViewPager);
+                        }
                     }
-                    Log.d(TAG, "Thread 종료");
-                    isrun=true;
+                    Log.d("TAG", "Thread 종료");
+                    isRun=true;
                 }catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -98,7 +111,7 @@ public class HomeFragment extends Fragment {
         });
         thread.start();
 
-        Log.d(TAG, "onCreateView: Thread onCreateView");
+        Log.d("TAG", "onCreateView: Home Fragment");
 
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_home,container,false);
 
@@ -114,6 +127,7 @@ public class HomeFragment extends Fragment {
                 return arrFragment.length;
             }
         });
+        //페이지가 바뀔 때 이벤트 처리
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -133,12 +147,19 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
+            //드래그 중이면 자동 페이지 전환 안되도록 떼면 다시 작동
             @Override
-            public void onPageScrollStateChanged(int state) { }
+            public void onPageScrollStateChanged(int state) {
+                //state==0 종료
+                if(state==0){
+                    isTouched = false;
+                }
+                //state==1 드래그 중
+                else if(state==1){
+                    isTouched = true;
+                }
+            }
         });
-        //| 좌 2 | 중앙 | 우 2 |  이미지를 미리 로딩시키는 메소드
-        //viewPager.setOffscreenPageLimit(2);
-
         //* ViewPager Indicator *
         LinearLayout linearLayout=rootView.findViewById(R.id.linear_root);
         //layout_gravity -> center * layout_gravity의 경우 View 자체의 위치를 지정한 위치로 정렬 시키는 것 *
@@ -202,7 +223,7 @@ public class HomeFragment extends Fragment {
                 posit++;
                 viewPager.setCurrentItem(posit, true);
             }
-            Log.d(TAG, "****Thread 실행 중****");
+            Log.d("TAG", "**** Thread 화면 전환 ****");
         }
     }
 
@@ -210,13 +231,13 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        Log.d(TAG, "onStop: HomeFragment 실행 중지");
+        Log.d("TAG", "onStop: HomeFragment 실행 중지");
     }
     @Override
     public void onPause(){
         super.onPause();
-        isrun=false;
-        Log.d(TAG, "onPause: HomeFragment Thread 일시 중지");
+        isRun=false;
+        Log.d("TAG", "onPause: HomeFragment Thread 일시 중지");
     }
 
     //전역 변수로 backgroundManager 초기화 메소드
