@@ -45,4 +45,6 @@ dependencies {
     implementation 'com.mikepenz:fontawesome-typeface:5.0.13.0@aar'
     //Simple Indicator
     implementation 'com.pm10:indicator:1.0.2'
+    //MP Andriod Chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
