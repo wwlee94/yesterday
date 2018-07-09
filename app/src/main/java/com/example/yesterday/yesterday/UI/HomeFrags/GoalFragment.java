@@ -16,6 +16,11 @@ public class GoalFragment extends Fragment {
     public GoalFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+    }
 
     //생성자와 onCreateView만 있어도 ok
     @Override

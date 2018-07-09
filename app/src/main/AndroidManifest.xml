@@ -22,8 +22,10 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
-
-        <activity android:name=".UI.MainActivity">
+        <activity
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,14 +34,13 @@
         </activity>
 
         <activity
-            android:name=".UI.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
-
-        </activity>
+            android:name=".UI.MainActivity"
+           />
 
         <activity android:name=".UI.LoginActivity" />
-        <activity android:name=".UI.JoinActivity" />
+        <activity android:name=".UI.JoinActivity"/>
+        <activity android:name=".UI.TodayMenu"/>
+        <activity android:name=".UI.UpdateMenu"/>
     </application>
 
 </manifest>

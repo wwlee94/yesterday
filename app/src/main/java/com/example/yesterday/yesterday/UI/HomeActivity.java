@@ -1,18 +1,18 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.example.yesterday.yesterday.R;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -29,6 +29,13 @@ import com.roughike.bottombar.OnTabSelectListener;
 
 public class HomeActivity extends AppCompatActivity {
 
+    //Activity
+    Activity mActivity;
+    //toolbar
+    private Toolbar toolbar;
+    //FragmentManager
+    private FragmentManager fragmentManager;
+
     //MaterialDrawer
     private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_white_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
@@ -38,69 +45,108 @@ public class HomeActivity extends AppCompatActivity {
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
-    private  Drawer result;
+    Drawer result;
+    AccountHeader headerResult;
+    private Handler handler;
 
     //BottomBar
-    private HomeFragment homeFragment;
+    BottomBar bottomBar;
+    //Fragment
+    HomeFragment homeFragment;
     private AddFragment addFragment;
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
-    //
     private CalendarFragment calendarFragment;
     //
-    private String name;
-    private ImageView imageView;
+    String name;
+    ImageView imageView;
     //
     Intent intent;
 
-    //현재 fragment가 어딘지 보기 위함
-    int tabid;
 
+    public HomeActivity(){
+
+        //Activity
+        mActivity = HomeActivity.this;
+
+        //FragmentManager
+        fragmentManager = getSupportFragmentManager();
+        handler = new Handler();
+
+        //Fragment
+        homeFragment = new HomeFragment();
+        addFragment = new AddFragment();
+        goalFragment = new GoalFragment();
+        statisticsFragment = new StatisticsFragment();
+        calendarFragment = new CalendarFragment();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.d("TAG","onStart / 시작");
+    }
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        Log.d("TAG","onRestart / 다시 실행");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d("TAG","onResume / 다시 시작");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.d("TAG","onPause / 일시 정지");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.d("TAG","onStop / 정지");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.d("TAG","onDestroy / 종료");
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Log.d("TAG","onCreate / 앱 생성(초기화)");
+
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
-        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-
-        //BottomBar
-        homeFragment = new HomeFragment();
-        addFragment = new AddFragment();
-        goalFragment = new GoalFragment();
-        statisticsFragment = new StatisticsFragment();
-
-        //Calendar
-        calendarFragment = new CalendarFragment();
+        toolbar=(Toolbar)findViewById(R.id.toolbar);
 
         //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
         intent = getIntent();
         name = intent.getStringExtra("name");
 
         //Calendar
+        //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
         imageView=(ImageView)findViewById(R.id.toolbar_calendar_button);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Calendar버튼 클릭", Toast.LENGTH_LONG).show();
                 replaceFragment(calendarFragment);
             }
         });
 
         // MaterialDrawer
         // Create the AccountHeader -> 사용자 계정(이미지,이름,이메일)헤더 생성
-        AccountHeader headerResult = new AccountHeaderBuilder()
+        headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)        //배경이미지
                 .withCompactStyle(true)                         //소형스타일
                 .withProfileImagesClickable(false)              //프로필이미지선택X
-                .withCloseDrawerOnProfileListClick(true)
-                .withSavedInstance(savedInstanceState)
+                //.withSavedInstance(savedInstanceState)
                 .addProfiles(
                         new ProfileDrawerItem().withName("woowonLee").withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
                 )
                 .build();
-
         //create the drawer and remember the `Drawer` result object
         result = new DrawerBuilder()
                 .withActivity(this)
@@ -123,12 +169,11 @@ public class HomeActivity extends AppCompatActivity {
                 .withTranslucentStatusBar(false)
                 //.withFullscreen(true)
                 .withDrawerLayout(R.layout.material_drawer_fits_not)
-                .withSavedInstance(savedInstanceState)
+                //.withSavedInstance(savedInstanceState)
                 .build();
 
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
-
-        BottomBar bottomBar=(BottomBar)findViewById(R.id.bottomBar);
+        bottomBar=(BottomBar)findViewById(R.id.bottomBar);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(int tabId) {
@@ -154,9 +199,8 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
     public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.contentContainer, fragment);
-        fragmentTransaction.commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.contentContainer, fragment);
+        transaction.commit();
     }
 }
