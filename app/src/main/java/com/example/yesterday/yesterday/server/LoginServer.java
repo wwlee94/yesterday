@@ -15,6 +15,7 @@ public class LoginServer extends AsyncTask<Void,Void,String> {
     String parent_id;
     String parent_pw;
     String answer;
+    //LocalHost -> 192.168.0.75
     private static final String  WEBIP = "117.17.142.207";
 
 

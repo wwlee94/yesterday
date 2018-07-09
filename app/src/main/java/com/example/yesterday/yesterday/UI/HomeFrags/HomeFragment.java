@@ -7,10 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -223,7 +221,7 @@ public class HomeFragment extends Fragment {
                 posit++;
                 viewPager.setCurrentItem(posit, true);
             }
-            Log.d("TAG", "**** Thread 화면 전환 ****");
+            Log.d("TAG", "**** Thread : setAutoChangeViewPager ****");
         }
     }
 

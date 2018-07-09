@@ -10,12 +10,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.RecyclerView.ItemTouchHelperCallback;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
 
@@ -41,6 +43,9 @@ public class TabTotalFragment extends Fragment {
         // Required empty public constructor
 
     }
+    // GoalAddActivity에서 목표 설정을 완료한 후 finish() 했을 때
+    // tabTotalFragment onResume 실행됌 onCreateView 실행 안됌
+    // 해당 액티비티에서 입력받은 문자를 받기 위함
     @Override
     public void onResume(){
         super.onResume();
@@ -51,7 +56,7 @@ public class TabTotalFragment extends Fragment {
         if (bundle != null) {
             name = bundle.getString("NAME");
             Log.d("FINAL VALUE",name);
-            adapter.addItem(name);
+            adapter.onItemAdd(name);
         }
     }
 
@@ -89,9 +94,14 @@ public class TabTotalFragment extends Fragment {
         recyclerView.addItemDecoration(decoration);
         //animator 설정
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        //Adapter 생성
+        //Adapter 생성 , RecyclerView에 적용
         adapter = new RecyclerViewAdapter(items);
         recyclerView.setAdapter(adapter);
+
+        //드래그 or 스와이프 이벤트를 사용 하기 위한 ItemTouchHelper
+        ItemTouchHelperCallback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         // Inflate the layout for this fragment
         return rootView;

@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.RecyclerView;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,24 +36,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     //recyclerview 가 처음 보이면 작동(여러번)
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        //final을 써줘야 동작.. ??
-        final RecyclerViewHolder viewholder = holder;
-        //Log.d("TAG",""+itemPosition);
 
+        //final을 써줘야 동작.. ??
+        final RecyclerViewHolder viewHolder = holder;
+
+        //* 정적인 부분 *
         holder.name.setText(items.get(position).getName());
+        //Log.d("TAG","onBindViewHolder : "+(position+1)+"번째 값 - "+items.get(position).getName());
+
         //추가 이벤트
+        //동적인 부분이라 holder의 getAdapterPosition 써야해
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteItem(viewholder.getAdapterPosition());
+                //toast보여주고 deleteItem 해야지 !!
+                Toast.makeText(context,(viewHolder.getAdapterPosition()+1)+" 번째 : "+items.get(viewHolder.getAdapterPosition()).getName(),Toast.LENGTH_SHORT).show();
+                //onItemDelete(viewHolder.getAdapterPosition());
             }
         });
-        //삭제 이벤트
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(context,(viewholder.getAdapterPosition()+1)+" 번째 : "+items.get(viewholder.getAdapterPosition()).getName(),Toast.LENGTH_SHORT).show();
-                //삭제 명령
+                onItemDelete(viewHolder.getAdapterPosition());
                 return true;
             }
         });
@@ -65,15 +70,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //아이템 추가
-    public void addItem(String name){
+    public void onItemAdd(String name){
         //items ArrayList<RecyclerItem> 에 데이터 넣고
+        Log.d("onItemAdd",name);
         items.add(new RecyclerItem(name));
         //아이템이 추가 되었다고 통지함 -> holder에다가 ?
+        //추가는 getItemCount 함으로서 제일 마지막 List 뒤에 삽입됨
         notifyItemInserted(getItemCount());
     }
     //아이템 삭제
-    public void deleteItem(int position){
+    public void onItemDelete(int position){
         try {
+            //toast보여주고 deleteItem 해야지 !!
+            Toast.makeText(context,(position+1)+" 번째 : "+items.get(position).getName(),Toast.LENGTH_SHORT).show();
             items.remove(position);
             notifyItemRemoved(position);
         }catch(IndexOutOfBoundsException e){
