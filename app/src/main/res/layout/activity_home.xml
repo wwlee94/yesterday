@@ -11,11 +11,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#5D4037"
         android:elevation="4dp"
         android:theme="@style/MaterialDrawerTheme"
         android:layout_marginTop="24dp"
-        app:title="HomeActivity"
+        app:title="Home Activity"
         app:titleTextColor="#FFFFFF">
         <ImageView
             android:id="@+id/toolbar_calendar_button"
@@ -31,9 +30,10 @@
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_above="@+id/bottomBar"
+        android:background="@drawable/mountain"
         />
+
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"

@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday.UI;
+package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,21 +10,20 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
-//통계 화면 Fragment
-public class StatisticsFragment extends Fragment {
+public class TabUserGoalFragment extends Fragment {
 
     private ViewGroup rootView;
 
-    public StatisticsFragment() {
+    public TabUserGoalFragment() {
         // Required empty public constructor
     }
 
-    //생성자와 onCreateView만 있어도 ok
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_statistics,container,false);
+        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_tab_user_goal,container,false);
+
         // Inflate the layout for this fragment
         return rootView;
     }
