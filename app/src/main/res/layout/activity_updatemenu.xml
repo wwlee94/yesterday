@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:background="@drawable/black"
         android:orientation="horizontal">
 
         <RadioGroup
@@ -85,7 +84,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/ViewPager"
-            android:background="@drawable/black"
 
             android:layout_below="@+id/viewpagerlayout"
             >
