@@ -46,10 +46,10 @@ public class JoinActivity extends AppCompatActivity {
                 }
 
                 if(result.equals("success")){
-
                     intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.putExtra("name",new_name);
                     startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "회원가입 성공!! 로그인 해 주세요", Toast.LENGTH_LONG).show();
                 }
                 else if(result.equals("overlap")){
                     Toast.makeText(getApplicationContext(), "아이디가 이미 존재합니다.", Toast.LENGTH_LONG).show();

@@ -1,7 +1,9 @@
 package com.example.yesterday.yesterday;
 
-public class ClientLoginInfo {
-    private String id,pass,name;
+import java.io.Serializable;
+
+public class ClientLoginInfo implements Serializable{
+    private String name,type,gender,birth,id,pass;
 
     public String getId() {
         return id;
@@ -17,6 +19,30 @@ public class ClientLoginInfo {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBirth() {
+        return birth;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
     }
 
     public String getName() {
