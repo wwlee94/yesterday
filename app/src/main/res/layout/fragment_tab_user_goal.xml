@@ -3,13 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeFrags.AddFragment">
+    tools:context=".UI.GoalTapFrags.TabUserGoalFragment">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="추가 화면"
-        android:textSize="40dp" />
+        android:text="Tab_User Fragment"
+        android:textSize="20dp"
+        android:textColor="#FFFFFFFF"
+        />
 
 </FrameLayout>

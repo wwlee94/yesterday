@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.TodayMenu">
+    tools:context=".UI.TodayMenuActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,7 +36,6 @@
                 android:layout_alignParentTop="true"
                 android:background="@drawable/backbtn_action"
                 android:onClick="backBtn"
-                android:src="@drawable/backbtn_action"
                 tools:layout_editor_absoluteX="313dp"
                 tools:layout_editor_absoluteY="0dp" />
 
