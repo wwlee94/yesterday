@@ -20,9 +20,10 @@
              android:layout_marginTop="?android:actionBarSize"
              android:background="#7F1976D2"
              app:tabSelectedTextColor="#FFFFFFFF"
-             app:tabTextAppearance="@style/TabLayoutText"/>
+             app:tabTextAppearance="@style/TabLayoutText"
+             />
 
-        <android.support.v4.view.ViewPager
+        <com.example.yesterday.yesterday.UI.HomeFrags.NoSwipeViewPager
             android:id="@+id/tab_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

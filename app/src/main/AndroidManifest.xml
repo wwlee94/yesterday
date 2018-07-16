@@ -24,7 +24,8 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".UI.MainActivity"
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,8 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".UI.MainActivity" />
         <!-- 로그인 , 회원 가입 -->
         <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity" />

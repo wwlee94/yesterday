@@ -37,6 +37,9 @@ public class TabTotalFragment extends Fragment {
     private ArrayList<RecyclerItem> items;
     private String[] names={"Charile","Andrew","Liz","Thomas","Sky","Andy","Lee","Park","Kim","Jeong"};
 
+    ItemTouchHelperCallback callback;
+    ItemTouchHelper itemTouchHelper;
+
     //결과 -> key="NAME"
     private String name;
 
@@ -97,14 +100,14 @@ public class TabTotalFragment extends Fragment {
         decoration.setDrawable(getResources().getDrawable(R.drawable.recycler_line));
         recyclerView.addItemDecoration(decoration);
         //animator 설정
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
         //Adapter 생성 , RecyclerView에 적용
         adapter = new RecyclerViewAdapter(items);
         recyclerView.setAdapter(adapter);
 
         //드래그 or 스와이프 이벤트를 사용 하기 위한 ItemTouchHelper
-        ItemTouchHelperCallback callback = new ItemTouchHelperCallback(adapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        callback = new ItemTouchHelperCallback(adapter,getActivity());
+        itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         // Inflate the layout for this fragment
