@@ -29,7 +29,7 @@ import com.kakao.util.exception.KakaoException;
 
 public class LoginActivity extends AppCompatActivity {
     EditText id_text, pw_text;
-    Button login_btn,kakaoLogout_btn,join_btn;
+    Button login_btn, kakaoLogout_btn, join_btn;
     CheckBox auto_check;
     TextView jsonText;
     String sId, sPw;
@@ -41,43 +41,48 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_login);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
-            id_text = (EditText) findViewById(R.id.id_text);
-            pw_text = (EditText) findViewById(R.id.pw_text);
-            login_btn = (Button) findViewById(R.id.login_btn);
-            kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
-            join_btn = (Button) findViewById(R.id.join_btn);
-            auto_check = (CheckBox) findViewById(R.id.auto_check);
+        id_text = (EditText) findViewById(R.id.id_text);
+        pw_text = (EditText) findViewById(R.id.pw_text);
+        login_btn = (Button) findViewById(R.id.login_btn);
+        kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
+        join_btn = (Button) findViewById(R.id.join_btn);
+        auto_check = (CheckBox) findViewById(R.id.auto_check);
 
-            client = new ClientLoginInfo();
+        client = new ClientLoginInfo();
 
-            loginSetting = getSharedPreferences("loginSetting",0);
-            editor = loginSetting.edit();
+        //login SharedPreferences
+        loginSetting = getSharedPreferences("loginSetting", 0);
+        editor = loginSetting.edit();
 
-            if(loginSetting.getBoolean("Auto_Login_enabled",false)){
-                id_text.setText(loginSetting.getString("ID",""));
-                pw_text.setText(loginSetting.getString("PW",""));
-                auto_check.setChecked(true);
-            }
+        //auto_check true면 id, pw setting
+        if (loginSetting.getBoolean("Auto_Login_enabled", false)) {
+            //id_text.setText(loginSetting.getString("ID",""));
+            //pw_text.setText(loginSetting.getString("PW",""));
+            auto_check.setChecked(true);
+            sId = loginSetting.getString("ID", "");
+            sPw = loginSetting.getString("PW", "");
+            Login(sId, sPw);
+        }
 
-            auto_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        editor.putString("ID",id_text.getText().toString());
-                        editor.putString("PW",pw_text.getText().toString());
-                        editor.putBoolean("Auto_Login_enabled",true);
-                        editor.commit();
-                    }
-                    else{
-                        editor.clear();
-                        editor.commit();
-                    }
+        //auto_check click listener
+        auto_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    editor.putString("ID", id_text.getText().toString());
+                    editor.putString("PW", pw_text.getText().toString());
+                    editor.putBoolean("Auto_Login_enabled", true);
+                    editor.commit();
+                } else {
+                    editor.clear();
+                    editor.commit();
                 }
-            });
+            }
+        });
 
         login_btn.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
@@ -85,25 +90,25 @@ public class LoginActivity extends AppCompatActivity {
                 // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
                 sId = id_text.getText().toString();   // id
                 sPw = pw_text.getText().toString();   // password
-
-
-                // AsyncTask 객체 생성, 호출
-                try {
-                    result  = new LoginServer(sId,sPw).execute().get();
-                } catch (Exception e){
-                    e.getMessage();
-                }
-
-                if(result.equals("fail")){
-                    Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    client.setType("회원");
-                    client.setName(result);
-                    intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.putExtra("client",client);
-                    startActivity(intent);
-                }
+                Login(sId, sPw);
+//                // AsyncTask 객체 생성, 호출
+//                try {
+//                    result = new LoginServer(sId, sPw).execute().get();
+//                } catch (Exception e) {
+//                    e.getMessage();
+//                }
+//
+//                Log.d("result", result);
+//
+//                if (result.equals("fail")) {
+//                    Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
+//                } else {
+//                    client.setType("회원");
+//                    client.setName(result);
+//                    intent = new Intent(getApplicationContext(), HomeActivity.class);
+//                    intent.putExtra("client", client);
+//                    startActivity(intent);
+//                }
             }
         });
 
@@ -116,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //카카오톡 로그아웃 나중에 메인화면 안에서 다시 구성
-        kakaoLogout_btn.setOnClickListener(new View.OnClickListener(){
+        kakaoLogout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickLogout();
@@ -129,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //카카오톡 로그아웃
-    private void onClickLogout(){
+    private void onClickLogout() {
         UserManagement.requestLogout(new LogoutResponseCallback() {
             @Override
             public void onCompleteLogout() {
@@ -147,6 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSessionClosed(ErrorResult errorResult) {
                 }
+
                 @Override
                 public void onNotSignedUp() {
                 }
@@ -157,14 +163,14 @@ public class LoginActivity extends AppCompatActivity {
                     //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
                     long number = userProfile.getId();
 
-                    Log.i("userProfile",Long.toString(number));
+                    Log.i("userProfile", Long.toString(number));
                 }
             });
         }
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
-            Log.i("SessionError","kakaoSession failed");
+            Log.i("SessionError", "kakaoSession failed");
         }
     }
 
@@ -175,11 +181,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onSessionClosed(ErrorResult errorResult) {
                 Log.d("onSessionClosed", "onSessionClosed1 =" + errorResult);
             }
+
             @Override
             public void onNotSignedUp() {
                 //카카오톡 회원이 아닐시
                 Log.d("NotSignedUp", "onNotSignedUp ");
             }
+
             @Override
             public void onSuccess(UserProfile result) { //로그인 성공, 원하는 정보 가져오기
                 Log.e("UserProfile", result.toString());
@@ -189,10 +197,31 @@ public class LoginActivity extends AppCompatActivity {
                 client.setType("카카오");
                 //homeActivity로 전달
                 intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.putExtra("client",client);
+                intent.putExtra("client", client);
                 //client.setBirth(result.get);
                 startActivity(intent);
             }
         });
+    }
+
+    public void Login(String id, String pw) {
+        // AsyncTask 객체 생성, 호출
+        try {
+            result = new LoginServer(id, pw).execute().get();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+
+        Log.d("result", result);
+
+        if (result.equals("fail")) {
+            Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
+        } else {
+            client.setType("회원");
+            client.setName(result);
+            intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.putExtra("client", client);
+            startActivity(intent);
+        }
     }
 }

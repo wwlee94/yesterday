@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
@@ -38,13 +41,16 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     //FragmentManager
     private FragmentManager fragmentManager;
+    //SharedPreferences
+    SharedPreferences loginSetting;
+    SharedPreferences.Editor editor;
 
     //MaterialDrawer
     private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -64,7 +70,8 @@ public class HomeActivity extends AppCompatActivity {
     ImageView calendarView;
     //
     Intent intent;
-
+    //client
+    ClientLoginInfo client;
 
     public HomeActivity(){
 
@@ -116,16 +123,21 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //SharedPreference
+        loginSetting = getSharedPreferences("loginSetting",0);
+        editor = loginSetting.edit();
 
         Log.d("TAG","onCreate / 앱 생성(초기화)");
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar=(Toolbar)findViewById(R.id.toolbar);
 
-        //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
+        //Intent로 client가져오기  -> client 아직 안쓰임
         intent = getIntent();
-        name = intent.getStringExtra("name");
+        client = (ClientLoginInfo) intent.getSerializableExtra("client");
 
+        //logout listener
+        //item5.set
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
         calendarView=(ImageView)findViewById(R.id.toolbar_calendar_button);
@@ -137,6 +149,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
         // MaterialDrawer
         // Create the AccountHeader -> 사용자 계정(이미지,이름,이메일)헤더 생성
         headerResult = new AccountHeaderBuilder()
@@ -146,9 +159,10 @@ public class HomeActivity extends AppCompatActivity {
                 .withProfileImagesClickable(false)              //프로필이미지선택X
                 //.withSavedInstance(savedInstanceState)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("woowonLee").withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
+                        new ProfileDrawerItem().withName(client.getName()).withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
                 )
                 .build();
+
         //create the drawer and remember the `Drawer` result object
         result = new DrawerBuilder()
                 .withActivity(this)
@@ -158,13 +172,21 @@ public class HomeActivity extends AppCompatActivity {
                         item1, item2, item3,
                         new DividerDrawerItem(),
                         sectionHeader,
-                        item4,item5
+                        item4,logout
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
+
+                        //logout clicked
+                        if(drawerItem == logout){
+                            editor.clear();
+                            editor.commit();
+                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            startActivity(intent);
+                        }
                         return true;
                     }
                 })
@@ -175,6 +197,8 @@ public class HomeActivity extends AppCompatActivity {
                 .withDrawerLayout(R.layout.material_drawer_fits_not)
                 //.withSavedInstance(savedInstanceState)
                 .build();
+
+
 
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
         bottomBar=(BottomBar)findViewById(R.id.bottomBar);
@@ -202,6 +226,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
     public void replaceFragment(Fragment fragment){
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentContainer, fragment);
