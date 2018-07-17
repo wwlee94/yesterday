@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,11 +8,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
+
 
 import android.util.Log;
 import android.view.LayoutInflater;
+
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,7 +25,6 @@ import com.example.yesterday.yesterday.UI.GoalTapFrags.TabTotalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabUserGoalFragment;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 
-import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -35,7 +35,8 @@ public class GoalFragment extends Fragment {
     private ViewGroup rootView;
 
     //TabLayout , ViewPager
-    private ViewPager viewPager;
+    //private ViewPager viewPager;
+    private NoSwipeViewPager mViewPager;
     private TabLayout tabLayout;
     private PagerAdapter pagerAdapter;
 
@@ -68,7 +69,7 @@ public class GoalFragment extends Fragment {
         rootView=(ViewGroup)inflater.inflate(R.layout.fragment_goal,container,false);
 
         tabLayout = (TabLayout)rootView.findViewById(R.id.tab_layout);
-        viewPager = (ViewPager)rootView.findViewById(R.id.tab_viewpager);
+        mViewPager = (NoSwipeViewPager)rootView.findViewById(R.id.tab_viewpager);
 
         //tabLayouy 초기화
         tabLayout.addTab(tabLayout.newTab().setText("전체"));
@@ -77,17 +78,11 @@ public class GoalFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("완료"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        //ViewPager 초기화
-        //class로 설정한 viewpager 어댑터 정의 후 적용
-        pagerAdapter = new PagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("TAG","Press TabLayout");
-                viewPager.setCurrentItem(tab.getPosition(),false);
+                mViewPager.setCurrentItem(tab.getPosition(),true);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) { }
@@ -95,7 +90,15 @@ public class GoalFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) { }
         });
 
-        //floatingActionButton 초기화 밑 이벤트 처리
+        //ViewPager 초기화
+        //class로 설정한 viewpager 어댑터 정의 후 적용
+        pagerAdapter = new PagerAdapter(getChildFragmentManager());
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        //페이지 스와이프 기능 해제
+        mViewPager.setPagingEnabled(false);
+
+        //floatingActionButton (+)버튼 // 초기화 밑 이벤트 처리
         floatingActionButton = (FloatingActionButton)rootView.findViewById(R.id.floating_action_button);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +127,7 @@ public class GoalFragment extends Fragment {
                 case 0:
                     return tabTotalFragment;
                 case 1:
-                    return  tabGoalFragment;
+                    return tabGoalFragment;
                 case 2:
                     return tabUserGoalFragment;
                 case 3:
@@ -139,11 +142,12 @@ public class GoalFragment extends Fragment {
         }
     }
 
-    //
+    //GoalFragment에서 GoalAddActivity로 넘어간 이후 데이터 다시 받아오기 위함
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("TAG","GoalFragment onActivityResult");
         // Check which request we're responding to
+        //내가 지정한 RESULT_ACT
         if (requestCode == REQUEST_ACT) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {

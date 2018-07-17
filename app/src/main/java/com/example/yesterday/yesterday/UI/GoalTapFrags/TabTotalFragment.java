@@ -34,13 +34,22 @@ public class TabTotalFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
+    private ArrayList<RecyclerItem> items;
     private String[] names={"Charile","Andrew","Liz","Thomas","Sky","Andy","Lee","Park","Kim","Jeong"};
+
+    ItemTouchHelperCallback callback;
+    ItemTouchHelper itemTouchHelper;
 
     //결과 -> key="NAME"
     private String name;
 
     public TabTotalFragment() {
         // Required empty public constructor
+        //ArrayList 생성해서 RectclerItem으로 데이터 넣어둠
+        items = new ArrayList<RecyclerItem>();
+        for(int i=0;i<names.length;i++) {
+            items.add(new RecyclerItem(names[i]));
+        }
 
     }
     // GoalAddActivity에서 목표 설정을 완료한 후 finish() 했을 때
@@ -55,8 +64,11 @@ public class TabTotalFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             name = bundle.getString("NAME");
-            Log.d("FINAL VALUE",name);
-            adapter.onItemAdd(name);
+            if(name != null) {
+                Log.d("FINAL VALUE", name);
+                adapter.onItemAdd(name);
+                bundle.clear();
+            }
         }
     }
 
@@ -81,11 +93,6 @@ public class TabTotalFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        //ArrayList 생성해서 RectclerItem으로 데이터 넣어둠
-        ArrayList<RecyclerItem> items = new ArrayList<RecyclerItem>();
-        for(int i=0;i<names.length;i++) {
-            items.add(new RecyclerItem(names[i]));
-        }
         //RecylerView에 layout 적용
         recyclerView.setLayoutManager(layoutManager);
         //Decoration 추가 -> 구분선 Vertical: 수직으로 구분한다!
@@ -93,14 +100,14 @@ public class TabTotalFragment extends Fragment {
         decoration.setDrawable(getResources().getDrawable(R.drawable.recycler_line));
         recyclerView.addItemDecoration(decoration);
         //animator 설정
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
         //Adapter 생성 , RecyclerView에 적용
         adapter = new RecyclerViewAdapter(items);
         recyclerView.setAdapter(adapter);
 
         //드래그 or 스와이프 이벤트를 사용 하기 위한 ItemTouchHelper
-        ItemTouchHelperCallback callback = new ItemTouchHelperCallback(adapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        callback = new ItemTouchHelperCallback(adapter,getActivity());
+        itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         // Inflate the layout for this fragment

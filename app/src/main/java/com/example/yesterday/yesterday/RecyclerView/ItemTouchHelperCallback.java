@@ -1,15 +1,38 @@
 package com.example.yesterday.yesterday.RecyclerView;
 
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+
+
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+
+
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.View;
+
+
+import com.example.yesterday.yesterday.R;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final RecyclerViewAdapter mAdapter;
 
-    public ItemTouchHelperCallback(RecyclerViewAdapter adapter) {
+    RectF rectF;
+    Context context;
+
+    public static final float ALPHA_FULL= 1.0f;
+
+    public ItemTouchHelperCallback(RecyclerViewAdapter adapter, Context context) {
         mAdapter = adapter;
+        this.context = context;
+
     }
 
     //RecyclerView에서 드래그 된지 알기 위해서 오버라이드
@@ -17,6 +40,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean isLongPressDragEnabled() {
         return true;
     }
+
     //RecyclerView에서 스와이프 된지 알기 위해 오버라이드
     @Override
     public boolean isItemViewSwipeEnabled() {
@@ -29,7 +53,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         //드래그 = 위,아래
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         //스와이프 = 좌,우
-        int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+        int swipeFlags = ItemTouchHelper.LEFT;
+
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 
@@ -37,8 +62,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        Log.d("TAG","ItemTouchHelper : onMove");
-        return true;
+        Log.d("TAG", "ItemTouchHelper : onMove");
+        return false;
     }
 
     //스와이프 되었을 때
@@ -47,4 +72,54 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         mAdapter.onItemDelete(viewHolder.getAdapterPosition());
     }
 
+    //스와이프하면 background 그리기
+
+
+    //뒷 배경에 그릴 메소드
+    @Override
+    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+        View itemView = viewHolder.itemView;
+
+        Paint p = new Paint();
+        p.setColor(Color.parseColor("#bffa315b"));//#7FD21928
+
+        //왼쪽으로 스와이프 하면
+        if(dX < 0) {
+            //Draw red background
+            //if -> 배경이 itemView 의 왼쪽 틀 가장자리를 넘지 않도록
+            if (itemView.getRight() + dX > itemView.getLeft()) {
+                rectF = new RectF(itemView.getRight() + (int) dX, itemView.getTop() + 4, itemView.getRight(), itemView.getBottom() - 4);
+            } else {
+                rectF = new RectF(itemView.getLeft(), itemView.getTop() + 4, itemView.getRight(), itemView.getBottom() - 4);
+            }
+            c.drawRoundRect(rectF, 10, 10, p);
+
+            Drawable icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_forever_black_24dp);
+
+            //Draw icon
+            int itemHeight = itemView.getBottom() - itemView.getTop();
+            //icon의 크기?
+            int intrinsicWidth = icon.getIntrinsicWidth();
+            int intrinsicHeight = icon.getIntrinsicHeight();
+
+            int iconLeft = itemView.getRight() - intrinsicWidth - 25;
+            int iconRight = itemView.getRight() - 25;
+            //아이콘 중앙에 위치하려고
+            int iconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+            int iconBottom = iconTop + intrinsicHeight;
+            //itemView.getRight+dX 가 iconRight랑 겹칠 때부터 icon을 그림
+            if (itemView.getRight() + (int) dX <= iconRight - intrinsicWidth / 2) {
+                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+            }
+            icon.draw(c);
+        }
+        //itemView Fadeout
+        final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+        viewHolder.itemView.setAlpha(alpha);
+        //뷰의 x축 변환
+       // viewHolder.itemView.setTranslationX(dX);
+
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+    }
 }

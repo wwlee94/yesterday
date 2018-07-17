@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.GoalAddActivity;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart1Fragment;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart2Fragment;
@@ -33,7 +34,6 @@ public class HomeFragment extends Fragment {
 
     private BackgroundManager backgroundManager = null;
 
-    private Intent intent;
     private ViewGroup rootView;
 
     private ViewPager viewPager = null;
@@ -86,28 +86,6 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         //인플레이트(inflate) 한다는 것은 동작 가능한 view의 객체로 생성한다는 의미
         //rootView가 플래그먼트 화면으로 보이게 된다.
-        thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d("TAG", "Thread 시작");
-                    while(isRun) {
-
-                        Thread.sleep(5000);
-                        //현재 상태가 드래그가 중이면 화면 전환 X
-                        if(!isTouched) {
-                            //UI 스레드
-                            handler.post(setAutoChangeViewPager);
-                        }
-                    }
-                    Log.d("TAG", "Thread 종료");
-                    isRun=true;
-                }catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
 
         Log.d("TAG", "onCreateView: Home Fragment");
 
@@ -199,7 +177,7 @@ public class HomeFragment extends Fragment {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent((HomeActivity)getActivity(), TodayMenuActivity.class);
+                Intent intent = new Intent(getActivity(), TodayMenuActivity.class);
                 startActivity(intent);
             }
         });
@@ -223,6 +201,33 @@ public class HomeFragment extends Fragment {
             }
             Log.d("TAG", "**** Thread : setAutoChangeViewPager ****");
         }
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d("TAG", "Thread 시작");
+                    while(isRun) {
+
+                        Thread.sleep(5000);
+                        //현재 상태가 드래그가 중이면 화면 전환 X
+                        if(!isTouched) {
+                            //UI 스레드
+                            handler.post(setAutoChangeViewPager);
+                        }
+                    }
+                }catch(Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    Log.d("TAG", "Thread 종료");
+                    isRun=true;
+                }
+            }
+        });
+        thread.start();
     }
 
     @Override
