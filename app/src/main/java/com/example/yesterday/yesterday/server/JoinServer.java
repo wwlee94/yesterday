@@ -13,7 +13,7 @@ import okhttp3.Response;
 public class JoinServer extends AsyncTask<Void,Void,String> {
     String new_id,new_pw,new_name;
 
-    private static final String  WEBIP = "192.168.0.75";
+    private static final String  WEBIP = "117.17.142.207";
 
     public JoinServer(String id,String pw,String name){
         new_id = id;

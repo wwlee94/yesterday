@@ -15,7 +15,10 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.yesterday.yesterday.ClientLoginInfo;
+import com.example.yesterday.yesterday.GlobalApplication;
 import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.UI.GoalAddActivity;
@@ -66,6 +69,13 @@ public class GoalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //전역변수 id 출력
+        GlobalApplication application =(GlobalApplication)getActivity().getApplication();
+        ClientLoginInfo client = application.getClientInfo();
+        Toast.makeText(getActivity(),client.getName(),Toast.LENGTH_LONG).show();
+
+
         rootView=(ViewGroup)inflater.inflate(R.layout.fragment_goal,container,false);
 
         tabLayout = (TabLayout)rootView.findViewById(R.id.tab_layout);

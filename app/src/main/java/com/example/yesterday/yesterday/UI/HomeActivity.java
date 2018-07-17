@@ -122,10 +122,6 @@ public class HomeActivity extends AppCompatActivity {
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar=(Toolbar)findViewById(R.id.toolbar);
 
-        //Intent로 로그인 이름 가져옴 -> name은 아직 안쓰임
-        intent = getIntent();
-        name = intent.getStringExtra("name");
-
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
         calendarView=(ImageView)findViewById(R.id.toolbar_calendar_button);

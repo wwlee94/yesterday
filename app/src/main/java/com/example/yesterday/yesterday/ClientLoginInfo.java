@@ -54,4 +54,5 @@ public class ClientLoginInfo implements Serializable{
     }
     //윤상이 멍청
     //인정
+    //인정2
 }

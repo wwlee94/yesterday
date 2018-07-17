@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
+import com.example.yesterday.yesterday.GlobalApplication;
 import com.example.yesterday.yesterday.LoginSharedPreference;
 import com.example.yesterday.yesterday.server.LoginServer;
 import com.example.yesterday.yesterday.R;
@@ -101,8 +102,13 @@ public class LoginActivity extends AppCompatActivity {
                     client.setType("회원");
                     client.setName(result);
                     intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    //전역변수로 client저장하니 intent로 안넘겨도 될듯?
                     intent.putExtra("client",client);
                     startActivity(intent);
+
+                    //전역변수에 id저장
+                    GlobalApplication application = (GlobalApplication)getApplication();
+                    application.setClientInfo(client);
                 }
             }
         });

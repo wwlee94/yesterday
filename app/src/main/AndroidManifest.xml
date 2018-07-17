@@ -20,8 +20,7 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".UI.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".UI.MainActivity"
            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +29,8 @@
             </intent-filter>
         </activity>
         <!-- HomeActivity -->
-        <activity android:name=".UI.MainActivity"
+        <activity android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
            />
         <!-- 로그인 , 회원 가입 -->
         <activity android:name=".UI.LoginActivity" />
