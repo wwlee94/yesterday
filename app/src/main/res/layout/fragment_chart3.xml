@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.ViewPager.Chart3Fragment">
+    tools:context=".UI.HomeViewPager.Chart3Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

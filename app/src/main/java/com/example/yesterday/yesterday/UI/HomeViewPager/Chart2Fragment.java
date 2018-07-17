@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday.UI.ViewPager;
+package com.example.yesterday.yesterday.UI.HomeViewPager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

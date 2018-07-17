@@ -8,8 +8,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.UpdateViewPager.FrequentlyMenuFragment;
+import com.example.yesterday.yesterday.UI.UpdateViewPager.SearchMenuFragment;
 
-public class UpdateMenu extends AppCompatActivity {
+public class UpdateMenuActivity extends AppCompatActivity {
 
 
     ViewPager vp;
@@ -55,9 +57,9 @@ public class UpdateMenu extends AppCompatActivity {
             switch(position)
             {
                 case 0:
-                    return new SearchMenu();
+                    return new SearchMenuFragment();
                 case 1:
-                    return new FrequentlyMenu();
+                    return new FrequentlyMenuFragment();
                 default:
                     return null;
             }

@@ -15,8 +15,8 @@ public class LoginServer extends AsyncTask<Void,Void,String> {
     String parent_id;
     String parent_pw;
     String answer;
-    private static final String  WEBIP = "192.168.0.76";
 
+    private static final String  WEBIP = "117.17.142.207";
 
     public LoginServer(String parent_id,String parent_pw) { //로그인 id, pw 받기
         this.parent_id = parent_id;
@@ -35,7 +35,7 @@ public class LoginServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + "/skuniv/login")
+                .url("http://"+ WEBIP + ":80/skuniv/login")
                 .post(requestBody)
                 .build();
         try {

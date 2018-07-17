@@ -1,4 +1,4 @@
-package com.example.yesterday.yesterday.UI;
+package com.example.yesterday.yesterday.UI.UpdateViewPager;
 
 //import android.app.Fragment;
 
