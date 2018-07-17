@@ -42,6 +42,8 @@ public class TabTotalFragment extends Fragment {
 
     //결과 -> key="NAME"
     private String name;
+    private String date;
+    private String type;
 
     public TabTotalFragment() {
         // Required empty public constructor
@@ -64,8 +66,12 @@ public class TabTotalFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             name = bundle.getString("NAME");
-            if(name != null) {
+            date = bundle.getString("DATE");
+            type = bundle.getString("TYPE");
+            if(name != null && date != null && type != null) {
                 Log.d("FINAL VALUE", name);
+                Log.d("FINAL VALUE", date);
+                Log.d("FINAL VALUE", type);
                 adapter.onItemAdd(name);
                 bundle.clear();
             }

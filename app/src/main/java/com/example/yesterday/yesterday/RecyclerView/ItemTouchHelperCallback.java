@@ -103,8 +103,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             int intrinsicWidth = icon.getIntrinsicWidth();
             int intrinsicHeight = icon.getIntrinsicHeight();
 
-            int iconLeft = itemView.getRight() - intrinsicWidth - 25;
-            int iconRight = itemView.getRight() - 25;
+            int iconLeft = itemView.getRight() - intrinsicWidth - 30;
+            int iconRight = itemView.getRight() - 30;
             //아이콘 중앙에 위치하려고
             int iconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
             int iconBottom = iconTop + intrinsicHeight;

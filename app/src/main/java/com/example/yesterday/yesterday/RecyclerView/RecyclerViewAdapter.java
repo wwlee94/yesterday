@@ -18,9 +18,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     //Recycler에 담을 데이터를 클래스로 만든 RecyclerItem을 ArrayList로 생성
     private ArrayList<RecyclerItem> items;
     private Context context;
-    private View view;
 
-    public RecyclerViewAdapter(ArrayList items){
+    public RecyclerViewAdapter(ArrayList<RecyclerItem> items){
         this.items = items;
     }
 
@@ -28,7 +27,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        view= LayoutInflater.from(context).inflate(R.layout.recycler_per_item,parent,false);
+        View view= LayoutInflater.from(context).inflate(R.layout.recycler_per_item,parent,false);
         return new RecyclerViewHolder(view);
     }
 
@@ -57,7 +56,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                onItemDelete(viewHolder.getAdapterPosition());
+                //onItemDelete(viewHolder.getAdapterPosition());
                 return true;
             }
         });

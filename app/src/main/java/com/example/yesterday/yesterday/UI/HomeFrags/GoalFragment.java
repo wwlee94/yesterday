@@ -156,11 +156,17 @@ public class GoalFragment extends Fragment {
 
                     //GoalAddActivity로 부터 데이터 받음!!
                     String name = data.getStringExtra("NAME");
+                    String date = data.getStringExtra("DATE");
+                    String type = data.getStringExtra("TYPE");
                     Log.d("VALUE",name);
+                    Log.d("VALUE",date);
+                    Log.d("VALUE",type);
 
                     //TabTotalFragment로 데이터 전달
                     Bundle bundle = new Bundle();
                     bundle.putString("NAME",name);
+                    bundle.putString("DATE",date);
+                    bundle.putString("TYPE",type);
                     tabTotalFragment.setArguments(bundle);
 
                 // Do something with the contact here (bigger example below)
