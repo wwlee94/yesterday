@@ -35,22 +35,29 @@ public class TabTotalFragment extends Fragment {
     private RecyclerViewAdapter adapter;
 
     private ArrayList<RecyclerItem> items;
-    private String[] names={"Charile","Andrew","Liz","Thomas","Sky","Andy","Lee","Park","Kim","Jeong"};
+    private String[] texts={"Charile","Andrew","Liz","Thomas","Sky","Andy"};
 
     ItemTouchHelperCallback callback;
     ItemTouchHelper itemTouchHelper;
 
-    //결과 -> key="NAME"
-    private String name;
-    private String date;
+    //결과 -> key="TEXT"
+    private String userID;
+    private String food;
+    private String count;
+    private String startDate;
+    private String endDate;
+    private String favorite;
+
+    //삭제 예정
+    private String text;
     private String type;
 
     public TabTotalFragment() {
         // Required empty public constructor
         //ArrayList 생성해서 RectclerItem으로 데이터 넣어둠
         items = new ArrayList<RecyclerItem>();
-        for(int i=0;i<names.length;i++) {
-            items.add(new RecyclerItem(names[i]));
+        for(int i=0;i<texts.length;i++) {
+            items.add(new RecyclerItem("admin","김치찌개","10","2017-5-28","2017-6-28","0",texts[i]));
         }
 
     }
@@ -65,14 +72,20 @@ public class TabTotalFragment extends Fragment {
         //GoalFragment로부터 name 데이터 받음!!
         Bundle bundle = getArguments();
         if (bundle != null) {
-            name = bundle.getString("NAME");
-            date = bundle.getString("DATE");
+            userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
+            food = bundle.getString("FOOD");
+            count = bundle.getString("COUNT");
+            startDate = bundle.getString("STARTDATE");
+            endDate = bundle.getString("ENDDATE");
+            favorite = bundle.getString("FAVORITE");
+            //삭제 예정
+            text = bundle.getString("TEXT");
             type = bundle.getString("TYPE");
-            if(name != null && date != null && type != null) {
-                Log.d("FINAL VALUE", name);
-                Log.d("FINAL VALUE", date);
+            if(text != null && endDate != null && type != null) {
+                Log.d("FINAL VALUE", text);
+                Log.d("FINAL VALUE", endDate);
                 Log.d("FINAL VALUE", type);
-                adapter.onItemAdd(name);
+                adapter.onItemAdd(userID,food,count,startDate,endDate,favorite,text);
                 bundle.clear();
             }
         }

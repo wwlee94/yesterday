@@ -16,16 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.UI.GoalAddActivity;
-import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart1Fragment;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart2Fragment;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart3Fragment;
 import com.example.yesterday.yesterday.UI.TodayMenuActivity;
 import com.matthewtamlin.sliding_intro_screen_library.background.BackgroundManager;
 import com.matthewtamlin.sliding_intro_screen_library.background.ColorBlender;
-
-import static android.content.ContentValues.TAG;
 
 //home 화면 Fragment
 public class HomeFragment extends Fragment {

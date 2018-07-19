@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.server.DeleteGoalServer;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     //Recycler에 담을 데이터를 클래스로 만든 RecyclerItem을 ArrayList로 생성
     private ArrayList<RecyclerItem> items;
     private Context context;
+
+    //결과 값
+    String result;
 
     public RecyclerViewAdapter(ArrayList<RecyclerItem> items){
         this.items = items;
@@ -40,7 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         final RecyclerViewHolder viewHolder = holder;
 
         //* 정적인 부분 *
-        holder.name.setText(items.get(position).getName());
+        holder.name.setText(items.get(position).getText());
         //Log.d("TAG","onBindViewHolder : "+(position+1)+"번째 값 - "+items.get(position).getName());
 
         //추가 이벤트
@@ -49,7 +53,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             @Override
             public void onClick(View v) {
                 //toast보여주고 deleteItem 해야지 !!
-                Toast.makeText(context,(viewHolder.getAdapterPosition()+1)+" 번째 : "+items.get(viewHolder.getAdapterPosition()).getName(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,(viewHolder.getAdapterPosition()+1)+" 번째 : "+items.get(viewHolder.getAdapterPosition()).getText()
+                        +" / ID : "+items.get(viewHolder.getAdapterPosition()).getUserID()
+                        +" / Food : "+items.get(viewHolder.getAdapterPosition()).getFood()
+                        ,Toast.LENGTH_SHORT).show();
                 //onItemDelete(viewHolder.getAdapterPosition());
             }
         });
@@ -69,23 +76,42 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //아이템 추가
-    public void onItemAdd(String name){
+    public void onItemAdd(String userID,String food,String count,String startDate,String endDate,String favorite,String text){
         //items ArrayList<RecyclerItem> 에 데이터 넣고
-        Log.d("onItemAdd",name);
-        items.add(new RecyclerItem(name));
+        Log.d("onItemAdd",text);
+        items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite,text));
         //아이템이 추가 되었다고 통지함 -> holder에다가 ?
         //추가는 getItemCount 함으로서 제일 마지막 List 뒤에 삽입됨
         notifyItemInserted(getItemCount());
     }
     //아이템 삭제
-    public void onItemDelete(int position){
+    public void onItemDelete(String userID,String food,int position){
         try {
             //toast보여주고 deleteItem 해야지 !!
-            Toast.makeText(context,(position+1)+" 번째 : "+items.get(position).getName(),Toast.LENGTH_SHORT).show();
-            items.remove(position);
-            notifyItemRemoved(position);
+
+            // AsyncTask 객체 생성 -> 목표 정보 userID 와 food 에 맞는 정보 DELETE
+            try{
+                result = new DeleteGoalServer(userID,food).execute().get();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            if(result.equals("success")){
+
+                //toast보여주고 deleteItem 해야지 !!
+                Log.d("VALUE",(position+1)+" 번째 : "+items.get(position).getText());
+                items.remove(position);
+                notifyItemRemoved(position);
+
+                Toast.makeText(context,"데이터 삭제 성공",Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(context,"데이터 삭제 실패",Toast.LENGTH_LONG).show();
+            }
         }catch(IndexOutOfBoundsException e){
             e.printStackTrace();
         }
+    }
+    public ArrayList<RecyclerItem> getItems(){
+        return items;
     }
 }

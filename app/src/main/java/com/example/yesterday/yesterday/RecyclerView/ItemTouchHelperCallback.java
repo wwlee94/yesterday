@@ -69,7 +69,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //스와이프 되었을 때
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDelete(viewHolder.getAdapterPosition());
+        int position = viewHolder.getAdapterPosition();
+        mAdapter.onItemDelete(mAdapter.getItems().get(position).getUserID(),mAdapter.getItems().get(position).getFood(),position);
     }
 
     //스와이프하면 background 그리기

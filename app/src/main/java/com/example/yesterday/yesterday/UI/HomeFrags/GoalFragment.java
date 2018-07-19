@@ -15,13 +15,10 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.yesterday.yesterday.ClientLoginInfo;
-import com.example.yesterday.yesterday.GlobalApplication;
 import com.example.yesterday.yesterday.R;
 
-import com.example.yesterday.yesterday.UI.GoalAddActivity;
+import com.example.yesterday.yesterday.UI.AddGoalActivity;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabGoalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabSuccessFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabTotalFragment;
@@ -70,11 +67,12 @@ public class GoalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //전역변수 id 출력
+        /*
+        //전역변수 Client 이름 출력
         GlobalApplication application =(GlobalApplication)getActivity().getApplication();
         ClientLoginInfo client = application.getClientInfo();
         Toast.makeText(getActivity(),client.getName(),Toast.LENGTH_LONG).show();
-
+        */
 
         rootView=(ViewGroup)inflater.inflate(R.layout.fragment_goal,container,false);
 
@@ -113,7 +111,7 @@ public class GoalFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent((HomeActivity)getActivity(),GoalAddActivity.class);
+                Intent intent = new Intent((HomeActivity)getActivity(),AddGoalActivity.class);
                 //fragment의 startActivityForResult !!
                 startActivityForResult(intent,REQUEST_ACT);
             }
@@ -165,18 +163,30 @@ public class GoalFragment extends Fragment {
                 // The Intent's data Uri identifies which contact was selected.
 
                     //GoalAddActivity로 부터 데이터 받음!!
-                    String name = data.getStringExtra("NAME");
-                    String date = data.getStringExtra("DATE");
+                    String userID = data.getStringExtra("USERID");
+                    String text = data.getStringExtra("TEXT");
+                    String food = data.getStringExtra("FOOD");
+                    String count= data.getStringExtra("COUNT");
+                    String startDate = data.getStringExtra("STARTDATE");
+                    String endDate = data.getStringExtra("ENDDATE");
+                    String favorite= data.getStringExtra("FAVORITE");
+
                     String type = data.getStringExtra("TYPE");
-                    Log.d("VALUE",name);
-                    Log.d("VALUE",date);
+                    Log.d("VALUE",text);
+                    Log.d("VALUE",endDate);
                     Log.d("VALUE",type);
 
                     //TabTotalFragment로 데이터 전달
                     Bundle bundle = new Bundle();
-                    bundle.putString("NAME",name);
-                    bundle.putString("DATE",date);
+                    bundle.putString("USERID",userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                    bundle.putString("TEXT",text);
+                    bundle.putString("FOOD",food);
+                    bundle.putString("COUNT",count);
+                    bundle.putString("STARTDATE",startDate);
+                    bundle.putString("ENDDATE",endDate);
+                    bundle.putString("FAVORITE",favorite);
                     bundle.putString("TYPE",type);
+
                     tabTotalFragment.setArguments(bundle);
 
                 // Do something with the contact here (bigger example below)
