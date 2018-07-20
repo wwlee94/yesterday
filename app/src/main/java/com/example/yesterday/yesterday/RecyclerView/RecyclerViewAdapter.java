@@ -36,7 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //View의 내용을 해당 포지션의 데이터로 set
-    //recyclerview 가 처음 보이면 작동(여러번)
+    //recyclerview가 처음 보이면 작동(여러번)
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
 
@@ -44,8 +44,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         final RecyclerViewHolder viewHolder = holder;
 
         //* 정적인 부분 *
-        holder.name.setText(items.get(position).getText());
-        //Log.d("TAG","onBindViewHolder : "+(position+1)+"번째 값 - "+items.get(position).getName());
+        holder.text.setText(items.get(position).getText());
+        holder.endDate.setText(items.get(position).getEndDate());
 
         //추가 이벤트
         //동적인 부분이라 holder의 getAdapterPosition 써야해
@@ -102,10 +102,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 items.remove(position);
                 notifyItemRemoved(position);
 
-                Toast.makeText(context,"데이터 삭제 성공",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"데이터 삭제 성공",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(context,"데이터 삭제 실패",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"데이터 삭제 실패",Toast.LENGTH_SHORT).show();
             }
         }catch(IndexOutOfBoundsException e){
             e.printStackTrace();

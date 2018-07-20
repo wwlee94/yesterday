@@ -1,6 +1,8 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -101,13 +103,27 @@ public class AddGoalActivity extends AppCompatActivity {
                     intent.putExtra("TYPE", goalType);
 
                     setResult(RESULT_OK, intent);
+
+                    finish();
                 }
                 else{
-                    Log.d("DB","데이터 저장 실패");
+                    show();
+                    Log.d("AddGoalServer","데이터 저장 실패 (DB 연동 오류 or 기본 키 포함되있어서)");
                 }
-
-                finish();
             }
         });
+    }
+    void show()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("목표 설정 오류");
+        builder.setMessage("중복되는 음식이 들어갑니다.");
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                       dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 }

@@ -17,8 +17,9 @@
         android:layout_marginStart="62dp"
         android:orientation="vertical">
 
+        <!-- TEXT -->
         <TextView
-            android:id="@+id/recycler_name"
+            android:id="@+id/recycler_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -26,13 +27,14 @@
             android:textSize="18sp"
             />
 
+        <!-- 마감일 -->
         <TextView
+            android:id="@+id/recycler_end_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/md_yellow_700"
             android:layout_marginTop="5dp"
             android:textSize="11sp"
-            android:text="test"
             />
     </LinearLayout>
 </RelativeLayout>

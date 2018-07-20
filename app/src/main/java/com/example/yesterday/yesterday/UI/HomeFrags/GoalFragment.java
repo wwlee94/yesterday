@@ -18,13 +18,17 @@ import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
 
+import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.UI.AddGoalActivity;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabGoalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabSuccessFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabTotalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabUserGoalFragment;
 import com.example.yesterday.yesterday.UI.HomeActivity;
+import com.example.yesterday.yesterday.server.SelectGoalServer;
 
+
+import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,12 +49,39 @@ public class GoalFragment extends Fragment {
     private TabUserGoalFragment tabUserGoalFragment;
     private TabSuccessFragment tabSuccessFragment;
 
+    //GoalTabFrags 에서 쓰일 item리스트
+    private ArrayList<RecyclerItem> items;
+
     //FloatingActionButton
     private FloatingActionButton floatingActionButton;
 
+    //onActivityResult -> 다음 액티비티에게 ACT주고 다시 받아와 같은 값인지(성공했는지) 검사하기 위함
     public int REQUEST_ACT=1234;
 
+    //ClientGoal DB 연동 결과값
+    String result;
+
     public GoalFragment() {
+
+        //<!-- TODO: GoalFragment에서 처음에 DB 읽어서 items 만들어주고 나머지 fragment로 items를 파라미터로 전해주면? 앱 실행 될때 DB 한번만 읽어오쥬
+        //     TODO: 최종 admin -> 전역변수 이용하여 id가져와 대입할 것
+        //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
+        try {
+            result = new SelectGoalServer("admin").execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            //성공 , 실패 여부
+            if (result.equals("fail")) {
+                Log.d("ClientGoal","데이터 조회 실패");
+            } else {
+                Log.d("ClientGoal","데이터 조회 성공");
+                Log.d("ClientGoal", result);
+            }
+        }
+
+        items = new ArrayList<RecyclerItem>();
+
         tabTotalFragment = new TabTotalFragment();
         tabGoalFragment = new TabGoalFragment();
         tabUserGoalFragment = new TabUserGoalFragment();
@@ -192,5 +223,10 @@ public class GoalFragment extends Fragment {
                 // Do something with the contact here (bigger example below)
             }
         }
+    }
+    //DB 연동해서 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
+    public void getClientGoal(){
+
+
     }
 }

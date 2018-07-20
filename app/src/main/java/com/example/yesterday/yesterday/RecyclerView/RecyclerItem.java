@@ -28,10 +28,15 @@ public class RecyclerItem {
     }
 
     public String getUserID(){ return userID; }
+
     public String getFood(){ return food; }
+
     public String getCount(){ return count; }
+
     public String getStartDate(){ return startDate; }
+
     public String getEndDate(){ return endDate; }
+
     public String getFavorite(){ return favorite; }
     //
     public String getText(){
