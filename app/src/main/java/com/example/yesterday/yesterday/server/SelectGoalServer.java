@@ -17,16 +17,11 @@ import okhttp3.Response;
 public class SelectGoalServer extends AsyncTask<Void,Void,String> {
 
     String userID;
-    String food;
-    String count;
-    String startDate;
-    String endDate;
-    String favorite;
 
     String result;
     //owl wifi 로컬 -> 192.168.0.75
     //조교서버 -> 117.17.142.207
-    private static final String  WEBIP = "117.17.142.207";
+    private static final String  WEBIP = "192.168.219.108";
 
     //addGoalActivity에서 등록한 정보 생성자로 받는다.
     public SelectGoalServer(String userID) {

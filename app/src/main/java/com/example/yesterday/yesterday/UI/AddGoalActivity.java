@@ -19,24 +19,26 @@ import com.example.yesterday.yesterday.server.AddGoalServer;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class AddGoalActivity extends AppCompatActivity {
 
-    TextView textView;  //목표 문자열
+    //이거 EditText 인데 TextView로 가져와도 잘되네..
     TextView foodView;
     TextView countView;
     TextView endDateView;  //마감일
     //TextView favoriteView; //즐겨찾기
 
     String goalType; //목표 설정 타입
-    String text;
     String food;
     String count;
     String endDate;
+    String startDate;
 
     //임시
-    String userID="admin";
-    String startDate="2017-10-20";
-    String favorite ="0";
+    String userID = "admin";
+    String favorite = "0";
     //
     Button button;
 
@@ -47,52 +49,52 @@ public class AddGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_goal);
 
-        textView=(TextView)findViewById(R.id.goal_edit_text);
-        foodView=(TextView)findViewById(R.id.goal_edit_food);
-        countView=(TextView)findViewById(R.id.goal_edit_count);
-        endDateView=(TextView)findViewById(R.id.goal_edit_date);
+        foodView = (TextView) findViewById(R.id.goal_edit_food);
+        countView = (TextView) findViewById(R.id.goal_edit_count);
+        endDateView = (TextView) findViewById(R.id.goal_edit_date);
 
-        //라디오 버튼
-        RadioGroup goalGroup=(RadioGroup)findViewById(R.id.goal_radioGroup);
-        int GroupID=goalGroup.getCheckedRadioButtonId();
+
+        //라디오 버튼 TODO: layout은 존재하지만 사용은 안하는 중
+        RadioGroup goalGroup = (RadioGroup) findViewById(R.id.goal_radioGroup);
+        int GroupID = goalGroup.getCheckedRadioButtonId();
         goalType = ((RadioButton) findViewById(GroupID)).getText().toString();
 
         //라디오 버튼 바꾸었을 때
-        goalGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+        goalGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton=(RadioButton)findViewById(checkedId);
-                goalType=radioButton.getText().toString();
+                RadioButton radioButton = (RadioButton) findViewById(checkedId);
+                goalType = radioButton.getText().toString();
             }
         });
 
         //저장 버튼
-        button=(Button)findViewById(R.id.goal_add_button);
+        button = (Button) findViewById(R.id.goal_add_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                text = textView.getText().toString();
                 food = foodView.getText().toString();
-                count= countView.getText().toString();
+                count = countView.getText().toString();
                 endDate = endDateView.getText().toString();
+                startDate = getDate();
+
+                //임시
                 //id
-                //startDate
                 //favorite
 
                 // AsyncTask 객체 생성 -> 목표 정보 DB에 INSERT
-                try{
-                    result = new AddGoalServer(userID,food,count,startDate,endDate,favorite).execute().get();
-                }catch(Exception e){
+                try {
+                    result = new AddGoalServer(userID, food, count, startDate, endDate, favorite).execute().get();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                if(result.equals("success")) {
+                if (result.equals("success")) {
                     //DB 연동 전 intent로 데이터 전송한 것
                     Intent intent = new Intent();
-                    intent.putExtra("USERID",userID);//나중에 삭제 예정 전역변수 이용하면 됌.
-                    intent.putExtra("TEXT", text);
+                    intent.putExtra("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
                     intent.putExtra("FOOD", food);
                     intent.putExtra("COUNT", count);
                     intent.putExtra("STARTDATE", startDate);
@@ -100,30 +102,40 @@ public class AddGoalActivity extends AppCompatActivity {
                     intent.putExtra("FAVORITE", favorite);
 
                     //삭제 예정
-                    intent.putExtra("TYPE", goalType);
+                    //intent.putExtra("TYPE", goalType);
 
                     setResult(RESULT_OK, intent);
 
                     finish();
-                }
-                else{
+                } else {
                     show();
-                    Log.d("AddGoalServer","데이터 저장 실패 (DB 연동 오류 or 기본 키 포함되있어서)");
+                    Log.d("AddGoalServer", "데이터 저장 실패 (DB 연동 오류 or 기본 키 포함되있어서)");
                 }
             }
         });
     }
-    void show()
-    {
+
+    public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("목표 설정 오류");
         builder.setMessage("중복되는 음식이 들어갑니다.");
         builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                       dialog.dismiss();
+                        dialog.dismiss();
                     }
                 });
         builder.show();
+    }
+
+    public String getDate() {
+        long now = System.currentTimeMillis();
+        // Data 객체에 시간을 저장한다.
+        Date date = new Date(now);
+        // 각자 사용할 포맷을 정하고 문자열로 만든다.
+        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy-MM-dd");
+        String nowDate = sdfNow.format(date);
+
+        return nowDate;
     }
 }

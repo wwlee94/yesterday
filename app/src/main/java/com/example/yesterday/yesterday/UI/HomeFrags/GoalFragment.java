@@ -3,6 +3,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,11 @@ import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -56,7 +62,7 @@ public class GoalFragment extends Fragment {
     private FloatingActionButton floatingActionButton;
 
     //onActivityResult -> 다음 액티비티에게 ACT주고 다시 받아와 같은 값인지(성공했는지) 검사하기 위함
-    public int REQUEST_ACT=1234;
+    public int REQUEST_ACT = 1234;
 
     //ClientGoal DB 연동 결과값
     String result;
@@ -65,31 +71,28 @@ public class GoalFragment extends Fragment {
 
         //<!-- TODO: GoalFragment에서 처음에 DB 읽어서 items 만들어주고 나머지 fragment로 items를 파라미터로 전해주면? 앱 실행 될때 DB 한번만 읽어오쥬
         //     TODO: 최종 admin -> 전역변수 이용하여 id가져와 대입할 것
-        //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
-        try {
-            result = new SelectGoalServer("admin").execute().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            //성공 , 실패 여부
-            if (result.equals("fail")) {
-                Log.d("ClientGoal","데이터 조회 실패");
-            } else {
-                Log.d("ClientGoal","데이터 조회 성공");
-                Log.d("ClientGoal", result);
-            }
-        }
 
+        // 목표DB를 저장할 items
         items = new ArrayList<RecyclerItem>();
+
+        //파싱된 데이터를 메소드를 통해 items에 대입
+        items = getClientGoal();
+
+        //프래그먼트에 데이터를 전달하기위한 Bundle
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("ITEMS", items);
 
         tabTotalFragment = new TabTotalFragment();
         tabGoalFragment = new TabGoalFragment();
         tabUserGoalFragment = new TabUserGoalFragment();
         tabSuccessFragment = new TabSuccessFragment();
+
+        //해당 프래그먼트에 데이터 전달
+        tabTotalFragment.setArguments(bundle);
     }
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -105,10 +108,10 @@ public class GoalFragment extends Fragment {
         Toast.makeText(getActivity(),client.getName(),Toast.LENGTH_LONG).show();
         */
 
-        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_goal,container,false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_goal, container, false);
 
-        tabLayout = (TabLayout)rootView.findViewById(R.id.tab_layout);
-        mViewPager = (NoSwipeViewPager)rootView.findViewById(R.id.tab_viewpager);
+        tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
+        mViewPager = (NoSwipeViewPager) rootView.findViewById(R.id.tab_viewpager);
 
         //tabLayouy 초기화
         tabLayout.addTab(tabLayout.newTab().setText("전체"));
@@ -120,13 +123,17 @@ public class GoalFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d("TAG","Press TabLayout");
-                mViewPager.setCurrentItem(tab.getPosition(),true);
+                Log.d("TAG", "Press TabLayout");
+                mViewPager.setCurrentItem(tab.getPosition(), true);
             }
+
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
             @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
 
         //ViewPager 초기화
@@ -138,13 +145,13 @@ public class GoalFragment extends Fragment {
         mViewPager.setPagingEnabled(false);
 
         //floatingActionButton (+)버튼 // 초기화 밑 이벤트 처리
-        floatingActionButton = (FloatingActionButton)rootView.findViewById(R.id.floating_action_button);
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floating_action_button);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent((HomeActivity)getActivity(),AddGoalActivity.class);
+                Intent intent = new Intent((HomeActivity) getActivity(), AddGoalActivity.class);
                 //fragment의 startActivityForResult !!
-                startActivityForResult(intent,REQUEST_ACT);
+                startActivityForResult(intent, REQUEST_ACT);
             }
         });
         // Inflate the layout for this fragment
@@ -156,13 +163,14 @@ public class GoalFragment extends Fragment {
     //즉 FragmentStatePagerAdapter는 getItem 할 때 객체를 새로 생성하고 return해주어야함 생성자에 생성해서 하면 오류남
     public class PagerAdapter extends FragmentPagerAdapter {
 
-        public PagerAdapter(FragmentManager fm){
+        public PagerAdapter(FragmentManager fm) {
             super(fm);
-    }
+        }
+
         @Override
         public Fragment getItem(int position) {
 
-            switch (position){
+            switch (position) {
                 case 0:
                     return tabTotalFragment;
                 case 1:
@@ -171,10 +179,11 @@ public class GoalFragment extends Fragment {
                     return tabUserGoalFragment;
                 case 3:
                     return tabSuccessFragment;
-                    default:
-                        return null;
+                default:
+                    return null;
             }
         }
+
         @Override
         public int getCount() {
             return 4;
@@ -184,7 +193,7 @@ public class GoalFragment extends Fragment {
     //GoalFragment에서 GoalAddActivity로 넘어간 이후 데이터 다시 받아오기 위함
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("TAG","GoalFragment onActivityResult");
+        Log.d("TAG", "GoalFragment onActivityResult");
         // Check which request we're responding to
         //내가 지정한 RESULT_ACT
         if (requestCode == REQUEST_ACT) {
@@ -193,40 +202,73 @@ public class GoalFragment extends Fragment {
                 // The user picked a contact.
                 // The Intent's data Uri identifies which contact was selected.
 
-                    //GoalAddActivity로 부터 데이터 받음!!
-                    String userID = data.getStringExtra("USERID");
-                    String text = data.getStringExtra("TEXT");
-                    String food = data.getStringExtra("FOOD");
-                    String count= data.getStringExtra("COUNT");
-                    String startDate = data.getStringExtra("STARTDATE");
-                    String endDate = data.getStringExtra("ENDDATE");
-                    String favorite= data.getStringExtra("FAVORITE");
+                //GoalAddActivity로 부터 데이터 받음!!
+                String userID = data.getStringExtra("USERID");
+                String food = data.getStringExtra("FOOD");
+                String count = data.getStringExtra("COUNT");
+                String startDate = data.getStringExtra("STARTDATE");
+                String endDate = data.getStringExtra("ENDDATE");
+                String favorite = data.getStringExtra("FAVORITE");
 
-                    String type = data.getStringExtra("TYPE");
-                    Log.d("VALUE",text);
-                    Log.d("VALUE",endDate);
-                    Log.d("VALUE",type);
+                Log.d("VALUE", endDate);
 
-                    //TabTotalFragment로 데이터 전달
-                    Bundle bundle = new Bundle();
-                    bundle.putString("USERID",userID);//나중에 삭제 예정 전역변수 이용하면 됌.
-                    bundle.putString("TEXT",text);
-                    bundle.putString("FOOD",food);
-                    bundle.putString("COUNT",count);
-                    bundle.putString("STARTDATE",startDate);
-                    bundle.putString("ENDDATE",endDate);
-                    bundle.putString("FAVORITE",favorite);
-                    bundle.putString("TYPE",type);
+                //TabTotalFragment로 데이터 전달
+                Bundle bundle = new Bundle();
+                bundle.putString("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                bundle.putString("FOOD", food);
+                bundle.putString("COUNT", count);
+                bundle.putString("STARTDATE", startDate);
+                bundle.putString("ENDDATE", endDate);
+                bundle.putString("FAVORITE", favorite);
 
-                    tabTotalFragment.setArguments(bundle);
+                tabTotalFragment.setArguments(bundle);
 
                 // Do something with the contact here (bigger example below)
             }
         }
     }
-    //DB 연동해서 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
-    public void getClientGoal(){
 
+    // DB 연동해서 Select
+    // 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
+    public ArrayList<RecyclerItem> getClientGoal(){
 
+        //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
+        try {
+            result = new SelectGoalServer("admin").execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //성공 , 실패 여부
+            if (result.equals("fail")) {
+                Log.d("ClientGoal", "데이터 조회 실패");
+            } else {
+                Log.d("ClientGoal", "데이터 조회 성공");
+                Log.d("ClientGoal", result);
+            }
+        }
+        //result -> json - String 형태
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+
+            JSONArray jsonArray = (JSONArray) jsonObject.get("CLIENTGOAL");
+            //jsonArray.length() -> 각각의 {id,food,...} 전체의 갯수
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject list = (JSONObject) jsonArray.get(i);
+
+                String userID = list.getString("USERID");
+                String food = list.getString("FOOD");
+                String count = list.getString("COUNT");
+                String startDate = list.getString("STARTDATE");
+                String endDate = list.getString("ENDDATE");
+                String favorite = list.getString("FAVORITE");
+
+                //item에 파싱한 list 값을 넣어줌
+                items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return items;
     }
 }

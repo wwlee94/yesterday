@@ -50,14 +50,22 @@ public class TabTotalFragment extends Fragment {
 
     //삭제 예정
     private String text;
-    private String type;
+
+    private Boolean isrun;
 
     public TabTotalFragment() {
+
+        Log.d("TabTotalFragment 생성자", "생성자!!");
+
+        isrun = true;
+
+        /*
         //ArrayList 생성해서 RectclerItem으로 데이터 넣어둠
         items = new ArrayList<RecyclerItem>();
         for (int i = 0; i < texts.length; i++) {
             items.add(new RecyclerItem("admin", "김치찌개", "10", "2017-5-28", endDates[i], "0", texts[i]));
-        }
+        }*/
+
     }
 
     // GoalAddActivity에서 목표 설정을 완료한 후 finish() 했을 때
@@ -68,7 +76,7 @@ public class TabTotalFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapTotalFragment");
 
-        //GoalFragment로부터 name 데이터 받음!!
+        //GoalFragment로부터 name 데이터 받음!! -> 목표추가 했을 때 이렇게 데이터 추가 물론 DB에도 저장됨
         Bundle bundle = getArguments();
         if (bundle != null) {
             userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
@@ -77,15 +85,14 @@ public class TabTotalFragment extends Fragment {
             startDate = bundle.getString("STARTDATE");
             endDate = bundle.getString("ENDDATE");
             favorite = bundle.getString("FAVORITE");
-            //삭제 예정
-            text = bundle.getString("TEXT");
-            type = bundle.getString("TYPE");
 
-            if (text != null && endDate != null && type != null) {
-                Log.d("FINAL VALUE", text);
+            //값들이 null이 아니면 adapter에 item 추가
+            if (food != null && count != null && endDate != null && favorite != null) {
+                Log.d("FINAL VALUE", food);
+                Log.d("FINAL VALUE", count);
                 Log.d("FINAL VALUE", endDate);
-                Log.d("FINAL VALUE", type);
-                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite, text);
+                Log.d("FINAL VALUE", favorite);
+                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite);
                 //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
                 bundle.clear();
             }
@@ -96,6 +103,18 @@ public class TabTotalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapTotalFragment");
+
+        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
+        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
+        if (isrun) {
+            Bundle bundle = getArguments();
+            items = bundle.getParcelableArrayList("ITEMS");
+            for (int i = 0; i < items.size(); i++) {
+                Log.d("itmes", "음식: " + items.get(i).getFood());
+            }
+            //items 한 번 불러오고 난 이후에 false로 전환
+            isrun = false;
+        }
     }
 
     @Override

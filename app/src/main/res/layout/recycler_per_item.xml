@@ -9,7 +9,7 @@
         android:layout_height="35dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
-        android:src="@drawable/ic_star_border_black_24dp"/>
+        android:src="@drawable/ic_star_border_black_24dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,24 +17,54 @@
         android:layout_marginStart="62dp"
         android:orientation="vertical">
 
-        <!-- TEXT -->
+        <!-- Goal Text -->
         <TextView
-            android:id="@+id/recycler_text"
+            android:id="@+id/recycler_goal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textColor="#FFFFFFFF"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
 
-        <!-- 마감일 -->
-        <TextView
-            android:id="@+id/recycler_end_date"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_yellow_700"
-            android:layout_marginTop="5dp"
-            android:textSize="11sp"
-            />
+            android:orientation="horizontal">
+            <!-- 마감 문자열 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="마감일 : "
+                android:textColor="@color/md_yellow_700"
+                android:textSize="12sp" />
+            <!-- 마감 일 -->
+            <TextView
+                android:id="@+id/recycler_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/md_yellow_700"
+                android:textSize="11sp" />
+
+            <!-- count 문자열 -->
+            <TextView
+                android:id="@+id/recycler_count_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="5dp"
+                android:text="목표횟수 : "
+                android:textColor="@color/md_yellow_700"
+                android:textSize="12sp" />
+            <!-- count 횟수 -->
+            <TextView
+                android:id="@+id/recycler_count_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/md_yellow_700"
+                android:textSize="11sp" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

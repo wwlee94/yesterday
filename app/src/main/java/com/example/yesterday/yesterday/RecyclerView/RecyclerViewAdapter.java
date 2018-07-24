@@ -44,7 +44,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         final RecyclerViewHolder viewHolder = holder;
 
         //* 정적인 부분 *
-        holder.text.setText(items.get(position).getText());
+        //TODO: goal text 안에 있는 부분 recylcler_per_item 에서 새로 textview 만들어 줘야할 듯
+        holder.goal.setText("음식 : "+items.get(position).getFood());
+        holder.count.setText(items.get(position).getCount());
         holder.endDate.setText(items.get(position).getEndDate());
 
         //추가 이벤트
@@ -53,9 +55,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             @Override
             public void onClick(View v) {
                 //toast보여주고 deleteItem 해야지 !!
-                Toast.makeText(context,(viewHolder.getAdapterPosition()+1)+" 번째 : "+items.get(viewHolder.getAdapterPosition()).getText()
+                Toast.makeText(context,(viewHolder.getAdapterPosition()+1)+" 번째 : "
                         +" / ID : "+items.get(viewHolder.getAdapterPosition()).getUserID()
                         +" / Food : "+items.get(viewHolder.getAdapterPosition()).getFood()
+                                +" / Count : "+items.get(viewHolder.getAdapterPosition()).getCount()
                         ,Toast.LENGTH_SHORT).show();
                 //onItemDelete(viewHolder.getAdapterPosition());
             }
@@ -76,10 +79,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //아이템 추가
-    public void onItemAdd(String userID,String food,String count,String startDate,String endDate,String favorite,String text){
+    public void onItemAdd(String userID,String food,String count,String startDate,String endDate,String favorite){
         //items ArrayList<RecyclerItem> 에 데이터 넣고
-        Log.d("onItemAdd",text);
-        items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite,text));
+        items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite));
         //아이템이 추가 되었다고 통지함 -> holder에다가 ?
         //추가는 getItemCount 함으로서 제일 마지막 List 뒤에 삽입됨
         notifyItemInserted(getItemCount());
@@ -98,7 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             if(result.equals("success")){
 
                 //toast보여주고 deleteItem 해야지 !!
-                Log.d("VALUE",(position+1)+" 번째 : "+items.get(position).getText());
+                Log.d("VALUE",(position+1)+" 번째 : "+items.get(position).getFood());
                 items.remove(position);
                 notifyItemRemoved(position);
 
