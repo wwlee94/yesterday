@@ -74,8 +74,6 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     //스와이프하면 background 그리기
-
-
     //뒷 배경에 그릴 메소드
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {

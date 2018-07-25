@@ -1,6 +1,8 @@
 package com.example.yesterday.yesterday.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +25,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     //결과 값
     String result;
 
+    int favoriteCount;
+
     public RecyclerViewAdapter(ArrayList<RecyclerItem> items){
         this.items = items;
+        favoriteCount = 0;
     }
 
     // View 생성 (한줄짜리 이미지랑 텍스트 들어있는 view) , ViewHolder 호출
@@ -48,6 +53,35 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         holder.goal.setText("음식 : "+items.get(position).getFood());
         holder.count.setText(items.get(position).getCount());
         holder.endDate.setText(items.get(position).getEndDate());
+
+        //favorite 초기화 작업
+
+        //favorite == 0 이면 선택 X
+        if(Integer.parseInt(items.get(position).getFavorite())==0) {
+            holder.isClicked = false;
+            holder.imageView.setSelected(false);
+        }
+        //favorite == 1 이면 선택된 것
+        else if(Integer.parseInt(items.get(position).getFavorite())==1) {
+            holder.isClicked = true;
+            holder.imageView.setSelected(true);
+        }
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // showFavoritesDialog();
+                if((viewHolder.isClicked) == false) {
+                    v.setSelected(true);
+                    viewHolder.isClicked=true;
+                    showFavoritesDialog();
+                }
+                else{
+                    v.setSelected(false);
+                    viewHolder.isClicked=false;
+                }
+            }
+        });
 
         //추가 이벤트
         //동적인 부분이라 holder의 getAdapterPosition 써야해
@@ -115,5 +149,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
     public ArrayList<RecyclerItem> getItems(){
         return items;
+    }
+    public void showFavoritesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("즐겨찾기 설정");
+        builder.setMessage("해당 목표를 즐겨찾기로 설정하시겠습니까?");
+        builder.setPositiveButton("YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setNegativeButton("NO",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 }

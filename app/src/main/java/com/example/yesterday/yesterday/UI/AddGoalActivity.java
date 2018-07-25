@@ -117,8 +117,8 @@ public class AddGoalActivity extends AppCompatActivity {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("목표 설정 오류");
-        builder.setMessage("중복되는 음식이 들어갑니다.");
+        builder.setTitle("목표 설정");
+        builder.setMessage("중복되는 음식이 들어갑니다.\n음식 종류를 다시 입력해주세요.");
         builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
