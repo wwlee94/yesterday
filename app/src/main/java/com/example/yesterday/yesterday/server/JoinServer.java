@@ -11,7 +11,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class JoinServer extends AsyncTask<Void,Void,String> {
-    String new_id,new_pw,new_name;
+    private String new_id,new_pw,new_name;
 
     private static final String  WEBIP = "117.17.142.207";
 

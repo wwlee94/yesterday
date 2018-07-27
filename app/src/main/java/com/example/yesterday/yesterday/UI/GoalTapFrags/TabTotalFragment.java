@@ -76,6 +76,8 @@ public class TabTotalFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapTotalFragment");
 
+        //TODO:데이터 추가,삭제,변경될 때 매번 DB에서 select해서 가져오려면 여기서 해결
+
         //GoalFragment로부터 name 데이터 받음!! -> 목표추가 했을 때 이렇게 데이터 추가 물론 DB에도 저장됨
         Bundle bundle = getArguments();
         if (bundle != null) {

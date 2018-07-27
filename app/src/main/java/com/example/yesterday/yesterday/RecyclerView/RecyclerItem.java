@@ -62,16 +62,22 @@ public class RecyclerItem  implements Parcelable {
         }
     };
 
+    public void setUserID(String userID){ this.userID =userID; }
     public String getUserID(){ return userID; }
 
+    public void setFood(String food){ this.food = food; }
     public String getFood(){ return food; }
 
+    public void setCount(String count){ this.count = count; }
     public String getCount(){ return count; }
 
+    public void setStartDate(String startDate){ this.startDate = startDate; }
     public String getStartDate(){ return startDate; }
 
+    public void setEndDate(String endDate){ this.endDate = endDate; }
     public String getEndDate(){ return endDate; }
 
+    public void setFavorite(String favorite){ this.favorite = favorite; }
     public String getFavorite(){ return favorite; }
 
 }
