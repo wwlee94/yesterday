@@ -201,6 +201,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        //autoChangeviewPager 스레드 재생성
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -224,6 +225,9 @@ public class HomeFragment extends Fragment {
             }
         });
         thread.start();
+
+        //목표 설정 공지란 -> favorite=1 로 즐겨찾기된 목표들 홈 화면에 표기
+
     }
 
     @Override

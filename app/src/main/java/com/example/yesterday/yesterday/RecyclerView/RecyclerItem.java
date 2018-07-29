@@ -7,14 +7,14 @@ public class RecyclerItem  implements Parcelable {
 
     String userID;
     String food;
-    String count;
+    int count;
     String startDate;
     String endDate;
-    String favorite;
+    int favorite;
 
     //count 랑 favorite DB에는 int로  정의 되어있음
 
-    public RecyclerItem(String userID,String food,String count,String startDate,String endDate,String favorite){
+    public RecyclerItem(String userID,String food,int count,String startDate,String endDate,int favorite){
         this.userID = userID;
         this.food = food;
         this.count = count;
@@ -26,10 +26,10 @@ public class RecyclerItem  implements Parcelable {
     protected RecyclerItem(Parcel in) {
         userID = in.readString();
         food = in.readString();
-        count = in.readString();
+        count = in.readInt();
         startDate = in.readString();
         endDate = in.readString();
-        favorite = in.readString();
+        favorite = in.readInt();
     }
 
     //Fragment 간 리스트 전달 하기 위함
@@ -37,10 +37,10 @@ public class RecyclerItem  implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(userID);
         dest.writeString(food);
-        dest.writeString(count);
+        dest.writeInt(count);
         dest.writeString(startDate);
         dest.writeString(endDate);
-        dest.writeString(favorite);
+        dest.writeInt(favorite);
     }
 
     //Fragment 간 리스트 전달 하기 위함
@@ -68,8 +68,8 @@ public class RecyclerItem  implements Parcelable {
     public void setFood(String food){ this.food = food; }
     public String getFood(){ return food; }
 
-    public void setCount(String count){ this.count = count; }
-    public String getCount(){ return count; }
+    public void setCount(int count){ this.count = count; }
+    public int getCount(){ return count; }
 
     public void setStartDate(String startDate){ this.startDate = startDate; }
     public String getStartDate(){ return startDate; }
@@ -77,7 +77,7 @@ public class RecyclerItem  implements Parcelable {
     public void setEndDate(String endDate){ this.endDate = endDate; }
     public String getEndDate(){ return endDate; }
 
-    public void setFavorite(String favorite){ this.favorite = favorite; }
-    public String getFavorite(){ return favorite; }
+    public void setFavorite(int favorite){ this.favorite = favorite; }
+    public int getFavorite(){ return favorite; }
 
 }

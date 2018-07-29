@@ -1,6 +1,8 @@
 package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,7 @@ import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.RecyclerView.ItemTouchHelperCallback;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
+import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
 
 
@@ -27,15 +30,17 @@ import java.util.ArrayList;
 public class TabTotalFragment extends Fragment {
 
     private ViewGroup rootView;
+    private View view;
 
     //RecyclerView
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
+    //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
-    private String[] texts = {"Charile", "Andrew", "Liz", "Thomas", "Sky", "Andy"};
-    private String[] endDates = {"2017-12-30", "2017-7-28", "2017-5-30", "2017-10-22", "2017-8-20", "2017-10-28"};
+
+    private FloatingActionButton fab;
 
     ItemTouchHelperCallback callback;
     ItemTouchHelper itemTouchHelper;
@@ -43,10 +48,10 @@ public class TabTotalFragment extends Fragment {
     //결과 -> key="TEXT"
     private String userID;
     private String food;
-    private String count;
+    private int count;
     private String startDate;
     private String endDate;
-    private String favorite;
+    private int favorite;
 
     //삭제 예정
     private String text;
@@ -83,17 +88,17 @@ public class TabTotalFragment extends Fragment {
         if (bundle != null) {
             userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
             food = bundle.getString("FOOD");
-            count = bundle.getString("COUNT");
+            count = bundle.getInt("COUNT");
             startDate = bundle.getString("STARTDATE");
             endDate = bundle.getString("ENDDATE");
-            favorite = bundle.getString("FAVORITE");
+            favorite = bundle.getInt("FAVORITE");
 
             //값들이 null이 아니면 adapter에 item 추가
-            if (food != null && count != null && endDate != null && favorite != null) {
+            if (food != null && count != -1 && endDate != null && favorite != -1) {
                 Log.d("FINAL VALUE", food);
-                Log.d("FINAL VALUE", count);
+                Log.d("FINAL VALUE", "" + count);
                 Log.d("FINAL VALUE", endDate);
-                Log.d("FINAL VALUE", favorite);
+                Log.d("FINAL VALUE", "" + favorite);
                 adapter.onItemAdd(userID, food, count, startDate, endDate, favorite);
                 //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
                 bundle.clear();
@@ -127,8 +132,11 @@ public class TabTotalFragment extends Fragment {
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_total, container, false);
 
+        //다른 Fragment or Activity에 있는 view 가져와 적용 시키는 것
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
+
         //RecyclerView 초기화
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.total_recyclerview);
         //layoutManager 생성
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -144,6 +152,30 @@ public class TabTotalFragment extends Fragment {
         //Adapter 생성 , RecyclerView에 적용
         adapter = new RecyclerViewAdapter(items);
         recyclerView.setAdapter(adapter);
+
+        //recyclerView를 스크롤 했을 때의 이벤트 처리
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if ((dy > 0) && fab.isShown()) {
+                    fab.hide();
+                } else if (dy < 0) {
+                    fab.show();
+                }
+            }
+
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
+                /*
+                //스크롤을 멈췄을 때 이벤트 TODO: FloatActionButton 이벤트 추후 변경
+                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                {
+                    fab.show();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+                */
+            }
+        });
 
         //드래그 or 스와이프 이벤트를 사용 하기 위한 ItemTouchHelper
         callback = new ItemTouchHelperCallback(adapter, getActivity());

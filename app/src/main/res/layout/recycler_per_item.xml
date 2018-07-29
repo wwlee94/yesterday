@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="54dp"
+    android:layout_height="57dp"
     android:orientation="vertical">
 
     <ImageView
@@ -30,14 +30,15 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
             <!-- 마감 문자열 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="마감일 : "
-                android:textColor="@color/md_yellow_700"
+                android:textColor="#F9AA33"
                 android:textSize="12sp" />
             <!-- 마감 일 -->
             <TextView
@@ -45,8 +46,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/md_yellow_700"
-                android:textSize="11sp" />
+                android:textColor="#F9AA33"
+                android:textSize="12sp" />
 
             <!-- count 문자열 -->
             <TextView
@@ -56,7 +57,7 @@
                 android:layout_marginLeft="90dp"
                 android:layout_marginTop="5dp"
                 android:text="목표횟수 : "
-                android:textColor="@color/md_yellow_700"
+                android:textColor="#F9AA33"
                 android:textSize="12sp" />
             <!-- count 횟수 -->
             <TextView
@@ -64,8 +65,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/md_yellow_700"
-                android:textSize="11sp" />
+                android:textColor="#F9AA33"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

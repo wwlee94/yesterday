@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -121,6 +122,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar=(Toolbar)findViewById(R.id.toolbar);
+        //toolbar.setTitle("어제 점심 뭐 먹었지 ?");
 
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?

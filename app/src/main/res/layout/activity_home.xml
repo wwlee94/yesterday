@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeActivity"
-    >
+    tools:context=".UI.HomeActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
+        android:layout_marginTop="24dp"
         android:elevation="4dp"
         android:theme="@style/MaterialDrawerTheme"
-        android:layout_marginTop="24dp"
-        app:title="Home Activity"
         app:titleTextColor="#FFFFFF">
 
         <ImageView
@@ -30,19 +28,20 @@
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar"
-        android:background="@drawable/mountain"
-        />
-
+        android:background="@drawable/purple_sunset">
+    </FrameLayout>
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        app:bb_titleTextAppearance="@style/BottomBarText"
-        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_height="65dp"
+        android:layout_gravity="bottom"
+        android:background="#6e4d7a"
+        app:bb_activeTabColor="#FFFFFF"
+        app:bb_behavior="shy|underNavbar"
         app:bb_inActiveTabAlpha="0.5"
-        app:bb_behavior="shifting|underNavbar"
-        />
-</RelativeLayout>
+        app:bb_inActiveTabColor="#FFFFFF"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        app:bb_titleTextAppearance="@style/BottomBarText" />
+
+</android.support.design.widget.CoordinatorLayout>

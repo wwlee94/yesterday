@@ -3,7 +3,8 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
+
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 
 import android.view.View;
+
 import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
@@ -27,13 +29,13 @@ import com.example.yesterday.yesterday.UI.GoalTapFrags.TabTotalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabUserGoalFragment;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
+import com.roughike.bottombar.BottomBar;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -60,6 +62,7 @@ public class GoalFragment extends Fragment {
 
     //FloatingActionButton
     private FloatingActionButton floatingActionButton;
+    private Handler handler;
 
     //onActivityResult -> 다음 액티비티에게 ACT주고 다시 받아와 같은 값인지(성공했는지) 검사하기 위함
     public int REQUEST_ACT = 1234;
@@ -87,6 +90,8 @@ public class GoalFragment extends Fragment {
         tabUserGoalFragment = new TabUserGoalFragment();
         tabSuccessFragment = new TabSuccessFragment();
 
+        //UI 스레드 쓰기위한 handler
+        handler = new Handler();
         //해당 프래그먼트에 데이터 전달
         tabTotalFragment.setArguments(bundle);
     }
@@ -124,6 +129,31 @@ public class GoalFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("TAG", "Press TabLayout");
+                //tab 변경 시 bottombar 없어져 있어도 show()해줌
+                BottomBar bottomBar = getActivity().findViewById(R.id.bottomBar);
+                bottomBar.getShySettings().showBar();
+                //tab 변경 시 hide 후 -> 다시 show 이벤트 처리
+                floatingActionButton.hide();
+                Thread hideAndShow = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            Thread.sleep(500);
+                            //UI스레드
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //변경할 UI 작성
+                                    floatingActionButton.show();
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                hideAndShow.start();
                 mViewPager.setCurrentItem(tab.getPosition(), true);
             }
 
@@ -149,11 +179,14 @@ public class GoalFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent((HomeActivity) getActivity(), AddGoalActivity.class);
                 //fragment의 startActivityForResult !!
                 startActivityForResult(intent, REQUEST_ACT);
+
             }
         });
+
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -205,10 +238,10 @@ public class GoalFragment extends Fragment {
                 //GoalAddActivity로 부터 데이터 받음!!
                 String userID = data.getStringExtra("USERID");
                 String food = data.getStringExtra("FOOD");
-                String count = data.getStringExtra("COUNT");
+                int count = data.getIntExtra("COUNT",-1);
                 String startDate = data.getStringExtra("STARTDATE");
                 String endDate = data.getStringExtra("ENDDATE");
-                String favorite = data.getStringExtra("FAVORITE");
+                int favorite = data.getIntExtra("FAVORITE",-1);
 
                 Log.d("VALUE", endDate);
 
@@ -216,10 +249,10 @@ public class GoalFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
                 bundle.putString("FOOD", food);
-                bundle.putString("COUNT", count);
+                bundle.putInt("COUNT", count);
                 bundle.putString("STARTDATE", startDate);
                 bundle.putString("ENDDATE", endDate);
-                bundle.putString("FAVORITE", favorite);
+                bundle.putInt("FAVORITE", favorite);
 
                 tabTotalFragment.setArguments(bundle);
 
@@ -257,10 +290,10 @@ public class GoalFragment extends Fragment {
 
                 String userID = list.getString("USERID");
                 String food = list.getString("FOOD");
-                String count = list.getString("COUNT");
+                int count = list.getInt("COUNT");
                 String startDate = list.getString("STARTDATE");
                 String endDate = list.getString("ENDDATE");
-                String favorite = list.getString("FAVORITE");
+                int favorite = list.getInt("FAVORITE");
 
                 //item에 파싱한 list 값을 넣어줌
                 items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite));
@@ -271,4 +304,5 @@ public class GoalFragment extends Fragment {
 
         return items;
     }
+
 }

@@ -32,14 +32,14 @@ public class AddGoalActivity extends AppCompatActivity {
 
     String goalType; //목표 설정 타입
     String food;
-    String count;
+    int count;
     String endDate;
     String startDate;
+    int favorite = 0;
 
     //임시
     String userID = "admin";
-    String favorite = "0";
-    //
+
     Button button;
 
     String result;
@@ -76,49 +76,60 @@ public class AddGoalActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 food = foodView.getText().toString();
-                count = countView.getText().toString();
+                count = Integer.parseInt(countView.getText().toString());
                 endDate = endDateView.getText().toString();
                 startDate = getDate();
-
-                //임시
-                //id
-                //favorite
 
                 // AsyncTask 객체 생성 -> 목표 정보 DB에 INSERT
                 try {
                     result = new AddGoalServer(userID, food, count, startDate, endDate, favorite).execute().get();
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
+                } finally {
+                    if (result.equals("success")) {
+                        //DB 연동 전 intent로 데이터 전송한 것
+                        Intent intent = new Intent();
+                        intent.putExtra("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                        intent.putExtra("FOOD", food);
+                        intent.putExtra("COUNT", count);
+                        intent.putExtra("STARTDATE", startDate);
+                        intent.putExtra("ENDDATE", endDate);
+                        intent.putExtra("FAVORITE", favorite);
 
-                if (result.equals("success")) {
-                    //DB 연동 전 intent로 데이터 전송한 것
-                    Intent intent = new Intent();
-                    intent.putExtra("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
-                    intent.putExtra("FOOD", food);
-                    intent.putExtra("COUNT", count);
-                    intent.putExtra("STARTDATE", startDate);
-                    intent.putExtra("ENDDATE", endDate);
-                    intent.putExtra("FAVORITE", favorite);
+                        //삭제 예정
+                        //intent.putExtra("TYPE", goalType);
 
-                    //삭제 예정
-                    //intent.putExtra("TYPE", goalType);
+                        setResult(RESULT_OK, intent);
 
-                    setResult(RESULT_OK, intent);
+                        finish();
 
-                    finish();
-                } else {
-                    show();
-                    Log.d("AddGoalServer", "데이터 저장 실패 (DB 연동 오류 or 기본 키 포함되있어서)");
+                    } else {
+                        showOverlap();
+                        Log.d("AddGoalServer", "데이터 저장 실패 (DB 연동 오류 or 기본 키 포함되있어서)");
+                    }
                 }
             }
         });
     }
 
-    public void show() {
+    public void showOverlap() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("목표 설정");
         builder.setMessage("중복되는 음식이 들어갑니다.\n음식 종류를 다시 입력해주세요.");
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+    }
+
+    //TODO: 할 수 있으면 데이터 중복일 때랑 서버 오류 일때 구분해서
+    public void showDBError() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("목표 설정");
+        builder.setMessage("현재 서버에 오류가 있습니다.\n잠시 후에 다시 시도해주세요.");
         builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

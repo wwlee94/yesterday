@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".UI.AddGoalActivity"
     android:orientation="vertical"
+    android:id="@+id/view_add_goal"
     >
 
     <TextView

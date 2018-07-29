@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
+import com.example.yesterday.yesterday.server.UpdateFavoriteServer;
 
 import java.util.ArrayList;
 
@@ -51,18 +52,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         //* 정적인 부분 *
         //TODO: goal text 안에 있는 부분 recylcler_per_item 에서 새로 textview 만들어 줘야할 듯
         holder.goal.setText("음식 : " + items.get(position).getFood());
-        holder.count.setText(items.get(position).getCount());
+        holder.count.setText("" + items.get(position).getCount());
         holder.endDate.setText(items.get(position).getEndDate());
 
         //favorite 초기화 작업
 
         //favorite == 0 이면 선택 X
-        if (Integer.parseInt(items.get(position).getFavorite()) == 0) {
+        if (items.get(position).getFavorite() == 0) {
             holder.isClicked = false;
             holder.imageView.setSelected(false);
         }
         //favorite == 1 이면 선택된 것
-        else if (Integer.parseInt(items.get(position).getFavorite()) == 1) {
+        else if (items.get(position).getFavorite() == 1) {
             holder.isClicked = true;
             holder.imageView.setSelected(true);
         }
@@ -72,7 +73,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             public void onClick(View v) {
                 //viewHolder.isClicked==false이면 즐겨찾기 설정 Dialog
                 //true 이면 즐겨찾기 해제 Dialog 를 띄워준다.
-                showFavoritesDialog(v,viewHolder);
+                showFavoritesDialog(v, viewHolder);
             }
         });
 
@@ -106,7 +107,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     //아이템 추가
-    public void onItemAdd(String userID, String food, String count, String startDate, String endDate, String favorite) {
+    public void onItemAdd(String userID, String food, int count, String startDate, String endDate, int favorite) {
         //items ArrayList<RecyclerItem> 에 데이터 넣고
         items.add(new RecyclerItem(userID, food, count, startDate, endDate, favorite));
         //아이템이 추가 되었다고 통지함 -> holder에다가 ?
@@ -124,17 +125,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 result = new DeleteGoalServer(userID, food).execute().get();
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-            if (result.equals("success")) {
+            } finally {
 
-                //toast보여주고 deleteItem 해야지 !!
-                Log.d("VALUE", (position + 1) + " 번째 : " + items.get(position).getFood());
-                items.remove(position);
-                notifyItemRemoved(position);
+                if (result.equals("success")) {
 
-                Toast.makeText(context, "데이터 삭제 성공", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "데이터 삭제 실패", Toast.LENGTH_SHORT).show();
+                    //toast보여주고 deleteItem 해야지 !!
+                    Log.d("VALUE", (position + 1) + " 번째 : " + items.get(position).getFood());
+                    items.remove(position);
+                    notifyItemRemoved(position);
+
+                    Toast.makeText(context, "데이터 삭제 성공", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "데이터 삭제 실패", Toast.LENGTH_SHORT).show();
+                }
             }
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
@@ -154,25 +157,45 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         builder.setTitle("즐겨찾기 설정");
         //favorite select 해제 -> 설정 할때
         if (viewHolder.isClicked == false) {
-            int count=0;
-            for(int i=0;i<getItemCount();i++){
-                if(Integer.parseInt(items.get(i).getFavorite())==1){
+            int count = 0;
+            for (int i = 0; i < getItemCount(); i++) {
+                if (items.get(i).getFavorite() == 1) {
                     count++;
                 }
             }
-            Log.d("favorite 개수",""+count);
+            Log.d("favorite 개수", "" + count);
             //현재 favorite 개수가 2개 이하 일때만 설정 가능
-            if(count<3) {
+            if (count < 3) {
                 builder.setMessage("해당 목표를 즐겨찾기로 설정하시겠습니까?");
                 builder.setPositiveButton("YES",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
+                                //변수 초기화
+                                String userID = items.get(viewHolder.getAdapterPosition()).getUserID();
+                                String food = items.get(viewHolder.getAdapterPosition()).getFood();
+                                int favorite = items.get(viewHolder.getAdapterPosition()).getFavorite();
+                                String result = null;
+
+                                //ICON 선택 된 상태로 설정
                                 view.setSelected(true);
                                 viewHolder.isClicked = true;
-                                items.get(viewHolder.getAdapterPosition()).setFavorite("1");
-                                Log.d("클릭 후 favorite값",items.get(viewHolder.getAdapterPosition()).getFood()+items.get(viewHolder.getAdapterPosition()).getFavorite());
-                                //favorite을 UPDATE 하는 과정을 작성하면 끗 but 그러면 favorite을 취소할 때에도 dialog띄워서 하는게 나을 듯
+                                items.get(viewHolder.getAdapterPosition()).setFavorite(1);
+                                Log.d("클릭 후 favorite값", items.get(viewHolder.getAdapterPosition()).getFood() + items.get(viewHolder.getAdapterPosition()).getFavorite());
+                                //UpdateFavoriteServer가 실행 되었다는 뜻은 0 -> 1, 1 -> 0 으로 업데이트 하겠다는 뜻
+
+                                // 웹 서버에 DB 연동 요청 (updateFavorite)
+                                try {
+                                    result = new UpdateFavoriteServer(userID, food, favorite).execute().get();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }finally {
+                                    if (result.equals("success")) {
+                                        Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "데이터 변경 실패", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
 
                                 dialog.dismiss();
                             }
@@ -186,7 +209,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                         });
             }
             //현재 favorite 개수가 3개 이상이면 설정은 X 해제는 O
-            else if(count>=3){
+            else if (count >= 3) {
                 builder.setMessage("즐겨찾기는 3개 이상 설정이 불가합니다.");
                 builder.setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
@@ -203,11 +226,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
+                            //변수 초기화
+                            String userID = items.get(viewHolder.getAdapterPosition()).getUserID();
+                            String food = items.get(viewHolder.getAdapterPosition()).getFood();
+                            int favorite = items.get(viewHolder.getAdapterPosition()).getFavorite();
+                            String result = null;
+
+                            //ICON 선택 해제 상태로 설정
                             view.setSelected(false);
                             viewHolder.isClicked = false;
                             //items 객체에 있는 값도 변경 시켜줘야 현재 전체 viewHolder에 저장된 favorite 개수 알 수 있음
-                            items.get(viewHolder.getAdapterPosition()).setFavorite("0");
-                            //favorite을 UPDATE 하는 과정을 작성하면 끗 but 그러면 favorite을 취소할 때에도 dialog띄워서 하는게 나을 듯
+                            items.get(viewHolder.getAdapterPosition()).setFavorite(0);
+
+                            // 웹 서버에 DB 연동 요청 (updateFavorite)
+                            try {
+                                result = new UpdateFavoriteServer(userID, food, favorite).execute().get();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }finally {
+                                if (result.equals("success")) {
+                                    Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "데이터 변경 실패", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
                             dialog.dismiss();
                         }

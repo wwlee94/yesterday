@@ -15,18 +15,18 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
 
     private String userID;
     private String food;
-    private String count;
+    private int count;
     private String startDate;
     private String endDate;
-    private String favorite;
+    private int favorite;
 
     private String result;
     //owl wifi 로컬 -> 192.168.0.75
     //조교서버 -> 117.17.142.207
-    private static final String  WEBIP = "192.168.0.181";
+    private static final String  WEBIP = "192.168.219.108";
 
     //addGoalActivity에서 등록한 정보 생성자로 받는다.
-    public AddGoalServer(String userID,String food,String count,String startDate,String endDate,String favorite) {
+    public AddGoalServer(String userID,String food,int count,String startDate,String endDate,int favorite) {
         this.userID = userID;
         this.food = food;
         this.count = count;
@@ -43,8 +43,8 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
         RequestBody requestBody = null;
 
         //보낼 데이터를 파라미터 형식으로 body에 넣음
-        requestBody = new FormBody.Builder().add("USERID",userID).add("FOOD",food).add("COUNT",count)
-                .add("STARTDATE",startDate).add("ENDDATE",endDate).add("FAVORITE",favorite)
+        requestBody = new FormBody.Builder().add("USERID",userID).add("FOOD",food).add("COUNT",""+count)
+                .add("STARTDATE",startDate).add("ENDDATE",endDate).add("FAVORITE",""+favorite)
                 .build();
 
         // post형식으로 url로 만든 body를 보냄
@@ -55,9 +55,6 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
         try {
             response = client.newCall(request).execute();
             /////////////////////////////////// newcall 하고 응답받기를 기다리는중
-
-
-            //서버로 부터 받은 json타입 문자열을 Object로 파싱 후 반환 !!
 
             //서버로 부터 온 답을 반환
             result = response.body().string();
