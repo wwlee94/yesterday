@@ -2,7 +2,6 @@ package com.example.yesterday.yesterday.UI;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import com.example.yesterday.yesterday.R;
 
+import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
@@ -30,6 +30,8 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -60,12 +62,11 @@ public class HomeActivity extends AppCompatActivity {
     private AddFragment addFragment;
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
-    //
-    String name;
-    ImageView calendarView;
-    //
-    Intent intent;
+    //Canlendar Icon
+    private ImageView calendarView;
 
+    //각 Fragment에서 items가 필요할 때 사용하기 위한 변수
+    private ArrayList<RecyclerItem> items;
 
     public HomeActivity(){
 
@@ -183,26 +184,33 @@ public class HomeActivity extends AppCompatActivity {
                 //transaction 객체를 가져옴
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if(tabId==R.id.tab_home){
-                    replaceFragment(homeFragment);
+                    replaceFragment(homeFragment,"HOME");
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
                 else if(tabId==R.id.tab_add){
-                    replaceFragment(addFragment);
+                    replaceFragment(addFragment,"ADD");
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
                 else if(tabId==R.id.tab_goal){
-                    replaceFragment(goalFragment);
+                    replaceFragment(goalFragment,"GOAL");
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
                 else if(tabId==R.id.tab_statistics){
-                    replaceFragment(statisticsFragment);
+                    replaceFragment(statisticsFragment,"STATISTICS");
                 }
             }
         });
     }
-    public void replaceFragment(Fragment fragment){
+    public void replaceFragment(Fragment fragment,String tag){
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.contentContainer, fragment);
+        transaction.replace(R.id.contentContainer, fragment,tag);
         transaction.commit();
+    }
+
+    public void setItems(ArrayList<RecyclerItem> items){
+        this.items = items;
+    }
+    public ArrayList<RecyclerItem> getItems(){
+        return items;
     }
 }

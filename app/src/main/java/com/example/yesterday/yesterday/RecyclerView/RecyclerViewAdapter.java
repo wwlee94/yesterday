@@ -28,9 +28,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     int favoriteCount;
 
+    //isSwiped = true 되었을 때 새로운 view로 전환 되는 데 
+    //이 때 스와이프 기능을 끄기 위한 변수이다.
+    boolean useSwipe;
+
     public RecyclerViewAdapter(ArrayList<RecyclerItem> items) {
         this.items = items;
         favoriteCount = 0;
+        useSwipe = true;
     }
 
     // View 생성 (한줄짜리 이미지랑 텍스트 들어있는 view) , ViewHolder 호출
@@ -49,55 +54,84 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         //final을 써줘야 동작.. ??
         final RecyclerViewHolder viewHolder = holder;
 
-        //* 정적인 부분 *
-        //TODO: goal text 안에 있는 부분 recylcler_per_item 에서 새로 textview 만들어 줘야할 듯
-        holder.goal.setText("음식 : " + items.get(position).getFood());
-        holder.count.setText("" + items.get(position).getCount());
-        holder.endDate.setText(items.get(position).getEndDate());
+        //swipedlayout show
+        if (items.get(viewHolder.getAdapterPosition()).isShowSwiped == true) {
+            holder.regularlayout.setVisibility(View.GONE);
+            holder.swipedlayout.setVisibility(View.VISIBLE);
 
-        //favorite 초기화 작업
-
-        //favorite == 0 이면 선택 X
-        if (items.get(position).getFavorite() == 0) {
-            holder.isClicked = false;
-            holder.imageView.setSelected(false);
+            //undo 버튼 누르면 아이템 삭제
+            holder.undo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //아이템 삭제
+                    useSwipe = true;
+                    onItemDelete(items.get(viewHolder.getAdapterPosition()).getUserID(), items.get(viewHolder.getAdapterPosition()).getFood(), viewHolder.getAdapterPosition());
+                }
+            });
+            // Swipedlayout 클릭하면 취소
+            holder.swipedlayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    useSwipe = true;
+                    items.get(viewHolder.getAdapterPosition()).isShowSwiped = false;
+                    notifyItemChanged(viewHolder.getAdapterPosition());
+                }
+            });
         }
-        //favorite == 1 이면 선택된 것
-        else if (items.get(position).getFavorite() == 1) {
-            holder.isClicked = true;
-            holder.imageView.setSelected(true);
-        }
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //viewHolder.isClicked==false이면 즐겨찾기 설정 Dialog
-                //true 이면 즐겨찾기 해제 Dialog 를 띄워준다.
-                showFavoritesDialog(v, viewHolder);
-            }
-        });
+        //regularlayout show
+        else if (items.get(viewHolder.getAdapterPosition()).isShowSwiped == false) {
+            holder.regularlayout.setVisibility(View.VISIBLE);
+            holder.swipedlayout.setVisibility(View.GONE);
+            //* 정적인 부분 *
+            //TODO: goal text 안에 있는 부분 recylcler_per_item 에서 새로 textview 만들어 줘야할 듯
+            holder.goal.setText("음식 : " + items.get(position).getFood());
+            holder.count.setText("" + items.get(position).getCount());
+            holder.endDate.setText(items.get(position).getEndDate());
 
-        //추가 이벤트
-        //동적인 부분이라 holder의 getAdapterPosition 써야해
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //toast보여주고 deleteItem 해야지 !!
-                Toast.makeText(context, (viewHolder.getAdapterPosition() + 1) + " 번째 : "
-                                + " / ID : " + items.get(viewHolder.getAdapterPosition()).getUserID()
-                                + " / Food : " + items.get(viewHolder.getAdapterPosition()).getFood()
-                                + " / Count : " + items.get(viewHolder.getAdapterPosition()).getCount()
-                        , Toast.LENGTH_SHORT).show();
-                //onItemDelete(viewHolder.getAdapterPosition());
+            //favorite 초기화 작업
+
+            //favorite == 0 이면 선택 X
+            if (items.get(position).getFavorite() == 0) {
+                holder.isClicked = false;
+                holder.favoriteView.setSelected(false);
             }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                //onItemDelete(viewHolder.getAdapterPosition());
-                return true;
+            //favorite == 1 이면 선택된 것
+            else if (items.get(position).getFavorite() == 1) {
+                holder.isClicked = true;
+                holder.favoriteView.setSelected(true);
             }
-        });
+
+            holder.favoriteView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //viewHolder.isClicked==false이면 즐겨찾기 설정 Dialog
+                    //true 이면 즐겨찾기 해제 Dialog 를 띄워준다.
+                    showFavoritesDialog(v, viewHolder);
+                }
+            });
+        }//isShowSwiped=false 일 때 regularlayout 이벤트 들
+
+            //추가 이벤트
+            //동적인 부분이라 holder의 getAdapterPosition 써야함
+            // * 그냥 list 클릭하면 ( isShowSwiped = false && useSwipe = true )로 만들어 swipedlayout 풀리고 regularlayout 나오도록 한 것 *
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, (viewHolder.getAdapterPosition() + 1) + " 번째 : "
+                                    + " / ID : " + items.get(viewHolder.getAdapterPosition()).getUserID()
+                                    + " / Food : " + items.get(viewHolder.getAdapterPosition()).getFood()
+                                    + " / Count : " + items.get(viewHolder.getAdapterPosition()).getCount()
+                            , Toast.LENGTH_SHORT).show();
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //onItemDelete(viewHolder.getAdapterPosition());
+                    return true;
+                }
+            });
     }
 
     //데이터 셋의 크기를 리턴
@@ -158,6 +192,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         //favorite select 해제 -> 설정 할때
         if (viewHolder.isClicked == false) {
             int count = 0;
+            //현재 items에 들어있는 favorite 개수 파악
             for (int i = 0; i < getItemCount(); i++) {
                 if (items.get(i).getFavorite() == 1) {
                     count++;
@@ -189,7 +224,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                                     result = new UpdateFavoriteServer(userID, food, favorite).execute().get();
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                }finally {
+                                } finally {
                                     if (result.equals("success")) {
                                         Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
                                     } else {
@@ -243,7 +278,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                                 result = new UpdateFavoriteServer(userID, food, favorite).execute().get();
                             } catch (Exception e) {
                                 e.printStackTrace();
-                            }finally {
+                            } finally {
                                 if (result.equals("success")) {
                                     Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
                                 } else {

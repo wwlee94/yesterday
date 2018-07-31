@@ -27,7 +27,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     RectF rectF;
     Context context;
 
-    public static final float ALPHA_FULL= 1.0f;
+    public static final float ALPHA_FULL = 1.0f;
 
     public ItemTouchHelperCallback(RecyclerViewAdapter adapter, Context context) {
         mAdapter = adapter;
@@ -38,18 +38,17 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //RecyclerView에서 드래그 된지 알기 위해서 오버라이드
     @Override
     public boolean isLongPressDragEnabled() {
-        return true;
+        return mAdapter.useSwipe;
     }
 
     //RecyclerView에서 스와이프 된지 알기 위해 오버라이드
     @Override
-    public boolean isItemViewSwipeEnabled() {
-        return true;
-    }
+    public boolean isItemViewSwipeEnabled() { return mAdapter.useSwipe; }
 
     //현재 어떤 동작을 취했는 지 알려주는 메소드
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+
         //드래그 = 위,아래
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         //스와이프 = 좌,우
@@ -70,7 +69,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         int position = viewHolder.getAdapterPosition();
-        mAdapter.onItemDelete(mAdapter.getItems().get(position).getUserID(),mAdapter.getItems().get(position).getFood(),position);
+        //mAdapter.onItemDelete(mAdapter.getItems().get(position).getUserID(),mAdapter.getItems().get(position).getFood(),position);
+
+        //아이템의 현재 상태를 스와이프 된 상태로 바꿔 ??:도중에 취소해도? ->  해답: 취소했을 때 상태 가져와 적용, 완료했을때 상태 가져와 스와이프 금지
+        mAdapter.getItems().get(position).isShowSwiped = true;
+        mAdapter.useSwipe=false;
+        //adapter에 변경 사항 알려준 뒤 갱신
+        mAdapter.notifyItemChanged(position);
     }
 
     //스와이프하면 background 그리기
@@ -84,7 +89,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         p.setColor(Color.parseColor("#bffa315b"));//#7FD21928
 
         //왼쪽으로 스와이프 하면
-        if(dX < 0) {
+        if (dX < 0) {
             //Draw red background
             //if -> 배경이 itemView 의 왼쪽 틀 가장자리를 넘지 않도록
             if (itemView.getRight() + dX > itemView.getLeft()) {
@@ -117,7 +122,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
         viewHolder.itemView.setAlpha(alpha);
         //뷰의 x축 변환
-       // viewHolder.itemView.setTranslationX(dX);
+        // viewHolder.itemView.setTranslationX(dX);
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }

@@ -2,4 +2,6 @@
     <string name="app_name">Yesterday</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="underline_undo"><u>Undo</u></string>
 </resources>

@@ -12,6 +12,11 @@ public class RecyclerItem  implements Parcelable {
     String endDate;
     int favorite;
 
+    //각각의 imageView에서 다르게 적용되는 변수가 필요해 item에서 선언한 변수
+    //isSwiped  false : 스와이프 안된 상태 true : 스와이프 된 상태
+    boolean isShowSwiped = false;
+    //TODO: isClicked 는 holder에서 선언하여 사용.. 얘는 여기,,?
+
     //count 랑 favorite DB에는 int로  정의 되어있음
 
     public RecyclerItem(String userID,String food,int count,String startDate,String endDate,int favorite){

@@ -80,6 +80,9 @@ public class GoalFragment extends Fragment {
 
         //파싱된 데이터를 메소드를 통해 items에 대입
         items = getClientGoal();
+        //모든 Fragment에서 item을 가져와 사용 할 수 있도록 GoalFragment에서 가져온 item 값을 HomeActivity에 설정
+        //TODO: 이렇게 하는 거면 굳이 여기서 TabFragmentTotal로 bundle로 데이터 안 넘겨도 되는 거 아님?
+        //((HomeActivity)getActivity()).setItems(items);
 
         //프래그먼트에 데이터를 전달하기위한 Bundle
         Bundle bundle = new Bundle();
@@ -304,5 +307,4 @@ public class GoalFragment extends Fragment {
 
         return items;
     }
-
 }
