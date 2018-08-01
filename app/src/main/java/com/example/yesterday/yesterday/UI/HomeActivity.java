@@ -19,6 +19,7 @@ import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
+import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -30,6 +31,10 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -51,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
-    Drawer result;
+    Drawer drawerResult;
     AccountHeader headerResult;
     //private Handler handler;
 
@@ -65,7 +70,9 @@ public class HomeActivity extends AppCompatActivity {
     //Canlendar Icon
     private ImageView calendarView;
 
-    //각 Fragment에서 items가 필요할 때 사용하기 위한 변수
+    //ClientGoal DB 연동 결과값
+    String result;
+    //각 Fragment에서 items가 필요할 때 공유하기 위한 변수
     private ArrayList<RecyclerItem> items;
 
     public HomeActivity(){
@@ -82,6 +89,10 @@ public class HomeActivity extends AppCompatActivity {
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();
         statisticsFragment = new StatisticsFragment();
+
+        items = new ArrayList<RecyclerItem>();
+        //파싱된 데이터를 메소드를 통해 items에 대입
+        items = getClientGoal();
     }
 
     @Override
@@ -149,7 +160,7 @@ public class HomeActivity extends AppCompatActivity {
                 )
                 .build();
         //create the drawer and remember the `Drawer` result object
-        result = new DrawerBuilder()
+        drawerResult = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)                           //toolbar에 drawer추가
                 .withAccountHeader(headerResult)                //drawer에 계정 정보 추가
@@ -201,12 +212,58 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+    //Fragment 화면 전환
     public void replaceFragment(Fragment fragment,String tag){
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentContainer, fragment,tag);
         transaction.commit();
     }
 
+    // DB 연동해서 Select
+    // 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
+    public ArrayList<RecyclerItem> getClientGoal(){
+
+        //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
+        try {
+            result = new SelectGoalServer("admin").execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //성공 , 실패 여부
+            if (result.equals("fail")) {
+                Log.d("ClientGoal", "데이터 조회 실패");
+            } else {
+                Log.d("ClientGoal", "데이터 조회 성공");
+                Log.d("ClientGoal", result);
+            }
+        }
+        //result -> json - String 형태
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+
+            JSONArray jsonArray = (JSONArray) jsonObject.get("CLIENTGOAL");
+            //jsonArray.length() -> 각각의 {id,food,...} 전체의 갯수
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject list = (JSONObject) jsonArray.get(i);
+
+                String userID = list.getString("USERID");
+                String food = list.getString("FOOD");
+                int count = list.getInt("COUNT");
+                String startDate = list.getString("STARTDATE");
+                String endDate = list.getString("ENDDATE");
+                int favorite = list.getInt("FAVORITE");
+
+                //item에 파싱한 list 값을 넣어줌
+                items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return items;
+    }
+    //* 다른 Fragment에서 getItems 해온 뒤에 그 items 변수를 다른 곳에서 변경하던 지우던 다 주소값으로 연결되어 있는 듯
+    //  즉, Fragment에서 바꾼 items가 여기 HomeActivity의 items에서도 바뀐다.
     public void setItems(ArrayList<RecyclerItem> items){
         this.items = items;
     }

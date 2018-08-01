@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
 import com.example.yesterday.yesterday.server.UpdateFavoriteServer;
 
@@ -112,26 +114,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             });
         }//isShowSwiped=false 일 때 regularlayout 이벤트 들
 
-            //추가 이벤트
-            //동적인 부분이라 holder의 getAdapterPosition 써야함
-            // * 그냥 list 클릭하면 ( isShowSwiped = false && useSwipe = true )로 만들어 swipedlayout 풀리고 regularlayout 나오도록 한 것 *
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, (viewHolder.getAdapterPosition() + 1) + " 번째 : "
-                                    + " / ID : " + items.get(viewHolder.getAdapterPosition()).getUserID()
-                                    + " / Food : " + items.get(viewHolder.getAdapterPosition()).getFood()
-                                    + " / Count : " + items.get(viewHolder.getAdapterPosition()).getCount()
-                            , Toast.LENGTH_SHORT).show();
-                }
-            });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    //onItemDelete(viewHolder.getAdapterPosition());
-                    return true;
-                }
-            });
+        //추가 이벤트
+        //동적인 부분이라 holder의 getAdapterPosition 써야함
+        // * 그냥 list 클릭하면 ( isShowSwiped = false && useSwipe = true )로 만들어 swipedlayout 풀리고 regularlayout 나오도록 한 것 *
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, (viewHolder.getAdapterPosition() + 1) + " 번째 : "
+                                + " / ID : " + items.get(viewHolder.getAdapterPosition()).getUserID()
+                                + " / Food : " + items.get(viewHolder.getAdapterPosition()).getFood()
+                                + " / Count : " + items.get(viewHolder.getAdapterPosition()).getCount()
+                        , Toast.LENGTH_SHORT).show();
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //onItemDelete(viewHolder.getAdapterPosition());
+                return true;
+            }
+        });
     }
 
     //데이터 셋의 크기를 리턴
@@ -216,6 +218,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                                 view.setSelected(true);
                                 viewHolder.isClicked = true;
                                 items.get(viewHolder.getAdapterPosition()).setFavorite(1);
+
                                 Log.d("클릭 후 favorite값", items.get(viewHolder.getAdapterPosition()).getFood() + items.get(viewHolder.getAdapterPosition()).getFavorite());
                                 //UpdateFavoriteServer가 실행 되었다는 뜻은 0 -> 1, 1 -> 0 으로 업데이트 하겠다는 뜻
 
@@ -231,7 +234,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                                         Toast.makeText(context, "데이터 변경 실패", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
                                 dialog.dismiss();
                             }
                         });

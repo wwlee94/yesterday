@@ -72,6 +72,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         //mAdapter.onItemDelete(mAdapter.getItems().get(position).getUserID(),mAdapter.getItems().get(position).getFood(),position);
 
         //아이템의 현재 상태를 스와이프 된 상태로 바꿔 ??:도중에 취소해도? ->  해답: 취소했을 때 상태 가져와 적용, 완료했을때 상태 가져와 스와이프 금지
+        //TODO: adapter에서 items 가져오는 게아니라 HomeActivity의 items 가져오게
         mAdapter.getItems().get(position).isShowSwiped = true;
         mAdapter.useSwipe=false;
         //adapter에 변경 사항 알려준 뒤 갱신

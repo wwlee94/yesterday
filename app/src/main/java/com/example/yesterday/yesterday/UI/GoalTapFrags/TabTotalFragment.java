@@ -1,6 +1,6 @@
 package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
-import android.content.Context;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,17 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.RecyclerView.ItemTouchHelperCallback;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
-import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
-import com.example.yesterday.yesterday.server.SelectGoalServer;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 
 
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 public class TabTotalFragment extends Fragment {
 
     private ViewGroup rootView;
-    private View view;
 
     //RecyclerView
     private RecyclerView recyclerView;
@@ -53,23 +50,13 @@ public class TabTotalFragment extends Fragment {
     private String endDate;
     private int favorite;
 
-    //삭제 예정
-    private String text;
-
     private Boolean isrun;
 
     public TabTotalFragment() {
 
-        Log.d("TabTotalFragment 생성자", "생성자!!");
+        items = new ArrayList<RecyclerItem>();
 
         isrun = true;
-
-        /*
-        //ArrayList 생성해서 RectclerItem으로 데이터 넣어둠
-        items = new ArrayList<RecyclerItem>();
-        for (int i = 0; i < texts.length; i++) {
-            items.add(new RecyclerItem("admin", "김치찌개", "10", "2017-5-28", endDates[i], "0", texts[i]));
-        }*/
 
     }
 
@@ -104,6 +91,10 @@ public class TabTotalFragment extends Fragment {
                 bundle.clear();
             }
         }
+        //TabTotalFragment의 items 조회
+        for (int i = 0; i < items.size(); i++) {
+            Log.d("itmes", "음식: " + items.get(i).getFood());
+        }
     }
 
     @Override
@@ -111,14 +102,21 @@ public class TabTotalFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapTotalFragment");
 
-        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
-        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
+        /*
+        //HomeActivity에 변수두고 공유하는 방법을 쓰면 bundle로 데이터 주고 받고 필요없음....
         if (isrun) {
             Bundle bundle = getArguments();
             items = bundle.getParcelableArrayList("ITEMS");
-            for (int i = 0; i < items.size(); i++) {
-                Log.d("itmes", "음식: " + items.get(i).getFood());
-            }
+
+            isrun = false;
+        }
+        */
+
+        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
+        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
+        if(isrun) {
+            // 목표DB를 저장할 items
+            items = ((HomeActivity) getActivity()).getItems();
             //items 한 번 불러오고 난 이후에 false로 전환
             isrun = false;
         }

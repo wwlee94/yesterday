@@ -35,11 +35,11 @@
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:background="#6e4d7a"
         app:bb_activeTabColor="#FFFFFF"
-        app:bb_behavior="shy|underNavbar"
+        app:bb_behavior="shy"
         app:bb_inActiveTabAlpha="0.5"
         app:bb_inActiveTabColor="#FFFFFF"
         app:bb_tabXmlResource="@xml/bottombar_tabs"

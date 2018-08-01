@@ -8,10 +8,13 @@
     <!-- 24dp -> StatusBarSize -->
     <!-- TabLayout이 ViewPager보다 먼저 오면 클릭이 안됌 -->
     <!-- ViewPager -> 컨테이너 역할 -->
+    <!-- 50dp -> navigationbar Size -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="30dp"
+        >
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -36,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="85dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:scaleType="center"

@@ -58,7 +58,7 @@ public class GoalFragment extends Fragment {
     private TabSuccessFragment tabSuccessFragment;
 
     //GoalTabFrags 에서 쓰일 item리스트
-    private ArrayList<RecyclerItem> items;
+    //private ArrayList<RecyclerItem> items;
 
     //FloatingActionButton
     private FloatingActionButton floatingActionButton;
@@ -75,19 +75,6 @@ public class GoalFragment extends Fragment {
         //<!-- TODO: GoalFragment에서 처음에 DB 읽어서 items 만들어주고 나머지 fragment로 items를 파라미터로 전해주면? 앱 실행 될때 DB 한번만 읽어오쥬
         //     TODO: 최종 admin -> 전역변수 이용하여 id가져와 대입할 것
 
-        // 목표DB를 저장할 items
-        items = new ArrayList<RecyclerItem>();
-
-        //파싱된 데이터를 메소드를 통해 items에 대입
-        items = getClientGoal();
-        //모든 Fragment에서 item을 가져와 사용 할 수 있도록 GoalFragment에서 가져온 item 값을 HomeActivity에 설정
-        //TODO: 이렇게 하는 거면 굳이 여기서 TabFragmentTotal로 bundle로 데이터 안 넘겨도 되는 거 아님?
-        //((HomeActivity)getActivity()).setItems(items);
-
-        //프래그먼트에 데이터를 전달하기위한 Bundle
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("ITEMS", items);
-
         tabTotalFragment = new TabTotalFragment();
         tabGoalFragment = new TabGoalFragment();
         tabUserGoalFragment = new TabUserGoalFragment();
@@ -95,8 +82,15 @@ public class GoalFragment extends Fragment {
 
         //UI 스레드 쓰기위한 handler
         handler = new Handler();
+
+        /*
+        //HomeActivity에 변수두고 공유하는 방법을 쓰면 bundle로 데이터 주고 받고 필요없음....
+        //프래그먼트에 데이터를 전달하기위한 Bundle
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("ITEMS", items);
         //해당 프래그먼트에 데이터 전달
         tabTotalFragment.setArguments(bundle);
+        */
     }
 
     @Override
@@ -264,47 +258,4 @@ public class GoalFragment extends Fragment {
         }
     }
 
-    // DB 연동해서 Select
-    // 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
-    public ArrayList<RecyclerItem> getClientGoal(){
-
-        //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
-        try {
-            result = new SelectGoalServer("admin").execute().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //성공 , 실패 여부
-            if (result.equals("fail")) {
-                Log.d("ClientGoal", "데이터 조회 실패");
-            } else {
-                Log.d("ClientGoal", "데이터 조회 성공");
-                Log.d("ClientGoal", result);
-            }
-        }
-        //result -> json - String 형태
-        try {
-            JSONObject jsonObject = new JSONObject(result);
-
-            JSONArray jsonArray = (JSONArray) jsonObject.get("CLIENTGOAL");
-            //jsonArray.length() -> 각각의 {id,food,...} 전체의 갯수
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject list = (JSONObject) jsonArray.get(i);
-
-                String userID = list.getString("USERID");
-                String food = list.getString("FOOD");
-                int count = list.getInt("COUNT");
-                String startDate = list.getString("STARTDATE");
-                String endDate = list.getString("ENDDATE");
-                int favorite = list.getInt("FAVORITE");
-
-                //item에 파싱한 list 값을 넣어줌
-                items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return items;
-    }
 }
