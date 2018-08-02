@@ -16,7 +16,7 @@ public class LoginServer extends AsyncTask<Void,Void,String> {
     String parent_pw;
     String answer;
 
-    private static final String  WEBIP = "117.17.142.207";
+    private static final String  WEBIP = "192.168.35.221";
 
     public LoginServer(String parent_id,String parent_pw) { //로그인 id, pw 받기
         this.parent_id = parent_id;
