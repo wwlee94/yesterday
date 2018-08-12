@@ -70,6 +70,8 @@ public class StatisticsFragment extends Fragment {
     ArrayList<BarEntry> entries = new ArrayList<>();
     ArrayList<String> labels = new ArrayList<String>();
 
+    HorizontalBarChart horizontalBarChart;
+
     public StatisticsFragment() {
         // Required empty public constructor
     }
@@ -78,6 +80,16 @@ public class StatisticsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+    }
+
+    public void onPause(){
+        super.onPause();
+        labels.clear();
+        entries.clear();
+
+        foodcount = 0;
+        maxfoodvalue = 0;
+
     }
 
     //생성자와 onCreateView만 있어도 ok
@@ -89,7 +101,7 @@ public class StatisticsFragment extends Fragment {
         // Inflate the layout for this fragment
 
         //막대바 차트 생성
-        final HorizontalBarChart horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.chart);
+        horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.chart);
 
         //시작 종료 날짜를 설정 할 수 있는 버튼
         startBtn = (Button) rootView.findViewById(R.id.button);
@@ -115,8 +127,18 @@ public class StatisticsFragment extends Fragment {
         startDatePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                //선택(시작) 날짜가 종료 날짜 이전인지 확인
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date1 =null;
+                Date date2 =null;
+                try {
+                    date1 = dateFormat.parse(year + "-" + month + "-" + dayOfMonth);
+                    date2 = dateFormat.parse(endYear + "-" + endMonth + "-" + endDay);
+                }catch(ParseException e){
 
-                if(year <= endYear ){
+            }
+
+                if(date1.compareTo(date2) <= 0){
                             startYear = year;
                             startMonth = month;
                             startDay = dayOfMonth;
@@ -133,7 +155,17 @@ public class StatisticsFragment extends Fragment {
         endDatePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                if(year >= startYear && month >= startMonth && dayOfMonth >= startDay){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date1 =null;
+                Date date2 =null;
+                try {
+                    date1 = dateFormat.parse(year + "-" + month + "-" + dayOfMonth);
+                    date2 = dateFormat.parse(startYear + "-" + startMonth + "-" + startDay);
+                }catch(ParseException e){
+
+                }
+
+                if(date1.compareTo(date2) >= 0){
                     endYear = year;
                     endMonth = month;
                     endDay = dayOfMonth;
