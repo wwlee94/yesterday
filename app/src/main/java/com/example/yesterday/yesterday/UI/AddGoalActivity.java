@@ -36,6 +36,7 @@ public class AddGoalActivity extends AppCompatActivity {
     String endDate;
     String startDate;
     int favorite = 0;
+    String type = "default";
 
     //임시
     String userID = "admin";
@@ -82,7 +83,7 @@ public class AddGoalActivity extends AppCompatActivity {
 
                 // AsyncTask 객체 생성 -> 목표 정보 DB에 INSERT
                 try {
-                    result = new AddGoalServer(userID, food, count, startDate, endDate, favorite).execute().get();
+                    result = new AddGoalServer(userID, food, count, startDate, endDate, favorite, type).execute().get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -95,6 +96,7 @@ public class AddGoalActivity extends AppCompatActivity {
                         intent.putExtra("STARTDATE", startDate);
                         intent.putExtra("ENDDATE", endDate);
                         intent.putExtra("FAVORITE", favorite);
+                        intent.putExtra("TYPE",type);
 
                         //삭제 예정
                         //intent.putExtra("TYPE", goalType);

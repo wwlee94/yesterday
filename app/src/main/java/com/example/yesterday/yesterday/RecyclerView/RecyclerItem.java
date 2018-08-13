@@ -11,6 +11,10 @@ public class RecyclerItem  implements Parcelable {
     String startDate;
     String endDate;
     int favorite;
+    String type;
+
+    //현재 DB에 저장되 있는 음식 값에 대한 개수
+    int currentcount;
 
     //각각의 imageView에서 다르게 적용되는 변수가 필요해 item에서 선언한 변수
     //isSwiped  false : 스와이프 안된 상태 true : 스와이프 된 상태
@@ -19,14 +23,17 @@ public class RecyclerItem  implements Parcelable {
 
     //count 랑 favorite DB에는 int로  정의 되어있음
 
-    public RecyclerItem(String userID,String food,int count,String startDate,String endDate,int favorite){
+    public RecyclerItem(String userID,String food,int count,String startDate,String endDate,int favorite,String type){
         this.userID = userID;
         this.food = food;
         this.count = count;
         this.startDate = startDate;
         this.endDate = endDate;
         this.favorite = favorite;
+        this.type = type;
+        currentcount = 0;
     }
+
     //Fragment 간 리스트 전달 하기 위함
     protected RecyclerItem(Parcel in) {
         userID = in.readString();
@@ -35,6 +42,7 @@ public class RecyclerItem  implements Parcelable {
         startDate = in.readString();
         endDate = in.readString();
         favorite = in.readInt();
+        type = in.readString();
     }
 
     //Fragment 간 리스트 전달 하기 위함
@@ -46,6 +54,7 @@ public class RecyclerItem  implements Parcelable {
         dest.writeString(startDate);
         dest.writeString(endDate);
         dest.writeInt(favorite);
+        dest.writeString(type);
     }
 
     //Fragment 간 리스트 전달 하기 위함
@@ -84,5 +93,11 @@ public class RecyclerItem  implements Parcelable {
 
     public void setFavorite(int favorite){ this.favorite = favorite; }
     public int getFavorite(){ return favorite; }
+
+    public void setCurrentCount(int currentcount){ this.currentcount = currentcount; }
+    public int getCurrentCount(){ return currentcount; }
+
+    public void setType(String type){ this.type = type; }
+    public String getType(){ return type; }
 
 }

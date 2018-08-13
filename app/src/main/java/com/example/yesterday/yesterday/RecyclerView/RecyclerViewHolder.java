@@ -3,6 +3,7 @@ package com.example.yesterday.yesterday.RecyclerView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,8 +15,11 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     public View itemView;
 
     public RelativeLayout regularlayout;
+    //success,fail시 가운데 줄
+    public LinearLayout endlayout;
     public TextView goal;
     public TextView count;
+    public TextView currentCount;
     public TextView endDate;
     public ImageView favoriteView;
 
@@ -34,11 +38,14 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         //기본 item 뷰
         regularlayout = itemView.findViewById(R.id.recycler_regularlayout);
+        //success,fail시 가운데 줄
+        endlayout = itemView.findViewById(R.id.recycler_end_layout);
         //이미지 가져와 이벤트 처리
         favoriteView = itemView.findViewById(R.id.recycler_image_view);
         //이미지 제외한 나머지 레이아웃
         goal = itemView.findViewById(R.id.recycler_goal);
-        count = itemView.findViewById(R.id.recycler_count_value);
+        count = itemView.findViewById(R.id.recycler_count);
+        currentCount = itemView.findViewById(R.id.recycler_currentcount);
         endDate = itemView.findViewById(R.id.recycler_end_date);
 
         //스와이프 했을 때 item 뷰

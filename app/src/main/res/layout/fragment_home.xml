@@ -9,22 +9,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="24dp"
-        >
+        android:layout_marginTop="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?android:actionBarSize"
-            android:orientation="vertical"
-            >
+            android:layout_marginBottom="60dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
                 android:text="목표 설정 공지 란"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
@@ -32,28 +31,26 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/recycler_line"
-                android:layout_marginLeft="40dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginRight="40dp"
                 android:layout_marginEnd="40dp"
-                />
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/recycler_line" />
 
             <LinearLayout
                 android:id="@+id/linear_favorite_goal"
                 android:layout_width="210dp"
-                android:layout_height="wrap_content"
+                android:layout_height="125dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
             </LinearLayout>
 
             <Button
                 android:id="@+id/menubutton"
-                android:layout_width="60dp"
+                android:layout_width="70dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="90dp"
@@ -68,14 +65,15 @@
                 android:layout_width="260dp"
                 android:layout_height="210dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/border">
+                android:layout_marginTop="5dp"
+                android:background="@drawable/border"
+                android:elevation="8dp"
+                >
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </android.support.v4.view.ViewPager>
+                    android:layout_height="match_parent" />
 
             </RelativeLayout>
 
@@ -85,8 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:orientation="horizontal">
-            </LinearLayout>
+                android:orientation="horizontal" />
 
         </LinearLayout>
     </LinearLayout>

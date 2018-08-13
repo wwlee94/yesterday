@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,18 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.RecyclerView.ItemTouchHelperCallback;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 
-
 import java.util.ArrayList;
 
-
-public class TabGoalFragment extends Fragment {
+public class TabFailFragment extends Fragment {
 
     private ViewGroup rootView;
 
@@ -42,76 +40,30 @@ public class TabGoalFragment extends Fragment {
     ItemTouchHelperCallback callback;
     ItemTouchHelper itemTouchHelper;
 
-    //결과 -> key="TEXT"
-    private String userID;
-    private String food;
-    private int count;
-    private String startDate;
-    private String endDate;
-    private int favorite;
-    private String type;
-
     private Boolean isrun;
 
-    public TabGoalFragment() {
+    public TabFailFragment() {
+        // Required empty public constructor
 
         tempItems = new ArrayList<RecyclerItem>();
         items = new ArrayList<RecyclerItem>();
 
         isrun = true;
-
-    }
-
-    // GoalAddActivity에서 목표 설정을 완료한 후 finish() 했을 때
-    // tabTotalFragment onResume 실행됌 onCreateView 실행 안됌
-    // 해당 액티비티에서 입력받은 문자를 받기 위함
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("TAG", "onResume : TapGoalFragment");
-
-        //GoalFragment로부터 name 데이터 받음!! -> 목표추가 했을 때 이렇게 데이터 추가 물론 DB에도 저장됨
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
-            food = bundle.getString("FOOD");
-            count = bundle.getInt("COUNT");
-            startDate = bundle.getString("STARTDATE");
-            endDate = bundle.getString("ENDDATE");
-            favorite = bundle.getInt("FAVORITE");
-            type = bundle.getString("TYPE");
-
-            //값들이 null이 아니면 adapter에 item 추가
-            if (food != null && count != -1 && endDate != null && favorite != -1 && type != null) {
-                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite, type);
-                //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
-                bundle.clear();
-            }
-        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TAG", "onCreate : TapGoalFragment");
-
-        /*
-        //HomeActivity에 변수두고 공유하는 방법을 쓰면 bundle로 데이터 주고 받고 필요없음....
-        if (isrun) {
-            Bundle bundle = getArguments();
-            items = bundle.getParcelableArrayList("ITEMS");
-
-            isrun = false;
-        }
-        */
+        Log.d("TAG", "onCreate : TapFailFragment");
 
         // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
         // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-        if (isrun) {
+        if(isrun) {
             // 목표DB를 저장할 items
             tempItems = ((HomeActivity) getActivity()).getItems();
-            for (int i = 0; i < tempItems.size(); i++) {
-                if (tempItems.get(i).getType().equals("default")) {
+            for(int i=0;i<tempItems.size();i++){
+                //type이 success인 것만 가져옴
+                if(tempItems.get(i).getType().equals("fail")){
                     items.add(tempItems.get(i));
                 }
             }
@@ -124,9 +76,7 @@ public class TabGoalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("TAG", "onCreateView : TapGoalFragment");
-
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_total, container, false);
+        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_tab_total,container,false);
 
         //다른 Fragment or Activity에 있는 view 가져와 적용 시키는 것
         fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
@@ -160,7 +110,8 @@ public class TabGoalFragment extends Fragment {
                 }
             }
 
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
                 /*
                 //스크롤을 멈췄을 때 이벤트 TODO: FloatActionButton 이벤트 추후 변경
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING)

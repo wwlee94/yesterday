@@ -3,6 +3,7 @@ package com.example.yesterday.yesterday.UI.GoalTapFrags;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ public class TabTotalFragment extends Fragment {
     private String startDate;
     private String endDate;
     private int favorite;
+    private String type;
 
     private Boolean isrun;
 
@@ -79,6 +81,7 @@ public class TabTotalFragment extends Fragment {
             startDate = bundle.getString("STARTDATE");
             endDate = bundle.getString("ENDDATE");
             favorite = bundle.getInt("FAVORITE");
+            type = bundle.getString("TYPE");
 
             //값들이 null이 아니면 adapter에 item 추가
             if (food != null && count != -1 && endDate != null && favorite != -1) {
@@ -86,14 +89,11 @@ public class TabTotalFragment extends Fragment {
                 Log.d("FINAL VALUE", "" + count);
                 Log.d("FINAL VALUE", endDate);
                 Log.d("FINAL VALUE", "" + favorite);
-                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite);
+                Log.d("FINAL VALUE", type);
+                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite ,type);
                 //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
                 bundle.clear();
             }
-        }
-        //TabTotalFragment의 items 조회
-        for (int i = 0; i < items.size(); i++) {
-            Log.d("itmes", "음식: " + items.get(i).getFood());
         }
     }
 
@@ -166,9 +166,8 @@ public class TabTotalFragment extends Fragment {
             {
                 /*
                 //스크롤을 멈췄을 때 이벤트 TODO: FloatActionButton 이벤트 추후 변경
-                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
                 {
-                    fab.show();
                 }
                 super.onScrollStateChanged(recyclerView, newState);
                 */

@@ -26,15 +26,11 @@ import com.example.yesterday.yesterday.UI.AddGoalActivity;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabGoalFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabSuccessFragment;
 import com.example.yesterday.yesterday.UI.GoalTapFrags.TabTotalFragment;
-import com.example.yesterday.yesterday.UI.GoalTapFrags.TabUserGoalFragment;
+import com.example.yesterday.yesterday.UI.GoalTapFrags.TabFailFragment;
 import com.example.yesterday.yesterday.UI.HomeActivity;
-import com.example.yesterday.yesterday.server.SelectGoalServer;
+
 import com.roughike.bottombar.BottomBar;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -54,7 +50,7 @@ public class GoalFragment extends Fragment {
 
     private TabTotalFragment tabTotalFragment;
     private TabGoalFragment tabGoalFragment;
-    private TabUserGoalFragment tabUserGoalFragment;
+    private TabFailFragment tabFailFragment;
     private TabSuccessFragment tabSuccessFragment;
 
     //GoalTabFrags 에서 쓰일 item리스트
@@ -77,7 +73,7 @@ public class GoalFragment extends Fragment {
 
         tabTotalFragment = new TabTotalFragment();
         tabGoalFragment = new TabGoalFragment();
-        tabUserGoalFragment = new TabUserGoalFragment();
+        tabFailFragment = new TabFailFragment();
         tabSuccessFragment = new TabSuccessFragment();
 
         //UI 스레드 쓰기위한 handler
@@ -118,7 +114,7 @@ public class GoalFragment extends Fragment {
         //tabLayouy 초기화
         tabLayout.addTab(tabLayout.newTab().setText("전체"));
         tabLayout.addTab(tabLayout.newTab().setText("목표"));
-        tabLayout.addTab(tabLayout.newTab().setText("다짐"));
+        tabLayout.addTab(tabLayout.newTab().setText("실패"));
         tabLayout.addTab(tabLayout.newTab().setText("완료"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
@@ -136,7 +132,7 @@ public class GoalFragment extends Fragment {
                     public void run() {
 
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(250);
                             //UI스레드
                             handler.post(new Runnable() {
                                 @Override
@@ -151,7 +147,7 @@ public class GoalFragment extends Fragment {
                     }
                 });
                 hideAndShow.start();
-                mViewPager.setCurrentItem(tab.getPosition(), true);
+                mViewPager.setCurrentItem(tab.getPosition(), false);
             }
 
             @Override
@@ -206,7 +202,7 @@ public class GoalFragment extends Fragment {
                 case 1:
                     return tabGoalFragment;
                 case 2:
-                    return tabUserGoalFragment;
+                    return tabFailFragment;
                 case 3:
                     return tabSuccessFragment;
                 default:
@@ -239,19 +235,26 @@ public class GoalFragment extends Fragment {
                 String startDate = data.getStringExtra("STARTDATE");
                 String endDate = data.getStringExtra("ENDDATE");
                 int favorite = data.getIntExtra("FAVORITE",-1);
+                String type = data.getStringExtra("TYPE");
 
-                Log.d("VALUE", endDate);
+                //items 가져옴
+                ArrayList<RecyclerItem> items = ((HomeActivity) getActivity()).getItems();
+                items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite,type));
 
-                //TabTotalFragment로 데이터 전달
-                Bundle bundle = new Bundle();
-                bundle.putString("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
-                bundle.putString("FOOD", food);
-                bundle.putInt("COUNT", count);
-                bundle.putString("STARTDATE", startDate);
-                bundle.putString("ENDDATE", endDate);
-                bundle.putInt("FAVORITE", favorite);
-
-                tabTotalFragment.setArguments(bundle);
+                //TabFragment로 데이터 전달
+                Bundle bundle[] = new Bundle[2];
+                for(int i=0;i<2;i++) {
+                    bundle[i] = new Bundle();
+                    bundle[i].putString("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                    bundle[i].putString("FOOD", food);
+                    bundle[i].putInt("COUNT", count);
+                    bundle[i].putString("STARTDATE", startDate);
+                    bundle[i].putString("ENDDATE", endDate);
+                    bundle[i].putInt("FAVORITE", favorite);
+                    bundle[i].putString("TYPE", type);
+                }
+                tabTotalFragment.setArguments(bundle[0]);
+                tabGoalFragment.setArguments(bundle[1]);
 
                 // Do something with the contact here (bigger example below)
             }

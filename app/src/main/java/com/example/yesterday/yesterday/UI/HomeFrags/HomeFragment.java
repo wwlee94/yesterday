@@ -44,11 +44,12 @@ public class HomeFragment extends Fragment {
     private LinearLayout linearLayout;
     //동적 생성하려는 TextView
     private TextView[] textViews;
+    private TextView[] textCount;
     //DB에서 값 가져온 recyclerView의 items
     private ArrayList<RecyclerItem> items;
     //즐겨찾기 설정된 items 개수
     private int favoriteCount;
-    //즐겨찾기 설정된 아이템의 index??
+    //즐겨찾기 설정된 아이템의 index (설정된 게 items의 2번째인지 4번째인지)
     private int[] favoriteIndex;
 
     private ViewPager viewPager = null;
@@ -287,19 +288,33 @@ public class HomeFragment extends Fragment {
         linearLayout = rootView.findViewById(R.id.linear_favorite_goal);
         //각각의 이미지의 layout 설정할 linearParams 생성
         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
         //이미지들 사이의 간격
-        linearParams.setMargins(0, 5, 0, 0);
+        linearParams.setMargins(0, 4, 0, 0);
         //favoriteGoal
         textViews = new TextView[favoriteCount];
+        textCount = new TextView[favoriteCount];
 
         for (int i = 0; i < favoriteCount; i++) {
             textViews[i] = new TextView(getActivity());
+            textCount[i] = new TextView(getActivity());
             textViews[i].setLayoutParams(linearParams);
+            textCount[i].setLayoutParams(linearParams);
 
-            textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood() + "\n기간: " + items.get(favoriteIndex[i]).getEndDate() + " 횟수 : " + items.get(favoriteIndex[i]).getCount());
             textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
+            textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
+            textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
+            //TODO: 70%이상 빨간색,주황색
+            int current = items.get(favoriteIndex[i]).getCurrentCount();
+            int limit = items.get(favoriteIndex[i]).getCount();
+            if(((float)current/(float)limit)*100 >= 70){
+                textCount[i].setTextColor(Color.parseColor("#FD5523"));
+            }
+            textCount[i].setText("기간: " + items.get(favoriteIndex[i]).getEndDate()+"  "
+                    + " 횟수: "+items.get(favoriteIndex[i]).getCurrentCount()+ " / " +items.get(favoriteIndex[i]).getCount());
 
             linearLayout.addView(textViews[i]);
+            linearLayout.addView(textCount[i]);
         }
     }
 

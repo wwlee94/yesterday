@@ -19,20 +19,22 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
     private String startDate;
     private String endDate;
     private int favorite;
+    private String type;
 
     private String result;
     //owl wifi 로컬 -> 192.168.0.75
     //조교서버 -> 117.17.142.207
-    private static final String  WEBIP = "192.168.219.108";
+    private static final String  WEBIP = "192.168.0.75";
 
     //addGoalActivity에서 등록한 정보 생성자로 받는다.
-    public AddGoalServer(String userID,String food,int count,String startDate,String endDate,int favorite) {
+    public AddGoalServer(String userID,String food,int count,String startDate,String endDate,int favorite,String type) {
         this.userID = userID;
         this.food = food;
         this.count = count;
         this.startDate = startDate;
         this.endDate = endDate;
         this.favorite = favorite;
+        this.type = type;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
 
         //보낼 데이터를 파라미터 형식으로 body에 넣음
         requestBody = new FormBody.Builder().add("USERID",userID).add("FOOD",food).add("COUNT",""+count)
-                .add("STARTDATE",startDate).add("ENDDATE",endDate).add("FAVORITE",""+favorite)
+                .add("STARTDATE",startDate).add("ENDDATE",endDate).add("FAVORITE",""+favorite).add("TYPE",type)
                 .build();
 
         // post형식으로 url로 만든 body를 보냄
