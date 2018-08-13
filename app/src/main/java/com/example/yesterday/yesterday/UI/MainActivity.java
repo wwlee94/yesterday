@@ -25,15 +25,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn_go = (Button)findViewById(R.id.GoBtn);
-        btn_go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                getHashKey();
-            }
-        });
+
+//        Button btn_go = (Button)findViewById(R.id.GoBtn);
+//        btn_go.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+//                startActivity(intent);
+//                getHashKey();
+//            }
+//        });
     }
 
     private void getHashKey() {

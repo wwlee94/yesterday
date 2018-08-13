@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.R;
@@ -21,6 +22,9 @@ import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
+import com.kakao.auth.Session;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -68,12 +72,10 @@ public class HomeActivity extends AppCompatActivity {
     //
     String name;
     ImageView calendarView;
-    //
-    Intent intent;
     //client
     ClientLoginInfo client;
 
-    public HomeActivity(){
+    public HomeActivity() {
 
         //Activity
         mActivity = HomeActivity.this;
@@ -90,62 +92,69 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
-        Log.d("TAG","HomeActivity onStart / 시작");
+        Log.d("TAG", "HomeActivity onStart / 시작");
     }
+
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
-        Log.d("TAG","HomeActivity onRestart / 다시 실행");
+        Log.d("TAG", "HomeActivity onRestart / 다시 실행");
     }
+
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        Log.d("TAG","HomeActivity onResume / 다시 시작");
+        Log.d("TAG", "HomeActivity onResume / 다시 시작");
     }
+
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        Log.d("TAG","HomeActivity onPause / 일시 정지");
+        Log.d("TAG", "HomeActivity onPause / 일시 정지");
     }
+
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
-        Log.d("TAG","HomeActivity onStop / 정지");
+        Log.d("TAG", "HomeActivity onStop / 정지");
     }
+
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        Log.d("TAG","HomeActivity onDestroy / 종료");
+        Log.d("TAG", "HomeActivity onDestroy / 종료");
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         //SharedPreference
-        loginSetting = getSharedPreferences("loginSetting",0);
+        loginSetting = getSharedPreferences("loginSetting", 0);
         editor = loginSetting.edit();
 
-        Log.d("TAG","onCreate / 앱 생성(초기화)");
+        Log.d("TAG", "onCreate / 앱 생성(초기화)");
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
-        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         //Intent로 client가져오기  -> client 아직 안쓰임
-        intent = getIntent();
+        Intent intent  = getIntent();
         client = (ClientLoginInfo) intent.getSerializableExtra("client");
+        Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
 
         //logout listener
         //item5.set
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
-        calendarView=(ImageView)findViewById(R.id.toolbar_calendar_button);
+        calendarView = (ImageView) findViewById(R.id.toolbar_calendar_button);
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
-               startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -172,19 +181,23 @@ public class HomeActivity extends AppCompatActivity {
                         item1, item2, item3,
                         new DividerDrawerItem(),
                         sectionHeader,
-                        item4,logout
+                        item4, logout
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
-
                         //logout clicked
-                        if(drawerItem == logout){
-                            editor.clear();
-                            editor.commit();
-                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        if (drawerItem == logout) {
+                            if ((client.getType()).equals("회원")) {
+                                editor.clear();
+                                editor.commit();
+                            } else if ((client.getType()).equals("카카오")) {
+                                onClickLogout();
+                            }
+                            Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
+                            Intent intent  = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         }
                         return true;
@@ -199,35 +212,34 @@ public class HomeActivity extends AppCompatActivity {
                 .build();
 
 
-
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
-        bottomBar=(BottomBar)findViewById(R.id.bottomBar);
+        bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(int tabId) {
 
                 //transaction 객체를 가져옴
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
-                if(tabId==R.id.tab_home){
+                if (tabId == R.id.tab_home) {
                     replaceFragment(homeFragment);
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
-                else if(tabId==R.id.tab_add){
+                else if (tabId == R.id.tab_add) {
                     replaceFragment(addFragment);
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
-                else if(tabId==R.id.tab_goal){
+                else if (tabId == R.id.tab_goal) {
                     replaceFragment(goalFragment);
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
-                else if(tabId==R.id.tab_statistics){
+                else if (tabId == R.id.tab_statistics) {
                     replaceFragment(statisticsFragment);
                 }
             }
         });
     }
 
-    public void replaceFragment(Fragment fragment){
+    public void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.contentContainer, fragment);
         transaction.commit();
@@ -241,4 +253,14 @@ public class HomeActivity extends AppCompatActivity {
         Fragment fragment =  getSupportFragmentManager().findFragmentByTag("tabTotalFragment");
         fragment.onActivityResult(request, resultCode, data);
     }*/
+
+    private void onClickLogout() {
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                Toast.makeText(getApplicationContext(), "카카오톡 로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 }

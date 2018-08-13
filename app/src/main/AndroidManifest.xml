@@ -24,7 +24,7 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".UI.MainActivity"
+            android:name=".UI.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,9 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".UI.MainActivity" />
         <activity android:name=".UI.HomeActivity" />
         <!-- 로그인 , 회원 가입 -->
-        <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity" />
         <!-- 메뉴 추가 , 수정 & 오늘,어제 먹은 메뉴 보여주는 Activity -->
         <activity android:name=".UI.TodayMenuActivity" />
