@@ -63,5 +63,4 @@ public class ClientLoginInfo extends Application implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-
 }

@@ -29,5 +29,3 @@ public class FrequentlyMenuFragment extends Fragment
         return layout;
     }
 }
-
-

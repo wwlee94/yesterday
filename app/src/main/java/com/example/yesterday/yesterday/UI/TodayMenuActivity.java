@@ -23,6 +23,4 @@ public class TodayMenuActivity extends AppCompatActivity {
         Intent myIntent=new Intent(getApplicationContext(),UpdateMenuActivity.class);
         startActivity(myIntent);
     }
-
-
 }
