@@ -1,16 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".UI.CalendarActivity">
 
     <CalendarView
+        android:id="@+id/calendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
-        >
-    </CalendarView>
+        android:layout_height="wrap_content"></CalendarView>
 
-</android.support.constraint.ConstraintLayout>
+    <ScrollView
+        android:layout_width="368dp"
+        android:layout_height="157dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="346dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="아침 메뉴"
+                android:textColor="@color/bb_darkBackgroundColor"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/breakfastText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="점심 메뉴"
+                android:textColor="@color/bb_darkBackgroundColor"
+                android:textSize="30sp"
+                />
+            <TextView
+                android:id="@+id/lunchText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="저녁 메뉴"
+                android:textColor="@color/bb_darkBackgroundColor"
+                android:textSize="30sp"
+                />
+            <TextView
+                android:id="@+id/dinnerText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="간식 메뉴"
+                android:textColor="@color/bb_darkBackgroundColor"
+                android:textSize="30sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="20sp"
+                />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
