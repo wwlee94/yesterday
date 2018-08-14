@@ -40,7 +40,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity {
     EditText id_text, pw_text;
-    Button login_btn, kakaoLogout_btn, join_btn, kakao_custom_btn;
+    Button login_btn, join_btn;
     SessionCallback callback;
     CheckBox auto_check;
     String sId, sPw;
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         id_text = (EditText) findViewById(R.id.id_text);
         pw_text = (EditText) findViewById(R.id.pw_text);
         login_btn = (Button) findViewById(R.id.login_btn);
-        kakaoLogout_btn = (Button) findViewById(R.id.kakaoLogout_btn);
+
         join_btn = (Button) findViewById(R.id.join_btn);
         auto_check = (CheckBox) findViewById(R.id.auto_check);
 
