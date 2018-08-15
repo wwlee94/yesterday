@@ -140,6 +140,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     viewHolder.currentCount.setTextColor(Color.parseColor("#FF0266"));
                     viewHolder.count.setTextColor(Color.parseColor("#FF0266"));
                 }
+                else{
+                    viewHolder.currentCount.setTextColor(Color.parseColor("#F9AA33"));
+                    viewHolder.count.setTextColor(Color.parseColor("#F9AA33"));
+                }
                 viewHolder.currentCount.setText("횟수 : " + current);
                 viewHolder.count.setText(" / " + limit);
 

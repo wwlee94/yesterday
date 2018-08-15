@@ -1,7 +1,11 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -13,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
@@ -22,6 +27,8 @@ import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.example.yesterday.yesterday.server.SelectGroupByGoalServer;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -38,7 +45,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -99,8 +108,11 @@ public class HomeActivity extends AppCompatActivity {
         //TODO: fooddata 값을 가져오긴 하는데 기간 조회가 어려움
         items = getCurrentCount();
 
-        for(int i=0;i<items.size();i++){
-            Log.d("FOOD's CurrentCount","음식: "+items.get(i).getFood()+"개수는 ? "+items.get(i).getCurrentCount());
+        //fail인 아이템 currentCount 초기화
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals("fail")) {
+                items.get(i).setCurrentCount(items.get(i).getCount());
+            }
         }
     }
 
@@ -146,6 +158,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
+
+        //10시 푸시 알림
+        new AlarmProgress(getApplicationContext()).Alarm();
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -226,6 +241,16 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //sharedfreference에 items 저장
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<RecyclerItem>>() {
+        }.getType();
+        String json = gson.toJson(items, listType);
+        editor.putString("ITEM", json);
+        editor.commit();
     }
 
     //Fragment 화면 전환
@@ -271,7 +296,6 @@ public class HomeActivity extends AppCompatActivity {
                 String endDate = list.getString("ENDDATE");
                 int favorite = list.getInt("FAVORITE");
                 String type = list.getString("TYPE");
-
                 //item에 파싱한 list 값을 넣어줌
                 items.add(new RecyclerItem(userID, food, count, startDate, endDate, favorite, type));
             }
@@ -282,6 +306,7 @@ public class HomeActivity extends AppCompatActivity {
         return items;
     }
 
+    //목표에 해당하는 음식을 먹은 횟수 조회
     public ArrayList<RecyclerItem> getCurrentCount() {
 
         result = null;
@@ -311,12 +336,10 @@ public class HomeActivity extends AppCompatActivity {
 
                 for (int k = 0; k < items.size(); k++) {
                     //items의 food와 DB에서 가져온 food가 같다면 해당되는 items에 currentCount 데이터 입력
-                    if(items.get(k).getFood().equals(food)){
-                        items.get(k).setCurrentCount(currentCount);
-                    }
-                    //타입이 fail인 넘들은 다 제한횟수 만큼 CurrentCount 변경
-                    if(items.get(k).getType().equals("fail")){
-                        items.get(k).setCurrentCount(items.get(k).getCount());
+                    if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
+                        if (items.get(k).getFood().equals(food)) {
+                            items.get(k).setCurrentCount(currentCount);
+                        }
                     }
                 }
 
@@ -336,5 +359,40 @@ public class HomeActivity extends AppCompatActivity {
 
     public ArrayList<RecyclerItem> getItems() {
         return items;
+    }
+
+    //매일 10시에 알람
+    public class AlarmProgress {
+        Context context;
+
+        public AlarmProgress(Context context) {
+            this.context = context;
+        }
+
+        public void Alarm() {
+            Log.d("AlarmProgress", "진행 상황 알림 설정");
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, AlarmProgressReceiver.class);
+
+            PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+            Calendar calendar = Calendar.getInstance();
+
+            //알람시간 calendar에 set해주기
+            //현재 시각이 오전 10시를 지나지 않았다면
+            if (calendar.get(Calendar.HOUR_OF_DAY) <= 10) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 41, 0);
+                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " <= 10 [ 10시 이전 ]");
+            }
+            //현재 시각이 오전10시 이후라면 다음날 10시로
+            else if (calendar.get(Calendar.HOUR_OF_DAY) > 10) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE + 1), 10, 0, 0);
+                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " > 10 [ 10시 이후 ]");
+            }
+
+            //알람 예약
+            //시,분,초 곱한 뒤 밀리세컨즈로 만드려고 *1000
+            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
+        }
     }
 }

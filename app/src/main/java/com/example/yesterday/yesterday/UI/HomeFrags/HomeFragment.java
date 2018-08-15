@@ -291,30 +291,41 @@ public class HomeFragment extends Fragment {
 
         //이미지들 사이의 간격
         linearParams.setMargins(0, 4, 0, 0);
-        //favoriteGoal
-        textViews = new TextView[favoriteCount];
-        textCount = new TextView[favoriteCount];
+        if(favoriteCount==0){
+            textViews = new TextView[1];
+            textViews[0] = new TextView(getActivity());
+            textViews[0].setLayoutParams(linearParams);
+            textViews[0].setText("즐겨찾기 된 목표가 없습니다.");
+            linearLayout.addView(textViews[0]);
+        }
+        else {
+            //favoriteGoal
+            //음식
+            textViews = new TextView[favoriteCount];
+            //기간+개수
+            textCount = new TextView[favoriteCount];
 
-        for (int i = 0; i < favoriteCount; i++) {
-            textViews[i] = new TextView(getActivity());
-            textCount[i] = new TextView(getActivity());
-            textViews[i].setLayoutParams(linearParams);
-            textCount[i].setLayoutParams(linearParams);
+            for (int i = 0; i < favoriteCount; i++) {
+                textViews[i] = new TextView(getActivity());
+                textCount[i] = new TextView(getActivity());
+                textViews[i].setLayoutParams(linearParams);
+                textCount[i].setLayoutParams(linearParams);
 
-            textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
-            textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
-            textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
-            //TODO: 70%이상 빨간색,주황색
-            int current = items.get(favoriteIndex[i]).getCurrentCount();
-            int limit = items.get(favoriteIndex[i]).getCount();
-            if(((float)current/(float)limit)*100 >= 70){
-                textCount[i].setTextColor(Color.parseColor("#FD5523"));
+                textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
+                textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
+                textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
+                //TODO: 70%이상 빨간색,주황색
+                int current = items.get(favoriteIndex[i]).getCurrentCount();
+                int limit = items.get(favoriteIndex[i]).getCount();
+                if (((float) current / (float) limit) * 100 >= 70) {
+                    textCount[i].setTextColor(Color.parseColor("#FD5523"));
+                }
+                textCount[i].setText("마감일 : " + items.get(favoriteIndex[i]).getEndDate() + "  "
+                        + " 횟수: " + items.get(favoriteIndex[i]).getCurrentCount() + " / " + items.get(favoriteIndex[i]).getCount());
+
+                linearLayout.addView(textViews[i]);
+                linearLayout.addView(textCount[i]);
             }
-            textCount[i].setText("기간: " + items.get(favoriteIndex[i]).getEndDate()+"  "
-                    + " 횟수: "+items.get(favoriteIndex[i]).getCurrentCount()+ " / " +items.get(favoriteIndex[i]).getCount());
-
-            linearLayout.addView(textViews[i]);
-            linearLayout.addView(textCount[i]);
         }
     }
 

@@ -22,7 +22,6 @@ import com.example.yesterday.yesterday.UI.HomeActivity;
 
 import java.util.ArrayList;
 
-
 public class TabGoalFragment extends Fragment {
 
     private ViewGroup rootView;

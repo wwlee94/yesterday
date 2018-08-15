@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.RecyclerView;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;

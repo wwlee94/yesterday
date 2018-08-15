@@ -14,7 +14,7 @@ public class RecyclerItem  implements Parcelable {
     String type;
 
     //현재 DB에 저장되 있는 음식 값에 대한 개수
-    int currentcount;
+    int currentcount = 0;
 
     //각각의 imageView에서 다르게 적용되는 변수가 필요해 item에서 선언한 변수
     //isSwiped  false : 스와이프 안된 상태 true : 스와이프 된 상태
@@ -31,7 +31,6 @@ public class RecyclerItem  implements Parcelable {
         this.endDate = endDate;
         this.favorite = favorite;
         this.type = type;
-        currentcount = 0;
     }
 
     //Fragment 간 리스트 전달 하기 위함

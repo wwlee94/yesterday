@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 진동 허용-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".GlobalApplication"
@@ -31,6 +33,7 @@
         </activity>
         <!-- HomeActivity -->
         <activity android:name=".UI.MainActivity"
+
            />
         <!-- 로그인 , 회원 가입 -->
         <activity android:name=".UI.LoginActivity" />
@@ -42,6 +45,11 @@
         <activity android:name=".UI.CalendarActivity" />
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
         <activity android:name=".UI.AddGoalActivity"/>
+
+        <!-- 브로드캐스트 리시버 설정 -->
+        <receiver android:name=".PushAlarm.AlarmProgressReceiver"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

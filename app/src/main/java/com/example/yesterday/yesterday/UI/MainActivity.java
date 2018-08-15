@@ -1,5 +1,8 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,8 +15,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.yesterday.yesterday.R;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Button btn_go = (Button)findViewById(R.id.GoBtn);
         btn_go.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 getHashKey();
             }
         });
+
     }
 
     private void getHashKey() {
@@ -51,3 +54,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+

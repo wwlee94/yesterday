@@ -25,7 +25,6 @@ import com.example.yesterday.yesterday.UI.HomeActivity;
 
 import java.util.ArrayList;
 
-
 public class TabTotalFragment extends Fragment {
 
     private ViewGroup rootView;
