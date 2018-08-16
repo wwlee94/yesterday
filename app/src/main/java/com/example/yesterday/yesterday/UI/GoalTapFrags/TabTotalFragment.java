@@ -84,11 +84,6 @@ public class TabTotalFragment extends Fragment {
 
             //값들이 null이 아니면 adapter에 item 추가
             if (food != null && count != -1 && endDate != null && favorite != -1) {
-                Log.d("FINAL VALUE", food);
-                Log.d("FINAL VALUE", "" + count);
-                Log.d("FINAL VALUE", endDate);
-                Log.d("FINAL VALUE", "" + favorite);
-                Log.d("FINAL VALUE", type);
                 adapter.onItemAdd(userID, food, count, startDate, endDate, favorite ,type);
                 //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
                 bundle.clear();

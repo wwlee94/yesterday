@@ -314,7 +314,7 @@ public class HomeFragment extends Fragment {
                 textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
                 textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
                 textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
-                //TODO: 70%이상 빨간색,주황색
+
                 int current = items.get(favoriteIndex[i]).getCurrentCount();
                 int limit = items.get(favoriteIndex[i]).getCount();
                 if (((float) current / (float) limit) * 100 >= 70) {

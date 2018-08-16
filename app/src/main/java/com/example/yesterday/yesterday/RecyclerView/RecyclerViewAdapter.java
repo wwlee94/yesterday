@@ -148,6 +148,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder.count.setText(" / " + limit);
 
                 //items 타입이 default 일때만 클릭 이벤트 작동
+                //즐겨찾기 설정 부분
                 if (items.get(position).getType().equals("default")) {
                     //favorite 초기화 작업
                     //favorite == 0 이면 선택 X

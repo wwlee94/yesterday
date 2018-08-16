@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
 
@@ -25,6 +26,8 @@ import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
+import com.example.yesterday.yesterday.server.CheckTypeServer;
+import com.example.yesterday.yesterday.server.DeleteGoalServer;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.example.yesterday.yesterday.server.SelectGroupByGoalServer;
 import com.google.gson.Gson;
@@ -46,8 +49,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -102,6 +108,7 @@ public class HomeActivity extends AppCompatActivity {
         statisticsFragment = new StatisticsFragment();
 
         items = new ArrayList<RecyclerItem>();
+
         //파싱된 데이터를 메소드를 통해 items에 대입
         items = getClientGoal();
         //fooddata를 조회해 해당되는 food의 개수를 가져옴
@@ -114,6 +121,8 @@ public class HomeActivity extends AppCompatActivity {
                 items.get(i).setCurrentCount(items.get(i).getCount());
             }
         }
+        //오늘 날짜와 목표설정 마감일을 비교하여 type 업데이트!!
+        items = compareDate();
     }
 
     @Override
@@ -160,8 +169,11 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
 
         //10시 푸시 알림
-        new AlarmProgress(getApplicationContext()).Alarm();
-
+        boolean isPush = true;
+        if(isPush) {
+            new AlarmProgress(getApplicationContext()).Alarm();
+            isPush = false;
+        }
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setTitle("어제 점심 뭐 먹었지 ?");
@@ -351,6 +363,97 @@ public class HomeActivity extends AppCompatActivity {
         return items;
     }
 
+    //날짜 비교 후 결과 값 도출
+    public ArrayList<RecyclerItem> compareDate(){
+
+        String result = null;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        //오늘 날짜
+        Date currentDate = new Date();
+        Log.d("currentDate",format.format(currentDate));
+
+        //검사 날짜
+        for(int i=0;i<items.size();i++) {
+            //index:-1 -> 삭제 안 일어남
+            int index=-1;
+            if(items.get(i).getType().equals("default")) {
+                try {
+                    Date checkDate = format.parse(items.get(i).getEndDate());
+                    int check = currentDate.compareTo(checkDate);
+                    //마감일이 지난 item들 currentDate > checkDate
+                    if (check > 0) {
+                        Log.d("currentDate > checkDate", format.format(checkDate));
+
+                        //Type 변경 전 해당 음식의 type이 중복되는 지 Check!!
+                        for(int k=0;k<items.size();k++){
+                            //음식 이름이 같고 그 음식의 이름을 가진 타입 중 success가 있는 지 판별
+                            if(items.get(k).getFood().equals(items.get(i).getFood())){
+                                if(items.get(k).getType().equals("success")){
+
+                                    //success 가 존재 한다면 지워
+                                    try{
+                                        result = new DeleteGoalServer("admin",items.get(k).getFood(),items.get(k).getType()).execute().get();
+                                        Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }finally {
+                                        if(result.equals("success")){
+                                            Log.d("DeleteGoalServer","데이터 삭제 성공");
+                                        }
+                                        else{
+                                            Log.d("DeleteGoalServer","데이터 삭제 실패");
+                                        }
+
+                                        index=k;
+
+                                    }//finally
+                                }//success
+                            }
+                        }
+
+                        //중복 체크 후 DB 연동 Type 변경 코드
+                        //
+                        try {
+                            result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
+                            Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }finally {
+                            if(result.equals("success")){
+                                Log.d("CheckTypeServer","데이터 변경 성공");
+                            }
+                            else{
+                                Log.d("CheckTypeServer","데이터 변경 실패");
+                            }
+                        }//finally
+
+
+                        //DB에서 변경했으니 items에서도 변경!!
+                        items.get(i).setType("success");
+                        //즐겨찾기 설정되어있으면 해제
+                        if(items.get(i).getFavorite()==1){
+                            items.get(i).setFavorite(0);
+                        }
+                        //count: -1 -> 삭제된 items 없음
+                        //TODO: FOR문 밖에서 처리해야 할 수도
+                        if(index!=-1) {
+                            //앞서 중복되는 success 타입의 데이터 items에서 제거
+                            Log.d("index", "" + index);
+                            items.remove(index);
+                        }
+
+                    }//check > 0
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }//default
+        }
+
+        return items;
+    }
+
     //* 다른 Fragment에서 getItems 해온 뒤에 그 items 변수를 다른 곳에서 변경하던 지우던 다 주소값으로 연결되어 있는 듯
     //  즉, Fragment에서 바꾼 items가 여기 HomeActivity의 items에서도 바뀐다.
     public void setItems(ArrayList<RecyclerItem> items) {
@@ -380,14 +483,14 @@ public class HomeActivity extends AppCompatActivity {
 
             //알람시간 calendar에 set해주기
             //현재 시각이 오전 10시를 지나지 않았다면
-            if (calendar.get(Calendar.HOUR_OF_DAY) <= 10) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 41, 0);
-                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " <= 10 [ 10시 이전 ]");
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 13) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 13, 0, 0);
+                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " < 10 [ 10시 이전 ]");
             }
             //현재 시각이 오전10시 이후라면 다음날 10시로
-            else if (calendar.get(Calendar.HOUR_OF_DAY) > 10) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE + 1), 10, 0, 0);
-                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " > 10 [ 10시 이후 ]");
+            else if (calendar.get(Calendar.HOUR_OF_DAY) >= 13) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE+1), 13, 0, 0);
+                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " >= 10 [ 10시 이후 ]");
             }
 
             //알람 예약

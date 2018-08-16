@@ -75,13 +75,13 @@ public class TabSuccessFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_total, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_success, container, false);
 
         //다른 Fragment or Activity에 있는 view 가져와 적용 시키는 것
         fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
 
         //RecyclerView 초기화
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.total_recyclerview);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.success_recyclerview);
         //layoutManager 생성
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

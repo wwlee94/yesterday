@@ -41,7 +41,7 @@
             <LinearLayout
                 android:id="@+id/linear_favorite_goal"
                 android:layout_width="210dp"
-                android:layout_height="125dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:orientation="vertical">

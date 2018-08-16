@@ -63,9 +63,6 @@ public class GoalFragment extends Fragment {
     //onActivityResult -> 다음 액티비티에게 ACT주고 다시 받아와 같은 값인지(성공했는지) 검사하기 위함
     public int REQUEST_ACT = 1234;
 
-    //ClientGoal DB 연동 결과값
-    String result;
-
     public GoalFragment() {
 
         //<!-- TODO: GoalFragment에서 처음에 DB 읽어서 items 만들어주고 나머지 fragment로 items를 파라미터로 전해주면? 앱 실행 될때 DB 한번만 읽어오쥬
@@ -238,8 +235,9 @@ public class GoalFragment extends Fragment {
                 String type = data.getStringExtra("TYPE");
 
                 //items 가져옴
-                ArrayList<RecyclerItem> items = ((HomeActivity) getActivity()).getItems();
-                items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite,type));
+                //TODO: 얘네의 기능은????????????????
+                //ArrayList<RecyclerItem> items = ((HomeActivity) getActivity()).getItems();
+                //items.add(new RecyclerItem(userID,food,count,startDate,endDate,favorite,type));
 
                 //TabFragment로 데이터 전달
                 Bundle bundle[] = new Bundle[2];
