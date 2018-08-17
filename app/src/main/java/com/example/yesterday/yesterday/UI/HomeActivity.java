@@ -483,13 +483,13 @@ public class HomeActivity extends AppCompatActivity {
 
             //알람시간 calendar에 set해주기
             //현재 시각이 오전 10시를 지나지 않았다면
-            if (calendar.get(Calendar.HOUR_OF_DAY) < 13) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 13, 0, 0);
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 11) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 11, 0, 0);
                 Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " < 10 [ 10시 이전 ]");
             }
             //현재 시각이 오전10시 이후라면 다음날 10시로
-            else if (calendar.get(Calendar.HOUR_OF_DAY) >= 13) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE+1), 13, 0, 0);
+            else if (calendar.get(Calendar.HOUR_OF_DAY) >= 11) {
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE+1), 11, 0, 0);
                 Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " >= 10 [ 10시 이후 ]");
             }
 
