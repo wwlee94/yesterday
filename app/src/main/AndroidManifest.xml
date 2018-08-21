@@ -32,8 +32,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".UI.MainActivity" />
+
+        <activity android:name=".UI.MainActivity" >
+        </activity>
+
         <!-- 로그인 , 회원 가입 -->
         <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity" />
