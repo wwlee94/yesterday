@@ -296,6 +296,7 @@ public class HomeFragment extends Fragment {
             textViews[0] = new TextView(getActivity());
             textViews[0].setLayoutParams(linearParams);
             textViews[0].setText("즐겨찾기 된 목표가 없습니다.");
+            textViews[0].setGravity(View.TEXT_ALIGNMENT_CENTER);
             linearLayout.addView(textViews[0]);
         }
         else {

@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
 
@@ -29,7 +28,7 @@ import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
 import com.example.yesterday.yesterday.server.CheckTypeServer;
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
-import com.example.yesterday.yesterday.server.SelectGroupByGoalServer;
+import com.example.yesterday.yesterday.server.SelectDateServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -57,6 +56,7 @@ import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
+    public static Context mContext;
     //Activity
     Activity mActivity;
     //toolbar
@@ -91,6 +91,9 @@ public class HomeActivity extends AppCompatActivity {
     String result;
     //각 Fragment에서 items가 필요할 때 공유하기 위한 변수
     private ArrayList<RecyclerItem> items;
+    private ArrayList<RecyclerItem> itemsGoal;
+    private ArrayList<RecyclerItem> itemsSuccess;
+    private ArrayList<RecyclerItem> itemsFail;
 
     public HomeActivity() {
 
@@ -108,21 +111,13 @@ public class HomeActivity extends AppCompatActivity {
         statisticsFragment = new StatisticsFragment();
 
         items = new ArrayList<RecyclerItem>();
+        itemsGoal = new ArrayList<RecyclerItem>();
+        itemsSuccess = new ArrayList<RecyclerItem>();
+        itemsFail = new ArrayList<RecyclerItem>();
 
-        //파싱된 데이터를 메소드를 통해 items에 대입
-        items = getClientGoal();
-        //fooddata를 조회해 해당되는 food의 개수를 가져옴
-        //TODO: fooddata 값을 가져오긴 하는데 기간 조회가 어려움
-        items = getCurrentCount();
+        //TODO: DB 갱신
+        reNewClientGoal();
 
-        //fail인 아이템 currentCount 초기화
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getType().equals("fail")) {
-                items.get(i).setCurrentCount(items.get(i).getCount());
-            }
-        }
-        //오늘 날짜와 목표설정 마감일을 비교하여 type 업데이트!!
-        items = compareDate();
     }
 
     @Override
@@ -141,6 +136,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d("TAG", "HomeActivity onResume / 다시 시작");
+        //reNewClientGoal();
     }
 
     @Override
@@ -166,11 +162,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mContext = this;
+
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
 
         //10시 푸시 알림
         boolean isPush = true;
-        if(isPush) {
+        if (isPush) {
             new AlarmProgress(getApplicationContext()).Alarm();
             isPush = false;
         }
@@ -272,6 +270,45 @@ public class HomeActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    //갱신
+    public void reFresh() {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.detach(goalFragment).attach(goalFragment).commit();
+    }
+
+    public void reNewClientGoal() {
+        items.clear();
+        itemsGoal.clear();
+        itemsSuccess.clear();
+        itemsFail.clear();
+
+        //파싱된 데이터를 메소드를 통해 items에 대입
+        items = getClientGoal();
+        //fooddata를 조회해 해당되는 food의 개수를 가져옴
+        //TODO: fooddata 값을 가져오긴 하는데 기간 조회가 어려움
+        items = getCurrentCount();
+
+        //fail인 아이템 currentCount 초기화
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals("fail")) {
+                items.get(i).setCurrentCount(items.get(i).getCount());
+            }
+        }
+        //오늘 날짜와 목표설정 마감일을 비교하여 type 업데이트!!
+        items = compareDate();
+
+        for (int i = 0; i < items.size(); i++) {
+            //type이 success인 것만 가져옴
+            if (items.get(i).getType().equals("default")) {
+                itemsGoal.add(items.get(i));
+            } else if (items.get(i).getType().equals("success")) {
+                itemsSuccess.add(items.get(i));
+            } else if (items.get(i).getType().equals("fail")) {
+                itemsFail.add(items.get(i));
+            }
+        }
+    }
+
     // DB 연동해서 Select
     // 현재 로그인한 id에 해당하는 목표들을 가져오는 메소드
     public ArrayList<RecyclerItem> getClientGoal() {
@@ -324,7 +361,7 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //fooddata 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectGroupByGoalServer("admin").execute().get();
+            result = new SelectDateServer("admin").execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -340,17 +377,43 @@ public class HomeActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = (JSONArray) jsonObject.get("FOODCOUNT");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            Date startDate = null;
+            Date endDate = null;
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject list = (JSONObject) jsonArray.get(i);
                 String food = list.getString("FOOD");
-                int currentCount = list.getInt("CURRENTCOUNT");
-
+                String dateStr = list.getString("DATE");
+                try {
+                    //String -> Date 형변환
+                    date = simpleDateFormat.parse(dateStr);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }//try
+                Log.d("가져온 음식 ",food);
+                Log.d("가져온 음식 기간 ",dateStr);
                 for (int k = 0; k < items.size(); k++) {
-                    //items의 food와 DB에서 가져온 food가 같다면 해당되는 items에 currentCount 데이터 입력
+                    //type 은 default 와 success만 비교
                     if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
+                        //items의 food와 DB에서 가져온 food가 같다면
                         if (items.get(k).getFood().equals(food)) {
-                            items.get(k).setCurrentCount(currentCount);
+                            try {
+                                //String -> Date 형변환
+                                startDate = simpleDateFormat.parse(items.get(k).getStartDate());
+                                endDate = simpleDateFormat.parse(items.get(k).getEndDate());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }//try
+
+                            //startDate <= date <= endDate 범위
+                            if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
+                                Log.d("음식종류","clientgoal 음식: "+items.get(k).getFood()+" /타입: "+items.get(k).getType());
+                                Log.d("시간범위","startDate:"+items.get(k).getStartDate()+" <= Date:"+dateStr+" <= endDate:"+items.get(k).getEndDate());
+                                items.get(k).setCurrentCount(items.get(k).getCurrentCount()+1);
+                            }
+
                         }
                     }
                 }
@@ -364,7 +427,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     //날짜 비교 후 결과 값 도출
-    public ArrayList<RecyclerItem> compareDate(){
+    //목표 설정 마감일 > 오늘 날짜(지났으면) 성공 여부 판별
+    public ArrayList<RecyclerItem> compareDate() {
 
         String result = null;
 
@@ -372,13 +436,13 @@ public class HomeActivity extends AppCompatActivity {
 
         //오늘 날짜
         Date currentDate = new Date();
-        Log.d("currentDate",format.format(currentDate));
+        Log.d("currentDate", format.format(currentDate));
 
         //검사 날짜
-        for(int i=0;i<items.size();i++) {
+        for (int i = 0; i < items.size(); i++) {
             //index:-1 -> 삭제 안 일어남
-            int index=-1;
-            if(items.get(i).getType().equals("default")) {
+            int index = -1;
+            if (items.get(i).getType().equals("default")) {
                 try {
                     Date checkDate = format.parse(items.get(i).getEndDate());
                     int check = currentDate.compareTo(checkDate);
@@ -387,26 +451,25 @@ public class HomeActivity extends AppCompatActivity {
                         Log.d("currentDate > checkDate", format.format(checkDate));
 
                         //Type 변경 전 해당 음식의 type이 중복되는 지 Check!!
-                        for(int k=0;k<items.size();k++){
+                        for (int k = 0; k < items.size(); k++) {
                             //음식 이름이 같고 그 음식의 이름을 가진 타입 중 success가 있는 지 판별
-                            if(items.get(k).getFood().equals(items.get(i).getFood())){
-                                if(items.get(k).getType().equals("success")){
+                            if (items.get(k).getFood().equals(items.get(i).getFood())) {
+                                if (items.get(k).getType().equals("success")) {
 
                                     //success 가 존재 한다면 지워
-                                    try{
-                                        result = new DeleteGoalServer("admin",items.get(k).getFood(),items.get(k).getType()).execute().get();
+                                    try {
+                                        result = new DeleteGoalServer("admin", items.get(k).getFood(), items.get(k).getType()).execute().get();
                                         Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
-                                    }catch(Exception e){
+                                    } catch (Exception e) {
                                         e.printStackTrace();
-                                    }finally {
-                                        if(result.equals("success")){
-                                            Log.d("DeleteGoalServer","데이터 삭제 성공");
-                                        }
-                                        else{
-                                            Log.d("DeleteGoalServer","데이터 삭제 실패");
+                                    } finally {
+                                        if (result.equals("success")) {
+                                            Log.d("DeleteGoalServer", "데이터 삭제 성공");
+                                        } else {
+                                            Log.d("DeleteGoalServer", "데이터 삭제 실패");
                                         }
 
-                                        index=k;
+                                        index = k;
 
                                     }//finally
                                 }//success
@@ -418,14 +481,13 @@ public class HomeActivity extends AppCompatActivity {
                         try {
                             result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
                             Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        }finally {
-                            if(result.equals("success")){
-                                Log.d("CheckTypeServer","데이터 변경 성공");
-                            }
-                            else{
-                                Log.d("CheckTypeServer","데이터 변경 실패");
+                        } finally {
+                            if (result.equals("success")) {
+                                Log.d("CheckTypeServer", "데이터 변경 성공");
+                            } else {
+                                Log.d("CheckTypeServer", "데이터 변경 실패");
                             }
                         }//finally
 
@@ -433,12 +495,12 @@ public class HomeActivity extends AppCompatActivity {
                         //DB에서 변경했으니 items에서도 변경!!
                         items.get(i).setType("success");
                         //즐겨찾기 설정되어있으면 해제
-                        if(items.get(i).getFavorite()==1){
+                        if (items.get(i).getFavorite() == 1) {
                             items.get(i).setFavorite(0);
                         }
                         //count: -1 -> 삭제된 items 없음
                         //TODO: FOR문 밖에서 처리해야 할 수도
-                        if(index!=-1) {
+                        if (index != -1) {
                             //앞서 중복되는 success 타입의 데이터 items에서 제거
                             Log.d("index", "" + index);
                             items.remove(index);
@@ -462,6 +524,18 @@ public class HomeActivity extends AppCompatActivity {
 
     public ArrayList<RecyclerItem> getItems() {
         return items;
+    }
+
+    public ArrayList<RecyclerItem> getItemsGoal() {
+        return itemsGoal;
+    }
+
+    public ArrayList<RecyclerItem> getItemsSuccess() {
+        return itemsSuccess;
+    }
+
+    public ArrayList<RecyclerItem> getItemsFail() {
+        return itemsFail;
     }
 
     //매일 10시에 알람
@@ -489,7 +563,7 @@ public class HomeActivity extends AppCompatActivity {
             }
             //현재 시각이 오전10시 이후라면 다음날 10시로
             else if (calendar.get(Calendar.HOUR_OF_DAY) >= 11) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE+1), 11, 0, 0);
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE + 1), 11, 0, 0);
                 Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " >= 10 [ 10시 이후 ]");
             }
 

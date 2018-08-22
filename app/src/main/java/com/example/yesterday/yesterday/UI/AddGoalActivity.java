@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -102,6 +103,12 @@ public class AddGoalActivity extends AppCompatActivity {
                         //intent.putExtra("TYPE", goalType);
 
                         setResult(RESULT_OK, intent);
+
+
+                        //DB값 다시 가져옴
+                        HomeActivity homeActivity = ((HomeActivity)HomeActivity.mContext);
+                        //TODO: DB 갱신
+                        homeActivity.reNewClientGoal();
 
                         finish();
 

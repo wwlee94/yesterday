@@ -3,6 +3,7 @@ package com.example.yesterday.yesterday.UI.GoalTapFrags;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +32,6 @@ public class TabGoalFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
-    //HomeActivity로 부터 가져온 items
     private ArrayList<RecyclerItem> tempItems;
     //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
@@ -54,8 +54,8 @@ public class TabGoalFragment extends Fragment {
 
     public TabGoalFragment() {
 
-        tempItems = new ArrayList<RecyclerItem>();
         items = new ArrayList<RecyclerItem>();
+        tempItems = new ArrayList<RecyclerItem>();
 
         isrun = true;
 
@@ -69,24 +69,15 @@ public class TabGoalFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapGoalFragment");
 
-        //GoalFragment로부터 name 데이터 받음!! -> 목표추가 했을 때 이렇게 데이터 추가 물론 DB에도 저장됨
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
-            food = bundle.getString("FOOD");
-            count = bundle.getInt("COUNT");
-            startDate = bundle.getString("STARTDATE");
-            endDate = bundle.getString("ENDDATE");
-            favorite = bundle.getInt("FAVORITE");
-            type = bundle.getString("TYPE");
 
-            //값들이 null이 아니면 adapter에 item 추가
-            if (food != null && count != -1 && endDate != null && favorite != -1 && type != null) {
-                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite, type);
-                //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
-                bundle.clear();
-            }
-        }
+            items = ((HomeActivity) getActivity()).getItemsGoal();
+
+            tempItems.clear();
+            tempItems.addAll(items);
+            items.clear();
+            items.addAll(tempItems);
+            adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -94,29 +85,11 @@ public class TabGoalFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapGoalFragment");
 
-        /*
-        //HomeActivity에 변수두고 공유하는 방법을 쓰면 bundle로 데이터 주고 받고 필요없음....
-        if (isrun) {
-            Bundle bundle = getArguments();
-            items = bundle.getParcelableArrayList("ITEMS");
-
-            isrun = false;
-        }
-        */
-
         // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
         // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-        if (isrun) {
             // 목표DB를 저장할 items
-            tempItems = ((HomeActivity) getActivity()).getItems();
-            for (int i = 0; i < tempItems.size(); i++) {
-                if (tempItems.get(i).getType().equals("default")) {
-                    items.add(tempItems.get(i));
-                }
-            }
-            //items 한 번 불러오고 난 이후에 false로 전환
-            isrun = false;
-        }
+            items = ((HomeActivity) getActivity()).getItemsGoal();
+
     }
 
     @Override
@@ -125,13 +98,13 @@ public class TabGoalFragment extends Fragment {
 
         Log.d("TAG", "onCreateView : TapGoalFragment");
 
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_total, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_tab_goal, container, false);
 
         //다른 Fragment or Activity에 있는 view 가져와 적용 시키는 것
         fab = (FloatingActionButton) getActivity().findViewById(R.id.floating_action_button);
 
         //RecyclerView 초기화
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.total_recyclerview);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.goal_recyclerview);
         //layoutManager 생성
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

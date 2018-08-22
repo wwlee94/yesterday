@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.HomeActivity;
+
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
 import com.example.yesterday.yesterday.server.UpdateFavoriteServer;
 
@@ -49,6 +51,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
+
         /*
         if (viewType == TYPE_HEADER) {
 
@@ -121,18 +124,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     viewHolder.endlayout.setVisibility(View.GONE);
                 }
                 else{
+                    viewHolder.endlayout.setVisibility(View.VISIBLE);
+                    //기본 빨강
+                    viewHolder.endlayout.setBackgroundColor(Color.parseColor("#80FF0000"));
                     if(items.get(viewHolder.getAdapterPosition()).getType().equals("success")){
+                        //성공:파랑
                         viewHolder.endlayout.setBackgroundColor(Color.parseColor("#8000FF00"));
                     }
-                    viewHolder.endlayout.setVisibility(View.VISIBLE);
                 }
 
                 //* 정적인 부분 *
-                viewHolder.goal.setText("음식 : " + items.get(position).getFood());
-                viewHolder.endDate.setText(items.get(position).getEndDate());
+                viewHolder.goal.setText("음식 : " + items.get(viewHolder.getAdapterPosition()).getFood());
+                viewHolder.endDate.setText(items.get(viewHolder.getAdapterPosition()).getEndDate());
 
-                int current = items.get(position).getCurrentCount();
-                int limit = items.get(position).getCount();
+                int current = items.get(viewHolder.getAdapterPosition()).getCurrentCount();
+                int limit = items.get(viewHolder.getAdapterPosition()).getCount();
                 // 70% 이상 빨간색
                 if (((float) current / (float) limit) * 100 >= 70) {
                     //pink:FF0266
@@ -149,15 +155,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 //items 타입이 default 일때만 클릭 이벤트 작동
                 //즐겨찾기 설정 부분
-                if (items.get(position).getType().equals("default")) {
+                if (items.get(viewHolder.getAdapterPosition()).getType().equals("default")) {
+                    viewHolder.favoriteView.setClickable(false);
                     //favorite 초기화 작업
                     //favorite == 0 이면 선택 X
-                    if (items.get(position).getFavorite() == 0) {
+                    if (items.get(viewHolder.getAdapterPosition()).getFavorite() == 0) {
                         viewHolder.isClicked = false;
                         viewHolder.favoriteView.setSelected(false);
                     }
                     //favorite == 1 이면 선택된 것
-                    else if (items.get(position).getFavorite() == 1) {
+                    else if (items.get(viewHolder.getAdapterPosition()).getFavorite() == 1) {
                         viewHolder.isClicked = true;
                         viewHolder.favoriteView.setSelected(true);
                     }
@@ -170,6 +177,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             showFavoritesDialog(v, viewHolder);
                         }
                     });
+                }
+                //type : success,fail 인것
+                else{
+                    viewHolder.isClicked=false;
+                    viewHolder.favoriteView.setSelected(false);
+                    viewHolder.favoriteView.setClickable(false);
                 }
             }//isShowSwiped=false 일 때 regularlayout 이벤트 들
 
@@ -185,6 +198,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     + " / CurrentCount : "+items.get(viewHolder.getAdapterPosition()).getCurrentCount()
                                     + " / Count : " + items.get(viewHolder.getAdapterPosition()).getCount()
                                     + " / Type : " + items.get(viewHolder.getAdapterPosition()).getType()
+                                    + " / favorite : "+ items.get(viewHolder.getAdapterPosition()).getFavorite()
                             , Toast.LENGTH_SHORT).show();
                 }
             });
@@ -209,7 +223,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return position == 0;
         }
     */
-    //아이템 추가
+    //아이템 추가 //TODO: 안씀..
     public void onItemAdd(String userID, String food, int count, String startDate, String endDate, int favorite, String type) {
         //items ArrayList<RecyclerItem> 에 데이터 넣고
         items.add(new RecyclerItem(userID, food, count, startDate, endDate, favorite, type));
@@ -234,8 +248,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     //toast보여주고 deleteItem 해야지 !!
                     Log.d("VALUE", (position + 1) + " 번째 : " + items.get(position).getFood());
-                    items.remove(position);
-                    notifyItemRemoved(position);
+                    //DB값 다시 가져옴
+                    HomeActivity homeActivity = ((HomeActivity)HomeActivity.mContext);
+                    //TODO: DB 갱신
+                    homeActivity.reNewClientGoal();
+                    //goalFragment 갱신
+                    homeActivity.reFresh();
 
                     Toast.makeText(context, "데이터 삭제 성공", Toast.LENGTH_SHORT).show();
                 } else {
@@ -282,11 +300,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 int favorite = items.get(viewHolder.getAdapterPosition()).getFavorite();
                                 String result = null;
 
-                                //ICON 선택 된 상태로 설정
-                                view.setSelected(true);
-                                viewHolder.isClicked = true;
-                                items.get(viewHolder.getAdapterPosition()).setFavorite(1);
-
                                 Log.d("클릭 후 favorite값", items.get(viewHolder.getAdapterPosition()).getFood() + items.get(viewHolder.getAdapterPosition()).getFavorite());
                                 //UpdateFavoriteServer가 실행 되었다는 뜻은 0 -> 1, 1 -> 0 으로 업데이트 하겠다는 뜻
 
@@ -298,6 +311,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 } finally {
                                     if (result.equals("success")) {
                                         Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
+                                        HomeActivity homeActivity = ((HomeActivity)HomeActivity.mContext);
+                                        //TODO: DB 갱신
+                                        homeActivity.reNewClientGoal();
+                                        homeActivity.reFresh();
+
                                     } else {
                                         Toast.makeText(context, "데이터 변경 실패", Toast.LENGTH_SHORT).show();
                                     }
@@ -338,12 +356,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             int favorite = items.get(viewHolder.getAdapterPosition()).getFavorite();
                             String result = null;
 
-                            //ICON 선택 해제 상태로 설정
-                            view.setSelected(false);
-                            viewHolder.isClicked = false;
-                            //items 객체에 있는 값도 변경 시켜줘야 현재 전체 viewHolder에 저장된 favorite 개수 알 수 있음
-                            items.get(viewHolder.getAdapterPosition()).setFavorite(0);
-
                             // 웹 서버에 DB 연동 요청 (updateFavorite)
                             try {
                                 result = new UpdateFavoriteServer(userID, food, type, favorite).execute().get();
@@ -352,6 +364,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             } finally {
                                 if (result.equals("success")) {
                                     Toast.makeText(context, "데이터 변경 성공", Toast.LENGTH_SHORT).show();
+                                    HomeActivity homeActivity = ((HomeActivity)HomeActivity.mContext);
+                                    //TODO: DB 갱신
+                                    homeActivity.reNewClientGoal();
+                                    homeActivity.reFresh();
                                 } else {
                                     Toast.makeText(context, "데이터 변경 실패", Toast.LENGTH_SHORT).show();
                                 }

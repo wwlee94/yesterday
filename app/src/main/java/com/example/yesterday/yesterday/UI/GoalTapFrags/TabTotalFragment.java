@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +22,7 @@ import com.example.yesterday.yesterday.RecyclerView.ItemTouchHelperCallback;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerViewAdapter;
 import com.example.yesterday.yesterday.UI.HomeActivity;
-
+import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class TabTotalFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
+    private ArrayList<RecyclerItem> tempItems;
     //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
 
@@ -56,6 +59,7 @@ public class TabTotalFragment extends Fragment {
     public TabTotalFragment() {
 
         items = new ArrayList<RecyclerItem>();
+        tempItems = new ArrayList<RecyclerItem>();
 
         isrun = true;
 
@@ -69,26 +73,15 @@ public class TabTotalFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapTotalFragment");
 
-        //TODO:데이터 추가,삭제,변경될 때 매번 DB에서 select해서 가져오려면 여기서 해결
 
-        //GoalFragment로부터 name 데이터 받음!! -> 목표추가 했을 때 이렇게 데이터 추가 물론 DB에도 저장됨
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            userID = bundle.getString("USERID");  //나중에 삭제 예정 전역변수 이용하면 됌.
-            food = bundle.getString("FOOD");
-            count = bundle.getInt("COUNT");
-            startDate = bundle.getString("STARTDATE");
-            endDate = bundle.getString("ENDDATE");
-            favorite = bundle.getInt("FAVORITE");
-            type = bundle.getString("TYPE");
+            items = ((HomeActivity) getActivity()).getItems();
 
-            //값들이 null이 아니면 adapter에 item 추가
-            if (food != null && count != -1 && endDate != null && favorite != -1) {
-                adapter.onItemAdd(userID, food, count, startDate, endDate, favorite ,type);
-                //bundle.clear() 해도 bundle을 null로 만들어 버리진 않음;
-                bundle.clear();
-            }
-        }
+            tempItems.clear();
+            tempItems.addAll(items);
+            items.clear();
+            items.addAll(tempItems);
+            adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -96,24 +89,12 @@ public class TabTotalFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapTotalFragment");
 
-        /*
-        //HomeActivity에 변수두고 공유하는 방법을 쓰면 bundle로 데이터 주고 받고 필요없음....
-        if (isrun) {
-            Bundle bundle = getArguments();
-            items = bundle.getParcelableArrayList("ITEMS");
-
-            isrun = false;
-        }
-        */
-
         // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
         // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-        if(isrun) {
             // 목표DB를 저장할 items
             items = ((HomeActivity) getActivity()).getItems();
             //items 한 번 불러오고 난 이후에 false로 전환
-            isrun = false;
-        }
+
     }
 
     @Override
@@ -156,8 +137,7 @@ public class TabTotalFragment extends Fragment {
                 }
             }
 
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
-            {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 /*
                 //스크롤을 멈췄을 때 이벤트 TODO: FloatActionButton 이벤트 추후 변경
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
@@ -176,4 +156,5 @@ public class TabTotalFragment extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
+
 }
