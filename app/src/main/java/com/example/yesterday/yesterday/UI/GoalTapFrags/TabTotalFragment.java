@@ -36,33 +36,35 @@ public class TabTotalFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
 
+    //임시
     private ArrayList<RecyclerItem> tempItems;
     //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
+    private ArrayList<RecyclerItem> goalItems;
+    private ArrayList<RecyclerItem> failItems;
+    private ArrayList<RecyclerItem> successItems;
+
+    int goalCount;
+    int failCount;
+    int successCount;
 
     private FloatingActionButton fab;
 
     ItemTouchHelperCallback callback;
     ItemTouchHelper itemTouchHelper;
 
-    //결과 -> key="TEXT"
-    private String userID;
-    private String food;
-    private int count;
-    private String startDate;
-    private String endDate;
-    private int favorite;
-    private String type;
-
     private Boolean isrun;
 
     public TabTotalFragment() {
 
-        items = new ArrayList<RecyclerItem>();
         tempItems = new ArrayList<RecyclerItem>();
+        items = new ArrayList<RecyclerItem>();
+
+        goalItems = new ArrayList<RecyclerItem>();
+        failItems = new ArrayList<RecyclerItem>();
+        successItems = new ArrayList<RecyclerItem>();
 
         isrun = true;
-
     }
 
     // GoalAddActivity에서 목표 설정을 완료한 후 finish() 했을 때
@@ -73,15 +75,19 @@ public class TabTotalFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapTotalFragment");
 
+        //isrun ->  true: 앱 처음 실행시 / false: onCreate실행 시
+        if(!isrun) {
+            //items 초기화
+            setItemsInit();
+        }
 
-            items = ((HomeActivity) getActivity()).getItems();
-
+            //reFresh(화면갱신) 후 onResume이 실행되며 item,adapter 갱신
             tempItems.clear();
             tempItems.addAll(items);
             items.clear();
             items.addAll(tempItems);
+            //adapter 갱신
             adapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -89,12 +95,11 @@ public class TabTotalFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapTotalFragment");
 
-        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
-        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-            // 목표DB를 저장할 items
-            items = ((HomeActivity) getActivity()).getItems();
-            //items 한 번 불러오고 난 이후에 false로 전환
-
+        //items 초기화
+        if(isrun) {
+            setItemsInit();
+            isrun=false;
+        }
     }
 
     @Override
@@ -155,6 +160,31 @@ public class TabTotalFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    public void setItemsInit() {
+
+        goalItems = ((HomeActivity)getActivity()).getItemsGoal();
+        failItems = ((HomeActivity)getActivity()).getItemsFail();
+        successItems = ((HomeActivity)getActivity()).getItemsSuccess();
+
+        goalCount = goalItems.size();
+        failCount = failItems.size();
+        successCount = successItems.size();
+
+        Log.d("GoalCount",""+goalCount);
+        Log.d("FailCount",""+failCount);
+        Log.d("SuccessCount",""+successCount);
+
+        //비워주고
+        items.clear();
+        //넣어준다.
+        items.add(new RecyclerItem("- 진행 중인 목표 -"));
+        items.addAll(goalItems);
+        items.add(new RecyclerItem("- 실패한 목표 -"));
+        items.addAll(failItems);
+        items.add(new RecyclerItem("- 완료한 목표 -"));
+        items.addAll(successItems);
     }
 
 }

@@ -33,6 +33,7 @@ public class TabSuccessFragment extends Fragment {
     private ArrayList<RecyclerItem> tempItems;
     //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
+    private ArrayList<RecyclerItem> successItems;
 
     private FloatingActionButton fab;
 
@@ -45,6 +46,7 @@ public class TabSuccessFragment extends Fragment {
 
         items = new ArrayList<RecyclerItem>();
         tempItems = new ArrayList<RecyclerItem>();
+        successItems = new ArrayList<RecyclerItem>();
 
         isrun = true;
     }
@@ -54,15 +56,15 @@ public class TabSuccessFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapSuccessFragment");
 
-
-            items = ((HomeActivity) getActivity()).getItemsSuccess();
-
+        //isrun ->  true: 앱 처음 실행시 / false: onCreate실행 시
+        if (!isrun) {
+            setItemsInit();
+        }
             tempItems.clear();
             tempItems.addAll(items);
             items.clear();
             items.addAll(tempItems);
             adapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -70,12 +72,12 @@ public class TabSuccessFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapSuccessFragment");
 
-        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
-        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-
-            // 목표DB를 저장할 items
-            items = ((HomeActivity) getActivity()).getItemsSuccess();
+        // 목표DB를 저장할 items
+        if (isrun) {
+            setItemsInit();
             //items 한 번 불러오고 난 이후에 false로 전환
+            isrun = false;
+        }
 
     }
 
@@ -118,8 +120,7 @@ public class TabSuccessFragment extends Fragment {
                 }
             }
 
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
-            {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 /*
                 //스크롤을 멈췄을 때 이벤트 TODO: FloatActionButton 이벤트 추후 변경
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
@@ -137,5 +138,15 @@ public class TabSuccessFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+    public void setItemsInit() {
+
+        successItems = ((HomeActivity)getActivity()).getItemsSuccess();
+
+        //비워주고
+        items.clear();
+        //넣어준다.
+        items.add(new RecyclerItem("- 완료한 목표 -"));
+        items.addAll(successItems);
     }
 }

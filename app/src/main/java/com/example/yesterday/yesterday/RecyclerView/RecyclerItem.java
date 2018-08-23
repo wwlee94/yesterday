@@ -3,7 +3,7 @@ package com.example.yesterday.yesterday.RecyclerView;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class RecyclerItem  implements Parcelable {
+public class RecyclerItem implements Parcelable {
 
     String userID;
     String food;
@@ -12,6 +12,11 @@ public class RecyclerItem  implements Parcelable {
     String endDate;
     int favorite;
     String type;
+
+    //헤더 제목
+    String title="";
+    //viewType -> 0:헤더 , 1:아이템
+    int viewType = 1;
 
     //현재 DB에 저장되 있는 음식 값에 대한 개수
     int currentcount = 0;
@@ -22,8 +27,7 @@ public class RecyclerItem  implements Parcelable {
     //TODO: isClicked 는 holder에서 선언하여 사용.. 얘는 여기,,?
 
     //count 랑 favorite DB에는 int로  정의 되어있음
-
-    public RecyclerItem(String userID,String food,int count,String startDate,String endDate,int favorite,String type){
+    public RecyclerItem(String userID, String food, int count, String startDate, String endDate, int favorite, String type) {
         this.userID = userID;
         this.food = food;
         this.count = count;
@@ -31,6 +35,12 @@ public class RecyclerItem  implements Parcelable {
         this.endDate = endDate;
         this.favorite = favorite;
         this.type = type;
+    }
+
+    //header type
+    public RecyclerItem(String title) {
+        this.title = title;
+        this.viewType = 0;
     }
 
     //Fragment 간 리스트 전달 하기 위함
@@ -75,28 +85,74 @@ public class RecyclerItem  implements Parcelable {
         }
     };
 
-    public void setUserID(String userID){ this.userID =userID; }
-    public String getUserID(){ return userID; }
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
-    public void setFood(String food){ this.food = food; }
-    public String getFood(){ return food; }
+    public String getUserID() {
+        return userID;
+    }
 
-    public void setCount(int count){ this.count = count; }
-    public int getCount(){ return count; }
+    public void setFood(String food) {
+        this.food = food;
+    }
 
-    public void setStartDate(String startDate){ this.startDate = startDate; }
-    public String getStartDate(){ return startDate; }
+    public String getFood() {
+        return food;
+    }
 
-    public void setEndDate(String endDate){ this.endDate = endDate; }
-    public String getEndDate(){ return endDate; }
+    public void setCount(int count) {
+        this.count = count;
+    }
 
-    public void setFavorite(int favorite){ this.favorite = favorite; }
-    public int getFavorite(){ return favorite; }
+    public int getCount() {
+        return count;
+    }
 
-    public void setCurrentCount(int currentcount){ this.currentcount = currentcount; }
-    public int getCurrentCount(){ return currentcount; }
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
 
-    public void setType(String type){ this.type = type; }
-    public String getType(){ return type; }
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setFavorite(int favorite) {
+        this.favorite = favorite;
+    }
+
+    public int getFavorite() {
+        return favorite;
+    }
+
+    public void setCurrentCount(int currentcount) {
+        this.currentcount = currentcount;
+    }
+
+    public int getCurrentCount() {
+        return currentcount;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+    public void setViewType(int viewType){
+        this.viewType = viewType;
+    }
+    public int getViewType(){
+        return viewType;
+    }
 
 }

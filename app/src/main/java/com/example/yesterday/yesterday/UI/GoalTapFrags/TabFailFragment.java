@@ -33,6 +33,7 @@ public class TabFailFragment extends Fragment {
     private ArrayList<RecyclerItem> tempItems;
     //목표를 담기위한 RecyclerItem의 배열
     private ArrayList<RecyclerItem> items;
+    private ArrayList<RecyclerItem> failItems;
 
     private FloatingActionButton fab;
 
@@ -46,6 +47,7 @@ public class TabFailFragment extends Fragment {
 
         items = new ArrayList<RecyclerItem>();
         tempItems = new ArrayList<RecyclerItem>();
+        failItems = new ArrayList<RecyclerItem>();
 
         isrun = true;
     }
@@ -55,14 +57,15 @@ public class TabFailFragment extends Fragment {
         super.onResume();
         Log.d("TAG", "onResume : TapFailFragment");
 
-            items = ((HomeActivity) getActivity()).getItemsFail();
-
+        //isrun ->  true: 앱 처음 실행시 / false: onCreate실행 시
+        if (!isrun) {
+            setItemsInit();
+        }
             tempItems.clear();
             tempItems.addAll(items);
             items.clear();
             items.addAll(tempItems);
             adapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -70,11 +73,11 @@ public class TabFailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onCreate : TapFailFragment");
 
-        // * 앱 실행 이후 DB로 값 가져오고 생성 될 때만 한 번 RecyclerView에 뿌려주고
-        // 이후 추가되는 항목은 onResume에서 별로로 추가 항상 DB에서 가져오면 느려질 것이기 때문 *
-        // 목표DB를 저장할 items
-            items = ((HomeActivity) getActivity()).getItemsFail();
-
+        if (isrun) {
+            // 목표DB를 저장할 items
+            setItemsInit();
+            isrun = false;
+        }
     }
 
     @Override
@@ -134,5 +137,14 @@ public class TabFailFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+    public void setItemsInit() {
+
+        failItems = ((HomeActivity)getActivity()).getItemsFail();
+
+        //비워주고
+        items.clear();
+        items.add(new RecyclerItem("- 실패한 목표 -"));
+        items.addAll(failItems);
     }
 }

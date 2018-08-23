@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -65,6 +66,7 @@ public class HomeFragment extends Fragment {
     private Handler handler;
     private setAutoChangeViewPager setAutoChangeViewPager;
     private Thread thread;
+    private Thread touchThread;
 
     //현재 HomeFragment가 화면에 보이면 isrun :true 안보이면 false
     private boolean isRun;
@@ -162,6 +164,34 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                //미리 스레드 생성 한 번만 실행되도록
+                if(!isTouched) {
+                    //10초후 isTouch=false 전환 스레드
+                    touchThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(10000);
+                                Log.d("touchThread", "OKOKOKOKOK");
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } finally {
+                                isTouched = false;
+                            }
+                        }
+                    });
+                    touchThread.start();
+                }
+
+                isTouched = true;
+
+                return false;
+            }
+        });
         //* ViewPager Indicator *
         LinearLayout linearLayout = rootView.findViewById(R.id.linear_root);
         //layout_gravity -> center * layout_gravity의 경우 View 자체의 위치를 지정한 위치로 정렬 시키는 것 *
@@ -240,6 +270,7 @@ public class HomeFragment extends Fragment {
                     while (isRun) {
 
                         Thread.sleep(5000);
+
                         //현재 상태가 드래그가 중이면 화면 전환 X
                         if (!isTouched) {
                             //UI 스레드
@@ -275,7 +306,7 @@ public class HomeFragment extends Fragment {
             //k==1일때 한 번만 실행
             //즐겨찾기로 설정된 item의 인덱스를 구하는 코드
             else if (k == 1) {
-                Log.d("favoriteCount",""+favoriteCount);
+                Log.d("favoriteCount", "" + favoriteCount);
                 favoriteIndex = new int[favoriteCount];
                 int x = 0;
                 for (int i = 0; i < items.size(); i++) {
@@ -293,17 +324,16 @@ public class HomeFragment extends Fragment {
         //각각의 이미지의 layout 설정할 linearParams 생성
         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         //이미지들 사이의 간격
-        linearParams.setMargins(0, 4, 10, 0);
+        linearParams.setMargins(0, 4, 18, 0);
 
-        if(favoriteCount==0){
+        if (favoriteCount == 0) {
             textViews = new TextView[1];
             textViews[0] = new TextView(getActivity());
             textViews[0].setLayoutParams(linearParams);
             textViews[0].setText("즐겨찾기 된 목표가 없습니다.");
             textViews[0].setGravity(View.TEXT_ALIGNMENT_CENTER);
             linearLayout.addView(textViews[0]);
-        }
-        else {
+        } else {
             //favoriteGoal
             //음식
             textViews = new TextView[favoriteCount];
@@ -325,22 +355,23 @@ public class HomeFragment extends Fragment {
 
                 horizontallayout[i] = new LinearLayout(getActivity());
                 horizontallayout[i].setOrientation(LinearLayout.HORIZONTAL);
+                horizontallayout[i].setGravity(Gravity.CENTER_VERTICAL);
 
                 //값 설정
-                textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
-                textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
+                textViews[i].setTextColor(Color.parseColor("#FEEAE6"));//#FEEAE6
+                textCount[i].setTextColor(Color.parseColor("#FEEAE6"));
                 textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
 
                 int current = items.get(favoriteIndex[i]).getCurrentCount();
                 int limit = items.get(favoriteIndex[i]).getCount();
                 if (((float) current / (float) limit) * 100 >= 70) {
                     //textViews[i].setTextColor(Color.parseColor("#FF0266"));
-                    textCount[i].setTextColor(Color.parseColor("#FF0266"));
+                    textCount[i].setTextColor(Color.parseColor("#000000"));//B00020
                 }
-                textCount[i].setText("마감일 : " + items.get(favoriteIndex[i]).getEndDate() + "  "
+                textCount[i].setText("마감일: " + items.get(favoriteIndex[i]).getEndDate() + "  "
                         + " 횟수: " + items.get(favoriteIndex[i]).getCurrentCount() + " / " + items.get(favoriteIndex[i]).getCount());
 
-                imageViews[i].setBackgroundResource(R.drawable.ic_restaurant_black_24dp);
+                imageViews[i].setBackgroundResource(R.drawable.ic_beenhere_black_24dp);
 
                 horizontallayout[i].addView(imageViews[i]);
                 horizontallayout[i].addView(textViews[i]);

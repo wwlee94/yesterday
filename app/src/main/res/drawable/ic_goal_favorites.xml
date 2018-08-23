@@ -2,9 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- 기본 상태 -->
-    <item android:drawable="@drawable/ic_star_basic" android:state_selected="false" />
+    <item android:drawable="@drawable/ic_check_box_basic" android:state_selected="false" />
 
     <!-- 선택 되었을 때 -->
-    <item android:drawable="@drawable/ic_star_selected" android:state_selected="true" />
+    <item android:drawable="@drawable/ic_check_box_selected" android:state_selected="true" />
 
 </selector>
