@@ -6,13 +6,11 @@
     tools:context=".UI.HomeViewPager.Chart1Fragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="첫 번째 ViewPager"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
+    <com.github.mikephil.charting.charts.HorizontalBarChart
+        android:id="@+id/fixedchart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
         />
 
 </FrameLayout>

@@ -2,11 +2,14 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +27,12 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
@@ -103,7 +111,20 @@ public class StatisticsFragment extends Fragment {
         //막대바 차트 생성
         horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.chart);
 
-        //시작 종료 날짜를 설정 할 수 있는 버튼
+        horizontalBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+
+                Toast.makeText(getActivity(),""+labels.get((int)e.getX()),Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
+
+                //시작 종료 날짜를 설정 할 수 있는 버튼
         startBtn = (Button) rootView.findViewById(R.id.button);
         endBtn = (Button) rootView.findViewById(R.id.button2);
 
@@ -309,6 +330,9 @@ public class StatisticsFragment extends Fragment {
         BarDataSet dataset = new BarDataSet(entries, "# of Colls");
         dataset.setDrawValues(true);
 
+        dataset.setHighlightEnabled(true);
+        dataset.setHighLightColor(Color.BLACK);
+
         BarData data = new BarData(dataset);
 
 
@@ -374,6 +398,12 @@ public class StatisticsFragment extends Fragment {
         //2개인 세로축을 따로따로 지워 줘야함 .
         //horizontalBarChart.getAxisLeft().setDrawGridLines(false);
         horizontalBarChart.getAxisRight().setDrawGridLines(false);
+
+        horizontalBarChart.setTouchEnabled(true);
+        horizontalBarChart.setDragEnabled(false);// : 차트의 끌기 (이동)를 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleEnabled(false); // : 두 축의 차트에 대한 배율을 설정 / 해제합니다.
+        horizontalBarChart.setScaleXEnabled(false); // : x 축에서 크기 조절을 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleYEnabled(false); // : Y 축에서 크기 조절을 활성화 / 비활성화합니다.
 
         //막대 애니메이션 속도(숫자 클수록 느리게)
         horizontalBarChart.animateY(2000);

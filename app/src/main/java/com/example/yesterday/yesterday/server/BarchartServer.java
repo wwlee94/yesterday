@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -20,7 +22,27 @@ public class BarchartServer extends AsyncTask<Void,Void,String> {
     String answer;
     JSONArray JArray;
 
+    private int startYear;
+    private int startMonth;
+    private int startDay;
+    private int endYear;
+    private int endMonth;
+    private int endDay;
+
     private static final String  WEBIP = "192.168.0.4";
+
+    public BarchartServer(String parent_id ) {
+        final Calendar c = Calendar.getInstance();
+        startYear = c.get(Calendar.YEAR);
+        startMonth = c.get(Calendar.MONTH) -1;
+        startDay = c.get(Calendar.DATE);
+        endYear = c.get(Calendar.YEAR);
+        endMonth = c.get(Calendar.MONTH);
+        endDay = c.get(Calendar.DATE);
+        stringToDateFormat(startYear,startMonth,startDay,true);
+        stringToDateFormat(endYear,endMonth,endDay,false);
+        this.parent_id = parent_id;
+    }
 
     public BarchartServer(String parent_id,String startDate,String endDate ) { //로그인 id 받기
         this.startDate = startDate;
@@ -54,6 +76,19 @@ public class BarchartServer extends AsyncTask<Void,Void,String> {
             e.printStackTrace();
         }
         return answer;
+    }
+
+    //int 형 년월일 을 날짜 데이터 포멧으로 변경한다.
+    private void stringToDateFormat(int Year,int Month,int Day ,boolean flag){
+        String strDate = Year+ "-"+(Month+1) +"-"+Day+" 00:00:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        //startday
+        if(flag){
+            startDate  = strDate;
+        }
+        else{
+            endDate = strDate;
+        }
     }
 
     @Override

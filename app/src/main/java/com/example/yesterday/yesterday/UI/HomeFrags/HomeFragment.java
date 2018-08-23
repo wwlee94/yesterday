@@ -30,7 +30,7 @@ import static android.content.ContentValues.TAG;
 //home 화면 Fragment
 public class HomeFragment extends Fragment {
 
-    private static final int[] BACKGROUND_COLORS = {0xff304FFE, 0xffcc0066, 0xff9900ff};
+    private static final int[] BACKGROUND_COLORS = {0xffffffff, 0xffffffff, 0xffffffff};
 
     private BackgroundManager backgroundManager = null;
 
