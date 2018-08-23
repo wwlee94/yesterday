@@ -7,10 +7,13 @@
     android:orientation="vertical"
     tools:context=".UI.CalendarActivity">
 
-    <CalendarView
-        android:id="@+id/calendar"
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></CalendarView>
+        android:layout_height="300dp"
+        app:mcv_selectionColor="#a9dbf0cb"
+        app:mcv_showOtherDates="defaults" />
 
     <ScrollView
         android:layout_width="368dp"

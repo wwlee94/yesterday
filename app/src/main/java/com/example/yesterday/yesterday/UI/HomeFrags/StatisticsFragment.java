@@ -100,6 +100,8 @@ public class StatisticsFragment extends Fragment {
 
     }
 
+
+
     //생성자와 onCreateView만 있어도 ok
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

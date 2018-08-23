@@ -47,4 +47,6 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     //MP Andriod Chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    //Material Calendar
+    implementation 'com.prolificinteractive:material-calendarview:1.4.3'
 }
