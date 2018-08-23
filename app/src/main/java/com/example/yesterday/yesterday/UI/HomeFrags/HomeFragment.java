@@ -42,9 +42,12 @@ public class HomeFragment extends Fragment {
     private ViewGroup rootView;
 
     private LinearLayout linearLayout;
+    private LinearLayout[] horizontallayout;
     //동적 생성하려는 TextView
     private TextView[] textViews;
     private TextView[] textCount;
+    //동적 생성하려는 ImageView
+    private ImageView[] imageViews;
     //DB에서 값 가져온 recyclerView의 items
     private ArrayList<RecyclerItem> items;
     //즐겨찾기 설정된 items 개수
@@ -53,7 +56,7 @@ public class HomeFragment extends Fragment {
     private int[] favoriteIndex;
 
     private ViewPager viewPager = null;
-    private ImageView[] imageViews;
+    private ImageView[] indicator;
 
     private Button menuButton;
 
@@ -78,7 +81,7 @@ public class HomeFragment extends Fragment {
         arrFragment[2] = new Chart3Fragment();
 
         //indicator
-        imageViews = new ImageView[arrFragment.length];
+        indicator = new ImageView[arrFragment.length];
         //
         //textView와 favoriteString는 동적 layout설정 할 때
         items = new ArrayList<RecyclerItem>();
@@ -139,9 +142,9 @@ public class HomeFragment extends Fragment {
 
                 for (int i = 0; i < arrFragment.length; i++) {
                     if (i == position) {
-                        imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
+                        indicator[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
                     } else {
-                        imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
+                        indicator[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
                     }
                 }
             }
@@ -172,16 +175,16 @@ public class HomeFragment extends Fragment {
         //viewPager indicator 초기화 설정
         for (int i = 0; i < arrFragment.length; i++) {
             //해당되는 Activity에서 ImageView 생성
-            imageViews[i] = new ImageView(getActivity());
+            indicator[i] = new ImageView(getActivity());
             //imageView의 레이아웃 설정 , 배경화면 설정
-            imageViews[i].setLayoutParams(linearParams);
+            indicator[i].setLayoutParams(linearParams);
             if (i == 0) {
                 //초기 indicator 지정 처음 보이는 ViewPager는 checked 되어 있도록
-                imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
+                indicator[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
             } else {
-                imageViews[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
+                indicator[i].setBackgroundResource(R.drawable.ic_radio_button_unchecked_black_24dp);
             }
-            linearLayout.addView(imageViews[i]);
+            linearLayout.addView(indicator[i]);
         }
 
 
@@ -286,11 +289,12 @@ public class HomeFragment extends Fragment {
 
         //목표 설정 공지란 layout 설정 -> favorite=1 로 즐겨찾기된 목표들 홈 화면에 표기
         linearLayout = rootView.findViewById(R.id.linear_favorite_goal);
+
         //각각의 이미지의 layout 설정할 linearParams 생성
         LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
         //이미지들 사이의 간격
-        linearParams.setMargins(0, 4, 0, 0);
+        linearParams.setMargins(0, 4, 10, 0);
+
         if(favoriteCount==0){
             textViews = new TextView[1];
             textViews[0] = new TextView(getActivity());
@@ -305,13 +309,24 @@ public class HomeFragment extends Fragment {
             textViews = new TextView[favoriteCount];
             //기간+개수
             textCount = new TextView[favoriteCount];
+            //음식 icon
+            imageViews = new ImageView[favoriteCount];
+            //horizontallayout
+            horizontallayout = new LinearLayout[favoriteCount];
 
             for (int i = 0; i < favoriteCount; i++) {
+                //초기화
                 textViews[i] = new TextView(getActivity());
                 textCount[i] = new TextView(getActivity());
+                imageViews[i] = new ImageView(getActivity());
                 textViews[i].setLayoutParams(linearParams);
                 textCount[i].setLayoutParams(linearParams);
+                imageViews[i].setLayoutParams(linearParams);
 
+                horizontallayout[i] = new LinearLayout(getActivity());
+                horizontallayout[i].setOrientation(LinearLayout.HORIZONTAL);
+
+                //값 설정
                 textViews[i].setTextColor(Color.parseColor("#FFFFFF"));
                 textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
                 textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
@@ -319,12 +334,18 @@ public class HomeFragment extends Fragment {
                 int current = items.get(favoriteIndex[i]).getCurrentCount();
                 int limit = items.get(favoriteIndex[i]).getCount();
                 if (((float) current / (float) limit) * 100 >= 70) {
-                    textCount[i].setTextColor(Color.parseColor("#FD5523"));
+                    //textViews[i].setTextColor(Color.parseColor("#FF0266"));
+                    textCount[i].setTextColor(Color.parseColor("#FF0266"));
                 }
                 textCount[i].setText("마감일 : " + items.get(favoriteIndex[i]).getEndDate() + "  "
                         + " 횟수: " + items.get(favoriteIndex[i]).getCurrentCount() + " / " + items.get(favoriteIndex[i]).getCount());
 
-                linearLayout.addView(textViews[i]);
+                imageViews[i].setBackgroundResource(R.drawable.ic_restaurant_black_24dp);
+
+                horizontallayout[i].addView(imageViews[i]);
+                horizontallayout[i].addView(textViews[i]);
+
+                linearLayout.addView(horizontallayout[i]);
                 linearLayout.addView(textCount[i]);
             }
         }

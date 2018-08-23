@@ -40,6 +40,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     //useSwipe true:swipe 가능 false:swipe 불가
     boolean useSwipe;
 
+    boolean headerflag;
+
 
     public RecyclerViewAdapter(ArrayList<RecyclerItem> items) {
         this.items = items;
@@ -192,6 +194,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //뷰를 클릭 했을 때 swiped된 뷰가 있으면 regular로 바꾸어줌
+                    for(int i=0;i<items.size();i++){
+                        if(items.get(i).isShowSwiped==true){
+                            useSwipe=true;
+                            items.get(i).isShowSwiped=false;
+                            notifyItemChanged(i);
+                        }
+                    }
                     Toast.makeText(context, (viewHolder.getAdapterPosition() + 1) + " 번째 : "
                                     + " / ID : " + items.get(viewHolder.getAdapterPosition()).getUserID()
                                     + " / Food : " + items.get(viewHolder.getAdapterPosition()).getFood()
