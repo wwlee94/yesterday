@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.UI;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -17,7 +18,9 @@ import com.example.yesterday.yesterday.decorators.OneDayDecorator;
 import com.example.yesterday.yesterday.decorators.SaturdayDecorator;
 import com.example.yesterday.yesterday.decorators.SundayDecorator;
 import com.example.yesterday.yesterday.server.BarchartServer;
+import com.example.yesterday.yesterday.server.DateServer;
 import com.example.yesterday.yesterday.server.FoodListServer;
+import com.example.yesterday.yesterday.server.haveBreakfast;
 import com.github.mikephil.charting.data.BarEntry;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -44,6 +47,11 @@ public class CalendarActivity extends AppCompatActivity {
     MaterialCalendarView materialCalendarView;
 
     String result;
+    String dateResult;
+
+    String foodname;
+
+    ArrayList<CalendarDay> dates = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,14 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
 
         materialCalendarView = (MaterialCalendarView )findViewById(R.id.calendarView);
+
+        Intent intent = getIntent();
+        foodname = intent.getStringExtra("foodname");
+
+        if(foodname != null) {
+            dateServerConn();
+            dateToResults(dateResult);
+        }
 
         materialCalendarView.state().edit()
                 .setMinimumDate(CalendarDay.from(2018, 0, 1))
@@ -62,10 +78,6 @@ public class CalendarActivity extends AppCompatActivity {
                 new SundayDecorator(),
                 new SaturdayDecorator(),
                 new OneDayDecorator());
-
-        String[] results = {"2018,03,18","2018,04,18","2018,05,18","2018,06,18"};
-
-        new ApiSimulator(results).executeOnExecutor(Executors.newSingleThreadExecutor());
 
         breakfastText = (TextView)findViewById(R.id.breakfastText);
         lunchText = (TextView)findViewById(R.id.lunchText);
@@ -80,54 +92,42 @@ public class CalendarActivity extends AppCompatActivity {
         });
     }
 
-    private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
-
-        String[] Time_Result;
-
-        ApiSimulator(String[] Time_Result){
-            this.Time_Result = Time_Result;
+    private String dateServerConn(){
+        try {
+            dateResult = new DateServer("kim",foodname).execute().get();
+        } catch (Exception e){
+            e.getMessage();
         }
 
-        @Override
-        protected List<CalendarDay> doInBackground(@NonNull Void... voids) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        return dateResult;
+    }
 
-            Calendar calendar = Calendar.getInstance();
-            ArrayList<CalendarDay> dates = new ArrayList<>();
+    private void dateToResults(String result){
+        String date = null;
+        Calendar calendar = Calendar.getInstance();
 
-            /*특정날짜 달력에 점표시해주는곳*/
-            /*월은 0이 1월 년,일은 그대로*/
-            //string 문자열인 Time_Result 을 받아와서 ,를 기준으로짜르고 string을 int 로 변환
-            for(int i = 0 ; i < Time_Result.length ; i ++){
-                CalendarDay day = CalendarDay.from(calendar);
-                String[] time = Time_Result[i].split(",");
+        try {
+            JSONArray jarray = new JSONObject(result).getJSONArray("data");
+            for (int i = 0 ; i <= jarray.length()-1 ; i++) {
+                JSONObject jObject = jarray.getJSONObject(i);
+                date = jObject.optString("date");
+
+                CalendarDay day;
+                String[] time = date.split("-");
                 int year = Integer.parseInt(time[0]);
                 int month = Integer.parseInt(time[1]);
-                int dayy = Integer.parseInt(time[2]);
+                int dayy = Integer.parseInt(time[2].split(" ")[0]);
 
-                dates.add(day);
                 calendar.set(year,month-1,dayy);
+                day = CalendarDay.from(calendar);
+                dates.add(day);
+
+                Log.d("TAG","JSON test :"+year+";"+month+";"+dayy);
             }
-
-
-
-            return dates;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected void onPostExecute(@NonNull List<CalendarDay> calendarDays) {
-            super.onPostExecute(calendarDays);
-
-            if (isFinishing()) {
-                return;
-            }
-
-            materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays,CalendarActivity.this));
-        }
+        materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,CalendarActivity.this));
     }
 
     //int 형 년월일 을 날짜 데이터 포멧으로 변경한다.

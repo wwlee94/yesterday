@@ -3,6 +3,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.CalendarActivity;
 import com.example.yesterday.yesterday.server.BarchartServer;
 import com.example.yesterday.yesterday.server.LoginServer;
 import com.github.mikephil.charting.charts.Chart;
@@ -117,7 +119,11 @@ public class StatisticsFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
-                Toast.makeText(getActivity(),""+labels.get((int)e.getX()),Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(),""+labels.get((int)e.getX()),Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(getActivity(),CalendarActivity.class);
+                intent.putExtra("foodname",labels.get((int)e.getX()));
+                startActivity(intent);
             }
 
             @Override
@@ -243,6 +249,14 @@ public class StatisticsFragment extends Fragment {
         DrawChart(horizontalBarChart);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        renewChart(horizontalBarChart);
+
     }
 
     //시작, 종료 날짜 텍스트 값 update 메소드

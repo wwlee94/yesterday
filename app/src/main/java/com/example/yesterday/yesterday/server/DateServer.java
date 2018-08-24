@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -13,17 +15,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 //로그인 서버와 연결하는 클래스
-public class FoodListServer extends AsyncTask<Void,Void,String> {
+public class DateServer extends AsyncTask<Void,Void,String> {
+
     String parent_id;
-    String date;
     String answer;
-    JSONArray JArray;
+    String foodname;
 
     private static final String  WEBIP = "192.168.35.149";
 
-    public FoodListServer(String parent_id, String Date ) { //로그인 id 받기
+    public DateServer(String parent_id,String foodname) {
         this.parent_id = parent_id;
-        this.date = Date;
+        this.foodname = foodname;
     }
 
     @Override
@@ -34,18 +36,16 @@ public class FoodListServer extends AsyncTask<Void,Void,String> {
         RequestBody requestBody = null;
 
         //보낼 데이터를 파라미터 형식으로 body에 넣음
-        requestBody = new FormBody.Builder().add("parent_id",parent_id).add("date",date).build();
+        requestBody = new FormBody.Builder().add("parent_id",parent_id).add("foodname",foodname).build();
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/showFoodList")
+                .url("http://"+ WEBIP + ":80/skuniv/DateServer")
                 .post(requestBody)
                 .build();
         try {
             response = client.newCall(request).execute();
-            /////////////////////////////////// newcall 하고 응답받기를 기다리는중
 
-            //제이슨 값 받기
             answer = response.body().string();
 
         } catch (IOException e) {
