@@ -354,21 +354,21 @@ public class StatisticsFragment extends Fragment {
 
 
         //Design 막대 랜덤 색상 지정
-        dataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        dataset.setColors(ColorTemplate.PASTEL_COLORS);
 
         //각각 막대 값을 가리키는 숫자의 textsize 지정
-        data.setValueTextSize(10f);
+        data.setValueTextSize(20f);
         //각각 막대 값을 가리키는 숫자의 color 지정
-        data.setValueTextColor(Color.DKGRAY);
+        data.setValueTextColor(Color.WHITE);
 
         //바 width 크기 지정
-        data.setBarWidth(0.85f);
+        data.setBarWidth(0.7f);
 
         horizontalBarChart.setData(data);
 
         //라벨 갯수 지정 !!!!!!!!!!!!!!!!!!
         horizontalBarChart.getXAxis().setLabelCount(foodcount);
-        horizontalBarChart.getXAxis().setTextColor(Color.BLUE);
+        horizontalBarChart.getXAxis().setTextColor(Color.WHITE);
 
         YAxis y = horizontalBarChart.getAxisLeft ();
 
@@ -397,8 +397,6 @@ public class StatisticsFragment extends Fragment {
         horizontalBarChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
         //라벨이 화면 밖으로 나가지 않게 전체적으로 오른쪽으로 이동
         horizontalBarChart.getXAxis().setXOffset(-10);
-
-
 
         //라벨값이 들어갈 수 있게 도표 위치 살짝 오른쪽으로 이동
         horizontalBarChart.setExtraOffsets(50,0,0,0);

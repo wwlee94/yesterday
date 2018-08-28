@@ -36,7 +36,7 @@ import java.util.ArrayList;
 //home 화면 Fragment
 public class HomeFragment extends Fragment {
 
-    private static final int[] BACKGROUND_COLORS = {0xFF304FFE, 0xFFcc0066, 0xFF9900ff};
+    private static final int[] BACKGROUND_COLORS = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 
     private BackgroundManager backgroundManager = null;
 
