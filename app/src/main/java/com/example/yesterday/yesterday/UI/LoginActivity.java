@@ -99,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
                 }
                 else{
+
                     client.setType("회원");
                     client.setName(result);
                     intent = new Intent(getApplicationContext(), HomeActivity.class);
