@@ -95,6 +95,8 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<RecyclerItem> itemsSuccess;
     private ArrayList<RecyclerItem> itemsFail;
 
+    boolean isPush;
+
     public HomeActivity() {
 
         //Activity
@@ -114,6 +116,8 @@ public class HomeActivity extends AppCompatActivity {
         itemsGoal = new ArrayList<RecyclerItem>();
         itemsSuccess = new ArrayList<RecyclerItem>();
         itemsFail = new ArrayList<RecyclerItem>();
+
+        isPush = true;
 
         //TODO: DB 갱신
         reNewClientGoal();
@@ -167,7 +171,6 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
 
         //10시 푸시 알림
-        boolean isPush = true;
         if (isPush) {
             new AlarmProgress(getApplicationContext()).Alarm();
             isPush = false;
