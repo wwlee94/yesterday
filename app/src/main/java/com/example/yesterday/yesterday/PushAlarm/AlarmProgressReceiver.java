@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-//AlarmProgress의 리시버
+//AlarmProgress의 리시버 
 public class AlarmProgressReceiver extends BroadcastReceiver {
 
     String INTENT_ACTION = Intent.ACTION_BOOT_COMPLETED;
