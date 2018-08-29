@@ -24,7 +24,7 @@ public class AddGoalServer extends AsyncTask<Void,Void,String> {
     private String result;
     //owl wifi 로컬 -> 192.168.0.75
     //조교서버 -> 117.17.142.207
-    private static final String  WEBIP = "192.168.0.75";
+    private static final String  WEBIP = "117.17.142.207";
 
     //addGoalActivity에서 등록한 정보 생성자로 받는다.
     public AddGoalServer(String userID,String food,int count,String startDate,String endDate,int favorite,String type) {

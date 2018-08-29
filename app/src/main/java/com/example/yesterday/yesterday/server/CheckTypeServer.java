@@ -21,7 +21,7 @@ public class CheckTypeServer extends AsyncTask<Void, Void, String> {
 
     //owl wifi 로컬 -> 192.168.0.75
     //조교서버 -> 117.17.142.207
-    private static final String WEBIP = "192.168.0.75";
+    private static final String WEBIP = "117.17.142.207";
 
     public CheckTypeServer(String userID, String food, int favorite, String type) {
         this.userID = userID;

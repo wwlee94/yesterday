@@ -43,18 +43,25 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     //RecyclerView에서 스와이프 된지 알기 위해 오버라이드
     @Override
-    public boolean isItemViewSwipeEnabled() { return mAdapter.useSwipe; }
+    public boolean isItemViewSwipeEnabled() {
+        return mAdapter.useSwipe;
+    }
 
     //현재 어떤 동작을 취했는 지 알려주는 메소드
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
 
-        //드래그 = 위,아래
-        int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        //스와이프 = 좌,우
-        int swipeFlags = ItemTouchHelper.LEFT;
+        //헤더가 아닐 때만
+        if (viewHolder instanceof RecyclerViewHolder) {
+            //드래그 = 위,아래
+            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            //스와이프 = 좌,우
+            int swipeFlags = ItemTouchHelper.LEFT;
 
-        return makeMovementFlags(dragFlags, swipeFlags);
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+        //헤더이면 터치,스와이프 금지
+        return 0;
     }
 
     //Item을 Long Touch하여 다른 위치로 움직였을 때
@@ -68,15 +75,20 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //스와이프 되었을 때
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        int position = viewHolder.getAdapterPosition();
-        //mAdapter.onItemDelete(mAdapter.getItems().get(position).getUserID(),mAdapter.getItems().get(position).getFood(),position);
+
+
+        final int position = viewHolder.getAdapterPosition();
+        Log.d("onSwiped", mAdapter.getItems().get(position).getFood());
 
         //아이템의 현재 상태를 스와이프 된 상태로 바꿔 ??:도중에 취소해도? ->  해답: 취소했을 때 상태 가져와 적용, 완료했을때 상태 가져와 스와이프 금지
         //TODO: adapter에서 items 가져오는 게아니라 HomeActivity의 items 가져오게
         mAdapter.getItems().get(position).isShowSwiped = true;
-        mAdapter.useSwipe=false;
+        mAdapter.useSwipe = false;
         //adapter에 변경 사항 알려준 뒤 갱신
+        //notify는 header 포함임;
         mAdapter.notifyItemChanged(position);
+        Log.d("onSwiped_Change", "" + mAdapter.getItems().get(position).isShowSwiped + mAdapter.useSwipe);
+
     }
 
     //스와이프하면 background 그리기
@@ -100,7 +112,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             }
             c.drawRoundRect(rectF, 10, 10, p);
 
-            Drawable icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_forever_black_24dp);
+            Drawable icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_sweep_black_24dp);
 
             //Draw icon
             int itemHeight = itemView.getBottom() - itemView.getTop();
