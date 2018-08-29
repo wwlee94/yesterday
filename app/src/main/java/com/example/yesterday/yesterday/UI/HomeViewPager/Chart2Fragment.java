@@ -129,7 +129,7 @@ public class Chart2Fragment extends Fragment {
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setSliceSpace(5f);//파이 사이 거리
         dataSet.setSelectionShift(3f);
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        dataSet.setColors(ColorTemplate.PASTEL_COLORS);
 
         PieData data = new PieData((dataSet));
         data.setValueTextSize(10f);//숫자(%) 크기
