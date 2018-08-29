@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,6 +23,7 @@ import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
+import com.example.yesterday.yesterday.UI.HomeFrags.CalendarFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
@@ -41,6 +43,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import org.json.JSONArray;
@@ -78,12 +81,13 @@ public class HomeActivity extends AppCompatActivity {
     //private Handler handler;
 
     //BottomBar
-    BottomBar bottomBar;
+    public BottomBar bottomBar;
     //Fragment
     private HomeFragment homeFragment;
     private AddFragment addFragment;
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
+    private CalendarFragment calendarFragment;
     //Canlendar Icon
     private ImageView calendarView;
 
@@ -111,6 +115,7 @@ public class HomeActivity extends AppCompatActivity {
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();
         statisticsFragment = new StatisticsFragment();
+        calendarFragment = new CalendarFragment();
 
         items = new ArrayList<RecyclerItem>();
         itemsGoal = new ArrayList<RecyclerItem>();
@@ -185,8 +190,7 @@ public class HomeActivity extends AppCompatActivity {
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-                startActivity(intent);
+                replaceFragment(calendarFragment, "달력");
             }
         });
 
@@ -231,6 +235,34 @@ public class HomeActivity extends AppCompatActivity {
 
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(int tabId) {
+
+                //transaction 객체를 가져옴
+                //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
+                if (tabId == R.id.tab_home) {
+                    replaceFragment(homeFragment, "HOME");
+                    Log.d("HomeFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_add) {
+                    replaceFragment(addFragment, "ADD");
+                    //2131296560
+                    Log.d("AddFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_goal) {
+                    replaceFragment(goalFragment, "GOAL");
+                    Log.d("GoalFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_statistics) {
+                    replaceFragment(statisticsFragment, "STATISTICS");
+                    Log.d("StatisticsFragment", "" + tabId);
+                }
+            }
+        });
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(int tabId) {
@@ -239,21 +271,27 @@ public class HomeActivity extends AppCompatActivity {
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if (tabId == R.id.tab_home) {
                     replaceFragment(homeFragment, "HOME");
+                    Log.d("HomeFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_add) {
                     replaceFragment(addFragment, "ADD");
+                    //2131296560
+                    Log.d("AddFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_goal) {
                     replaceFragment(goalFragment, "GOAL");
+                    Log.d("GoalFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_statistics) {
                     replaceFragment(statisticsFragment, "STATISTICS");
+                    Log.d("StatisticsFragment", "" + tabId);
                 }
             }
         });
+
 
         //sharedfreference에 items 저장
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
@@ -278,6 +316,15 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.detach(goalFragment).attach(goalFragment).commit();
     }
+
+    public AddFragment getAddFragment() {
+        return addFragment;
+    }
+
+    public CalendarFragment getCalendarFragment() {
+        return calendarFragment;
+    }
+
 
     public void reNewClientGoal() {
         items.clear();
@@ -395,8 +442,8 @@ public class HomeActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }//try
-                Log.d("가져온 음식 ",food);
-                Log.d("가져온 음식 기간 ",dateStr);
+                Log.d("가져온 음식 ", food);
+                Log.d("가져온 음식 기간 ", dateStr);
                 for (int k = 0; k < items.size(); k++) {
                     //type 은 default 와 success만 비교
                     if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
@@ -412,9 +459,9 @@ public class HomeActivity extends AppCompatActivity {
 
                             //startDate <= date <= endDate 범위
                             if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                                Log.d("음식종류","clientgoal 음식: "+items.get(k).getFood()+" /타입: "+items.get(k).getType());
-                                Log.d("시간범위","startDate:"+items.get(k).getStartDate()+" <= Date:"+dateStr+" <= endDate:"+items.get(k).getEndDate());
-                                items.get(k).setCurrentCount(items.get(k).getCurrentCount()+1);
+                                Log.d("음식종류", "clientgoal 음식: " + items.get(k).getFood() + " /타입: " + items.get(k).getType());
+                                Log.d("시간범위", "startDate:" + items.get(k).getStartDate() + " <= Date:" + dateStr + " <= endDate:" + items.get(k).getEndDate());
+                                items.get(k).setCurrentCount(items.get(k).getCurrentCount() + 1);
                             }
 
                         }

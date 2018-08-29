@@ -60,29 +60,33 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new RecyclerViewHolder(view);
         }
     }
+
     //View의 내용을 해당 포지션의 데이터로 set
     //recyclerview가 처음 보이면 작동(여러번)
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
 
-        if(holder instanceof HeaderViewHolder){
-           headerBindInit(holder,position);
+        if (holder instanceof HeaderViewHolder) {
+            headerBindInit(holder, position);
         }
 
         //final을 써줘야 동작.. ??
         if (holder instanceof RecyclerViewHolder) {
-            bodyBindInit(holder,position);
+            bodyBindInit(holder, position);
         }
     }
+
     //헤더 바인드
-    private void headerBindInit(final RecyclerView.ViewHolder holder,final int position){
+    private void headerBindInit(final RecyclerView.ViewHolder holder, final int position) {
         final HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
-            viewHolder.headerTitle.setText(items.get(position).title);
+        viewHolder.headerTitle.setTextColor(Color.parseColor("#FD5523"));
+        viewHolder.headerTitle.setText(items.get(position).title);
 
     }
+
     //헤더가 아닌 경우
-    private void bodyBindInit(final RecyclerView.ViewHolder holder, final int position){
+    private void bodyBindInit(final RecyclerView.ViewHolder holder, final int position) {
         final RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
 
         //swipedlayout show
@@ -176,7 +180,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     public void onClick(View v) {
                         //viewHolder.isClicked==false이면 즐겨찾기 설정 Dialog
                         //true 이면 즐겨찾기 해제 Dialog 를 띄워준다.
-                        showFavoritesDialog(v, viewHolder,position);
+                        showFavoritesDialog(v, viewHolder, position);
                     }
                 });
             }
@@ -215,7 +219,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public int getItemViewType(int position){
+    public int getItemViewType(int position) {
         //0:헤더 1:아이템
         return items.get(position).getViewType();
     }

@@ -112,8 +112,8 @@ public class Chart2Fragment extends Fragment {
         pieChart.setTransparentCircleRadius(30f);
 
         // enable rotation of the chart by touch
-        //pieChart.setRotationAngle(0);
-        //pieChart.setRotationEnabled(false);
+        //pieChart.setRotationAngle(0)
+        pieChart.setRotationEnabled(false);
 
         //라벨
         /*

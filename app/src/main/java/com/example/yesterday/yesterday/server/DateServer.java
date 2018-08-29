@@ -21,7 +21,7 @@ public class DateServer extends AsyncTask<Void,Void,String> {
     String answer;
     String foodname;
 
-    private static final String  WEBIP = "192.168.35.149";
+    private static final String  WEBIP = "117.17.142.207";
 
     public DateServer(String parent_id,String foodname) {
         this.parent_id = parent_id;

@@ -98,12 +98,14 @@ public class Chart3Fragment extends Fragment {
 
     private void DrawCalendar() {
         materialCalendarView.state().edit()
-                .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth()-1, 1))
+                .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth()-3, 1))
                 .setMaximumDate(CalendarDay.today())
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
-        materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,getActivity()));
+        materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#80000000"), dates,getActivity()));
+
+        materialCalendarView.setPagingEnabled(false);
 
         materialCalendarView.addDecorators(
                 new SundayDecorator(),

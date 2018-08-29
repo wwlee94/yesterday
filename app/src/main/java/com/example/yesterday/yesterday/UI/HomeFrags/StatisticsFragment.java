@@ -1,5 +1,6 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.UI.CalendarActivity;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.BarchartServer;
 import com.example.yesterday.yesterday.server.LoginServer;
 import com.github.mikephil.charting.charts.Chart;
@@ -120,10 +122,16 @@ public class StatisticsFragment extends Fragment {
             public void onValueSelected(Entry e, Highlight h) {
 
                 //Toast.makeText(getActivity(),""+labels.get((int)e.getX()),Toast.LENGTH_LONG).show();
-
+                /*
                 Intent intent = new Intent(getActivity(),CalendarActivity.class);
                 intent.putExtra("foodname",labels.get((int)e.getX()));
                 startActivity(intent);
+                */
+                HomeActivity activity = (HomeActivity)getActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("foodname",labels.get((int)e.getX()));
+                activity.getCalendarFragment().setArguments(bundle);
+                activity.replaceFragment(activity.getCalendarFragment(),"달력");
             }
 
             @Override

@@ -47,24 +47,12 @@
                 android:orientation="vertical">
             </LinearLayout>
 
-            <Button
-                android:id="@+id/menubutton"
-                android:layout_width="70dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="90dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/border_button"
-                android:text="먹은 메뉴"
-                android:textColor="#000000"
-                android:textSize="12sp" />
-
             <RelativeLayout
                 android:id="@+id/border"
                 android:layout_width="260dp"
                 android:layout_height="210dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/border"
                 android:elevation="8dp"
                 >

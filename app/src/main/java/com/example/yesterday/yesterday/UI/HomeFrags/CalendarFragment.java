@@ -1,109 +1,224 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
-import android.content.Context;
-import android.net.Uri;
+
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.CalendarActivity;
+import com.example.yesterday.yesterday.UI.HomeActivity;
+import com.example.yesterday.yesterday.decorators.EventDecorator;
+import com.example.yesterday.yesterday.decorators.OneDayDecorator;
+import com.example.yesterday.yesterday.decorators.SaturdayDecorator;
+import com.example.yesterday.yesterday.decorators.SundayDecorator;
+import com.example.yesterday.yesterday.server.DateServer;
+import com.example.yesterday.yesterday.server.FoodListServer;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CalendarFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
 public class CalendarFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ViewGroup root;
+    private FragmentManager fragmentManager;
 
-    private OnFragmentInteractionListener mListener;
+    private AddFragment addFragment;
+
+    private Button button;
+
+    TextView breakfastText ;
+    TextView lunchText;
+    TextView dinnerText ;
+
+    MaterialCalendarView materialCalendarView;
+
+    String result;
+    String dateResult;
+
+    String foodname;
+
+    ArrayList<CalendarDay> dates = new ArrayList<>();
 
     public CalendarFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CalendarFragment newInstance(String param1, String param2) {
-        CalendarFragment fragment = new CalendarFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
-    }
+        root = (ViewGroup) inflater.inflate(R.layout.fragment_calendar, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        materialCalendarView = (MaterialCalendarView )root.findViewById(R.id.calendar_calendarView);
+
+        /*
+        Intent intent = getIntent();
+        foodname = intent.getStringExtra("foodname");
+        */
+
+        Bundle bundle = getArguments();
+
+        if(bundle!=null) {
+            foodname = bundle.getString("foodname");
+            //bundle.remove("foodname");
+            bundle.clear();
         }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        if(foodname != null) {
+            dateServerConn();
+            dateToResults(dateResult);
         }
+
+        materialCalendarView.state().edit()
+                .setMinimumDate(CalendarDay.from(2018, 0, 1))
+                .setMaximumDate(CalendarDay.from(2018, 9, 20))
+                .setCalendarDisplayMode(CalendarMode.MONTHS)
+                .commit();
+
+        materialCalendarView.addDecorators(
+                new SundayDecorator(),
+                new SaturdayDecorator(),
+                new OneDayDecorator());
+
+        breakfastText = (TextView)root.findViewById(R.id.calendar_breakfastText);
+        lunchText = (TextView)root.findViewById(R.id.calendar_lunchText);
+        dinnerText = (TextView)root.findViewById(R.id.calendar_dinnerText);
+
+        materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener(){
+            @Override
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                serverConn(stringToDateFormat(date.getYear(),date.getMonth(),date.getDay()));
+                stringToJSON(result);
+            }
+        });
+
+        fragmentManager = this.getFragmentManager();
+        addFragment = ((HomeActivity)getActivity()).getAddFragment();
+
+        //수정 버튼
+        button = root.findViewById(R.id.calendar_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"버튼 클릭",Toast.LENGTH_SHORT).show();
+                ((HomeActivity)getActivity()).bottomBar.selectTabAtPosition(1);
+            }
+        });
+        return root;
+    }
+    private String dateServerConn(){
+        try {
+            dateResult = new DateServer("kim",foodname).execute().get();
+        } catch (Exception e){
+            e.getMessage();
+        }
+
+        return dateResult;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void dateToResults(String result){
+        String date = null;
+        Calendar calendar = Calendar.getInstance();
+
+        try {
+            JSONArray jarray = new JSONObject(result).getJSONArray("data");
+            for (int i = 0 ; i <= jarray.length()-1 ; i++) {
+                JSONObject jObject = jarray.getJSONObject(i);
+                date = jObject.optString("date");
+
+                CalendarDay day;
+                String[] time = date.split("-");
+                int year = Integer.parseInt(time[0]);
+                int month = Integer.parseInt(time[1]);
+                int dayy = Integer.parseInt(time[2].split(" ")[0]);
+
+                calendar.set(year,month-1,dayy);
+                day = CalendarDay.from(calendar);
+                dates.add(day);
+
+                Log.d("TAG","JSON test :"+year+";"+month+";"+dayy);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,getActivity()));
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    //int 형 년월일 을 날짜 데이터 포멧으로 변경한다.
+    private String stringToDateFormat(int Year,int Month,int Day){
+        String date = Year+ "-"+(Month+1) +"-"+Day+" 00:00:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        return date;
+    }
+
+    private String serverConn(String Date){
+        try {
+            result = new FoodListServer("kim",Date).execute().get();
+        } catch (Exception e){
+            e.getMessage();
+        }
+        return result;
+    }
+
+    //JSON 형식 String 데이터를 파라미터로 받는다.
+    //JSON형식 데이터를 받은 후 파싱 해준 후
+    //각각의 데이터를 막댈그래프에 보여주기 위해 값을 입력 해준다.
+    private void stringToJSON(String result){
+        String foodName = null;
+        String foodTime = null;
+
+        try {
+            JSONArray jarray = new JSONObject(result).getJSONArray("data");
+            breakfastText.setText("");
+            lunchText.setText("");
+            dinnerText.setText("");
+            for (int i = jarray.length()-1 ; i >= 0; i--) {
+                JSONObject jObject = jarray.getJSONObject(i);
+                foodName = jObject.optString("food");
+                foodTime = jObject.optString("foodTime");
+
+                if(foodTime.equals("B")){
+                    breakfastText.setText(breakfastText.getText()+" "+foodName);
+                }else if(foodTime.equals("L")){
+                    lunchText.setText(lunchText.getText()+" "+foodName);
+                }else if(foodTime.equals("D")){
+                    dinnerText.setText(dinnerText.getText()+" "+foodName);
+                }else if(foodTime.equals("B")){
+
+                }
+                Log.d("TAG","Statics Fragment : JSON test :"+foodName +" : "+ foodTime);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
