@@ -17,7 +17,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
 
@@ -29,10 +31,13 @@ import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
 import com.example.yesterday.yesterday.server.CheckTypeServer;
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
-import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.example.yesterday.yesterday.server.SelectDateServer;
+import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kakao.auth.Session;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -66,13 +71,16 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     //FragmentManager
     private FragmentManager fragmentManager;
+    //SharedPreferences
+    SharedPreferences loginSetting;
+    SharedPreferences.Editor editor;
 
     //MaterialDrawer
     private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -98,6 +106,11 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<RecyclerItem> itemsGoal;
     private ArrayList<RecyclerItem> itemsSuccess;
     private ArrayList<RecyclerItem> itemsFail;
+
+    //
+    String name;
+    //client
+    ClientLoginInfo client;
 
     boolean isPush;
 
@@ -171,6 +184,10 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //SharedPreference
+        loginSetting = getSharedPreferences("loginSetting", 0);
+        editor = loginSetting.edit();
+
         mContext = this;
 
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
@@ -184,6 +201,13 @@ public class HomeActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setTitle("어제 점심 뭐 먹었지 ?");
 
+        //Intent로 client가져오기  -> client 아직 안쓰임
+        Intent intent  = getIntent();
+        client = (ClientLoginInfo) intent.getSerializableExtra("client");
+        Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
+
+        //logout listener
+        //item5.set
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
         calendarView = (ImageView) findViewById(R.id.toolbar_calendar_button);
@@ -215,13 +239,25 @@ public class HomeActivity extends AppCompatActivity {
                         item1, item2, item3,
                         new DividerDrawerItem(),
                         sectionHeader,
-                        item4, item5
+                        item4, logout
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
+                        //logout clicked
+                        if (drawerItem == logout) {
+                            if ((client.getType()).equals("회원")) {
+                                editor.clear();
+                                editor.commit();
+                            } else if ((client.getType()).equals("카카오")) {
+                                onClickLogout();
+                            }
+                            Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
+                            Intent intent  = new Intent(HomeActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
                         return true;
                     }
                 })
@@ -621,5 +657,13 @@ public class HomeActivity extends AppCompatActivity {
             //시,분,초 곱한 뒤 밀리세컨즈로 만드려고 *1000
             am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
         }
+    }
+    private void onClickLogout() {
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                Toast.makeText(getApplicationContext(), "카카오톡 로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

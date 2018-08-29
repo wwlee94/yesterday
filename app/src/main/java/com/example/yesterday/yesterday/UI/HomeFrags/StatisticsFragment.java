@@ -362,7 +362,7 @@ public class StatisticsFragment extends Fragment {
 
 
         //Design 막대 랜덤 색상 지정
-        dataset.setColors(ColorTemplate.PASTEL_COLORS);
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         //각각 막대 값을 가리키는 숫자의 textsize 지정
         data.setValueTextSize(20f);
