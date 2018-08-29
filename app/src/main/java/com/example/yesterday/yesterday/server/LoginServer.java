@@ -12,11 +12,12 @@ import okhttp3.Response;
 
 //로그인 서버와 연결하는 클래스
 public class LoginServer extends AsyncTask<Void,Void,String> {
-    String parent_id;
-    String parent_pw;
-    String answer;
+    private String parent_id;
+    private String parent_pw;
+    private String answer;
+    //owl wifi 로컬 -> 192.168.0.75
+    //조교서버 -> 117.17.142.207
     private static final String  WEBIP = "117.17.142.207";
-
 
     public LoginServer(String parent_id,String parent_pw) { //로그인 id, pw 받기
         this.parent_id = parent_id;

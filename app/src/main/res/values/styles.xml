@@ -15,10 +15,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!-- 상태 바,네비게이션 바 투명 적용-->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">#80000000</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">#D9000000</item>
+        <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
         <!-- MaterialDrawer specific values -->
@@ -43,17 +43,18 @@
         <item name="material_drawer_divider">@color/material_drawer_divider</item>
         <item name="material_drawer_selected">@color/material_drawer_selected</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
     </style>
 
     <style name="BottomBarText">
-        <item name="android:textSize">15sp</item>
-       <!-- <item name="android:textStyle">bold</item>-->
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TabLayoutText"  parent="TextAppearance.Design.Tab">
+    <style name="TabLayoutText" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">17sp</item>
-        <!-- <item name="android:textStyle">bold</item>-->
+        <!-- <item name="android:textStyle">bold</item> -->
     </style>
-
 </resources>

@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@android:color/transparent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="54dp">
+    android:layout_height="67dp"
+    >
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_filter_vintage_black_24dp"
-        android:layout_marginStart="10dp"
-        android:layout_centerVertical="true" />
+    <!-- Swipe Layout-->
+    <include layout="@layout/recycler_per_swiped" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recycler_name"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="66dp"
-        android:textSize="18sp"
-        android:textColor="#FFFFFFFF"
-        />
+    <!-- Regular Layout-->
+    <include layout="@layout/recycler_per_regular" />
 
-</RelativeLayout>
+</FrameLayout>

@@ -4,45 +4,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeActivity"
-    >
+    tools:context=".UI.HomeActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/MaterialDrawerTheme"
         android:layout_marginTop="24dp"
-        app:title="Home Activity"
+        android:elevation="8dp"
+        android:theme="@style/MaterialDrawerTheme"
         app:titleTextColor="#FFFFFF">
+
         <ImageView
             android:id="@+id/toolbar_calendar_button"
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_gravity="right"
             android:layout_marginRight="15dp"
-            android:src="@drawable/ic_event_note_white_24dp"
-            />
+            android:src="@drawable/ic_event_note_white_24dp" />
     </android.support.v7.widget.Toolbar>
 
-    <FrameLayout
-        android:id="@+id/contentContainer"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar"
-        android:background="@drawable/mountain"
-        />
+        android:layout_height="match_parent">
 
+        <FrameLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/purple_sunset"/>
 
-    <com.roughike.bottombar.BottomBar
-        android:id="@+id/bottomBar"
+        <!-- TODO: BottomBar 홈,추가,목표,통계 지우고 아이콘만 보이게 가능!! -->
+        <com.roughike.bottombar.BottomBar
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="#6e4d7a"
+            android:elevation="8dp"
+            app:bb_activeTabColor="#FFFFFF"
+            app:bb_behavior="shy"
+            app:bb_inActiveTabAlpha="0.5"
+            app:bb_inActiveTabColor="#FFFFFF"
+            app:bb_tabXmlResource="@xml/bottombar_tabs"
+            app:bb_titleTextAppearance="@style/BottomBarText" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <!-- ToolBar 아래에 그림자 효과 -->
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="4dp"
+        android:layout_below="@+id/toolbar"
+        android:background="@drawable/shadow_270" />
+
+    <!-- BottomBar 위에 그림자 효과 -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
         android:layout_alignParentBottom="true"
-        app:bb_titleTextAppearance="@style/BottomBarText"
-        app:bb_tabXmlResource="@xml/bottombar_tabs"
-        app:bb_inActiveTabAlpha="0.5"
-        app:bb_behavior="shifting|underNavbar"
-        />
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/shadow_90" />
+
 </RelativeLayout>

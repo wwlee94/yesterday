@@ -1,20 +1,9 @@
 package com.example.yesterday.yesterday;
 
-import android.app.Application;
-
 import java.io.Serializable;
 
-public class ClientLoginInfo extends Application implements Serializable{
+public class ClientLoginInfo implements Serializable{
     private String name,type,gender,birth,id,pass;
-    private boolean log;
-
-    public boolean isLog() {
-        return log;
-    }
-
-    public void setLog(boolean log) {
-        this.log = log;
-    }
 
     public String getId() {
         return id;
@@ -63,4 +52,7 @@ public class ClientLoginInfo extends Application implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
+    //윤상이 멍청
+    //인정
+    //인정2
 }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="67dp"
+    android:orientation="vertical"
+    android:id="@+id/recycler_regularlayout"
+    >
+
+    <ImageView
+        android:id="@+id/recycler_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/ic_goal_favorites" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="67dp"
+        android:orientation="vertical">
+
+        <!-- Goal Text -->
+        <TextView
+            android:id="@+id/recycler_goal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <!-- 마감 문자열 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="마감일 : "
+                android:textColor="#F9AA33"
+                android:textSize="12sp" />
+            <!-- 마감 일 -->
+            <TextView
+                android:id="@+id/recycler_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#F9AA33"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_marginEnd="18dp"
+                android:layout_marginRight="18dp"
+                >
+                <!-- count 문자열
+                <TextView
+                    android:id="@+id/recycler_count_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 횟수 : "
+                    android:textColor="#F9AA33"
+                    android:textSize="12sp" />
+                 -->
+                <!-- currentCount 횟수 -->
+                <TextView
+                    android:id="@+id/recycler_currentcount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#F9AA33"
+                    android:textSize="12sp" />
+                <!-- count 제한횟수 -->
+                <TextView
+                    android:id="@+id/recycler_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#F9AA33"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <!-- success , fail Line -->
+    <LinearLayout
+        android:id="@+id/recycler_end_layout"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:orientation="vertical"
+        android:background="#80FF0000"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true">
+    </LinearLayout>
+</RelativeLayout>

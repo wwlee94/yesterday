@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.GoalTapFrags.TabTotalFragment">
+    tools:context=".UI.GoalTapFrags.TabTotalFragment"
+    >
     <!-- 24dp -> StatusBar Size
          ?android:actionBarSize -> toolbar Size or TabLayout Size
     -->
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview"
+            android:id="@+id/total_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingRight="10dp"

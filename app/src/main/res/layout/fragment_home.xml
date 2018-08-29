@@ -3,80 +3,88 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeFrags.HomeFragment"
-    android:layout_marginTop="24dp"
-    >
+    android:layout_centerVertical="true"
+    tools:context=".UI.HomeFrags.HomeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="?android:actionBarSize"
-        >
-
-        <TextView
-            android:id="@+id/textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Home Fragment"
-            android:layout_marginTop="10dp"
-            android:textSize="25sp"
-            android:textColor="#FFFFFF"
-            />
-
-        <TextView
-            android:id="@+id/goaltext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:text="목표 설정 공지 란"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF"
-            />
-
-        <Button
-            android:id="@+id/menubutton"
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="80dp"
-            android:text="먹은 메뉴"
-            android:textSize="12sp"
-            android:textColor="#000000"
-            android:background="@drawable/border_button"
-            />
-
-        <RelativeLayout
-            android:id="@+id/border"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/border"
-            android:layout_gravity="center"
-            >
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </android.support.v4.view.ViewPager>
-
-        </RelativeLayout>
+        android:layout_marginTop="24dp">
 
         <LinearLayout
-            android:id="@+id/linear_root"
-            android:layout_width="150dp"
-            android:layout_height="25dp"
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?android:actionBarSize"
+            android:layout_marginBottom="60dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="목표 설정 공지 란"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="40dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/recycler_line" />
+
+            <LinearLayout
+                android:id="@+id/linear_favorite_goal"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/menubutton"
+                android:layout_width="70dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="90dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_button"
+                android:text="먹은 메뉴"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+
+            <RelativeLayout
+                android:id="@+id/border"
+                android:layout_width="260dp"
+                android:layout_height="210dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/border"
+                android:elevation="8dp"
+                >
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_root"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" />
 
         </LinearLayout>
-
     </LinearLayout>
-
 </FrameLayout>

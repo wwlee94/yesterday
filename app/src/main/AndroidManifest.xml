@@ -2,14 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.yesterday.yesterday">
 
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="8" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 진동 허용-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".GlobalApplication"
@@ -24,18 +22,21 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".UI.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- HomeActivity -->
+        <activity android:name=".UI.MainActivity"
 
-        <activity android:name=".UI.HomeActivity" />
-        <activity android:name=".UI.LoginActivity" />
+           />
         <!-- 로그인 , 회원 가입 -->
+        <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity" />
         <!-- 메뉴 추가 , 수정 & 오늘,어제 먹은 메뉴 보여주는 Activity -->
         <activity android:name=".UI.TodayMenuActivity" />
@@ -43,7 +44,12 @@
         <!-- 달력 누르면 그 날 먹은 메뉴 보여주는 Activity -->
         <activity android:name=".UI.CalendarActivity" />
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
-        <activity android:name=".UI.GoalAddActivity"/>
+        <activity android:name=".UI.AddGoalActivity"/>
+
+        <!-- 브로드캐스트 리시버 설정 -->
+        <receiver android:name=".PushAlarm.AlarmProgressReceiver"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>
