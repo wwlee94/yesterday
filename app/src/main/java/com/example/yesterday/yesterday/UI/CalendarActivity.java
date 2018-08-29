@@ -128,6 +128,7 @@ public class CalendarActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,CalendarActivity.this));
+
     }
 
     //int 형 년월일 을 날짜 데이터 포멧으로 변경한다.

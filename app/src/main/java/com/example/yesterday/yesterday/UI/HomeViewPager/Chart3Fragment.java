@@ -56,6 +56,7 @@ public class Chart3Fragment extends Fragment {
 
         DrawCalendar();
 
+
         return rootView;
     }
 
@@ -111,5 +112,7 @@ public class Chart3Fragment extends Fragment {
                 new SundayDecorator(),
                 new SaturdayDecorator(),
                 new OneDayDecorator());
+
+        materialCalendarView.setPagingEnabled(false);
     }
 }
