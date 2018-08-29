@@ -56,6 +56,7 @@ public class Chart3Fragment extends Fragment {
 
         DrawCalendar();
 
+
         return rootView;
     }
 
@@ -98,7 +99,7 @@ public class Chart3Fragment extends Fragment {
 
     private void DrawCalendar() {
         materialCalendarView.state().edit()
-                .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth()-1, 1))
+                .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth()-3, 1))
                 .setMaximumDate(CalendarDay.today())
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
@@ -109,5 +110,7 @@ public class Chart3Fragment extends Fragment {
                 new SundayDecorator(),
                 new SaturdayDecorator(),
                 new OneDayDecorator());
+
+        materialCalendarView.setPagingEnabled(false);
     }
 }
