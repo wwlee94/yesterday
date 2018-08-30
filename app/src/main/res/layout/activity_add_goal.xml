@@ -30,8 +30,8 @@
         android:layout_marginTop="10dp"
         android:hint="음식을 입력하세요."
         android:padding="10dp"
-        android:textColorHint="#000000"
-        android:textColor="#000000"
+        android:textColorHint="#80FFFFFF"
+        android:textColor="#FFFFFF"
         android:textSize="17sp"
         android:gravity="center"
         />
@@ -56,8 +56,8 @@
         android:layout_marginTop="10dp"
         android:hint="횟수를 입력하세요."
         android:padding="10dp"
-        android:textColorHint="#000000"
-        android:textColor="#000000"
+        android:textColorHint="#80FFFFFF"
+        android:textColor="#FFFFFF"
         android:textSize="17sp"
         android:gravity="center"
         />
@@ -83,6 +83,7 @@
         android:layout_gravity="center"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
+        android:theme="@style/datepicker"
        />
 
     <!-- 저장 버튼 -->
@@ -91,9 +92,9 @@
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="#000000"
+        android:background="#80FFFFFF"
         android:text="저장하기"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"
         />
