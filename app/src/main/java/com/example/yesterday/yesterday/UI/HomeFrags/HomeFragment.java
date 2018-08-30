@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,6 +67,8 @@ public class HomeFragment extends Fragment {
     private Thread thread;
     private Thread touchThread;
 
+    SharedPreferences loginPre;
+
     //현재 HomeFragment가 화면에 보이면 isrun :true 안보이면 false
     private boolean isRun;
     //터치 or 드래그 중이면 true 아니면 false
@@ -79,6 +82,7 @@ public class HomeFragment extends Fragment {
         arrFragment[0] = new Chart1Fragment();
         arrFragment[1] = new Chart2Fragment();
         arrFragment[2] = new Chart3Fragment();
+
 
         //indicator
         indicator = new ImageView[arrFragment.length];

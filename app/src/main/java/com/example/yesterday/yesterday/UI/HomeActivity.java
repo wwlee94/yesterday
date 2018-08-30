@@ -72,8 +72,8 @@ public class HomeActivity extends AppCompatActivity {
     //FragmentManager
     private FragmentManager fragmentManager;
     //SharedPreferences
-    SharedPreferences loginSetting;
-    SharedPreferences.Editor editor;
+    public SharedPreferences loginSetting;
+    public SharedPreferences.Editor editor;
 
     //MaterialDrawer
     private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
@@ -135,10 +135,9 @@ public class HomeActivity extends AppCompatActivity {
         itemsSuccess = new ArrayList<RecyclerItem>();
         itemsFail = new ArrayList<RecyclerItem>();
 
-        isPush = true;
+        client = new ClientLoginInfo();
 
-        //TODO: DB 갱신
-        reNewClientGoal();
+        isPush = true;
 
     }
 
@@ -185,8 +184,10 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         //SharedPreference
-        loginSetting = getSharedPreferences("loginSetting", 0);
+        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
         editor = loginSetting.edit();
+        Log.i("ID",loginSetting.getString("gggggID",""));
+
 
         mContext = this;
 
@@ -204,7 +205,11 @@ public class HomeActivity extends AppCompatActivity {
         //Intent로 client가져오기  -> client 아직 안쓰임
         Intent intent  = getIntent();
         client = (ClientLoginInfo) intent.getSerializableExtra("client");
+        Log.i("ID",client.getId());
         Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
+
+        //TODO: DB 갱신
+        reNewClientGoal();
 
         //logout listener
         //item5.set
@@ -227,7 +232,7 @@ public class HomeActivity extends AppCompatActivity {
                 .withProfileImagesClickable(false)              //프로필이미지선택X
                 //.withSavedInstance(savedInstanceState)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("woowonLee").withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
+                        new ProfileDrawerItem().withName(client.getName()).withIcon(getResources().getDrawable(R.drawable.profile))
                 )
                 .build();
         //create the drawer and remember the `Drawer` result object
@@ -253,6 +258,8 @@ public class HomeActivity extends AppCompatActivity {
                                 editor.commit();
                             } else if ((client.getType()).equals("카카오")) {
                                 onClickLogout();
+                                editor.clear();
+                                editor.commit();
                             }
                             Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
                             Intent intent  = new Intent(HomeActivity.this, LoginActivity.class);
@@ -402,7 +409,8 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectGoalServer("admin").execute().get();
+            result = new SelectGoalServer(loginSetting.getString("ID","")).execute().get();
+            Log.i("ID",client.getId());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -423,7 +431,6 @@ public class HomeActivity extends AppCompatActivity {
             //jsonArray.length() -> 각각의 {id,food,...} 전체의 갯수
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject list = (JSONObject) jsonArray.get(i);
-
                 String userID = list.getString("USERID");
                 String food = list.getString("FOOD");
                 int count = list.getInt("COUNT");
@@ -447,7 +454,7 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //fooddata 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectDateServer("admin").execute().get();
+            result = new SelectDateServer(loginSetting.getString("ID","")).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -544,7 +551,7 @@ public class HomeActivity extends AppCompatActivity {
 
                                     //success 가 존재 한다면 지워
                                     try {
-                                        result = new DeleteGoalServer("admin", items.get(k).getFood(), items.get(k).getType()).execute().get();
+                                        result = new DeleteGoalServer(loginSetting.getString("ID",""), items.get(k).getFood(), items.get(k).getType()).execute().get();
                                         Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -565,7 +572,7 @@ public class HomeActivity extends AppCompatActivity {
                         //중복 체크 후 DB 연동 Type 변경 코드
                         //
                         try {
-                            result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
+                            result = new CheckTypeServer(loginSetting.getString("ID",""), items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
                             Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
                         } catch (Exception e) {
                             e.printStackTrace();

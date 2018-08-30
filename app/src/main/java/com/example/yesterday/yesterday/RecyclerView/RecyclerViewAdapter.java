@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     String result;
 
     int favoriteCount;
+
 
     //isSwiped = true 되었을 때 새로운 view로 전환 되는 데 또 스와이프 안되게하려고
     //useSwipe true:swipe 가능 false:swipe 불가
