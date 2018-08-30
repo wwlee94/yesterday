@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,6 +39,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class CalendarFragment extends Fragment {
 
     ViewGroup root;
@@ -58,6 +61,8 @@ public class CalendarFragment extends Fragment {
 
     String foodname;
 
+    SharedPreferences loginPre;
+
     ArrayList<CalendarDay> dates = new ArrayList<>();
 
     public CalendarFragment() {
@@ -67,6 +72,9 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        Log.i("loginPre",loginPre.getString("ID",""));
 
     }
 
@@ -136,7 +144,7 @@ public class CalendarFragment extends Fragment {
     }
     private String dateServerConn(){
         try {
-            dateResult = new DateServer("kim",foodname).execute().get();
+            dateResult = new DateServer(loginPre.getString("ID",""),foodname).execute().get();
         } catch (Exception e){
             e.getMessage();
         }

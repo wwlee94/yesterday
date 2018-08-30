@@ -42,13 +42,12 @@ public class LoginActivity extends AppCompatActivity {
     EditText id_text, pw_text;
     Button login_btn, join_btn;
     SessionCallback callback;
-    CheckBox auto_check;
     String sId, sPw;
     ClientLoginInfo client, logoutClient;
     String result = "";
 
     //자동 로그인 SharedPreferences 객체 생성
-    SharedPreferences loginSetting;
+    public SharedPreferences loginSetting;
     SharedPreferences.Editor editor;
 
     @Override
@@ -66,27 +65,20 @@ public class LoginActivity extends AppCompatActivity {
         login_btn = (Button) findViewById(R.id.login_btn);
 
         join_btn = (Button) findViewById(R.id.join_btn);
-        auto_check = (CheckBox) findViewById(R.id.auto_check);
 
         client = new ClientLoginInfo();
         client.setLog(false);
         logoutClient = new ClientLoginInfo();
+
         //login SharedPreferences
-        loginSetting = getSharedPreferences("loginSetting", 0);
+        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
         editor = loginSetting.edit();
 
-        //auto_check true면 id, pw setting
-        if (loginSetting.getBoolean("Auto_Login_enabled", false)) {
-            //id_text.setText(loginSetting.getString("ID",""));
-            //pw_text.setText(loginSetting.getString("PW",""));
-            auto_check.setChecked(true);
-            sId = loginSetting.getString("ID", "");
-            sPw = loginSetting.getString("PW", "");
-            Log.d("login","outoLogin");
-            MyLogin(sId, sPw);
+        if(loginSetting.getBoolean("Login",false)){
+            MyLogin(loginSetting.getString("ID",""),loginSetting.getString("PW",""));
         }
 
-        //auto_check click listener
+        /*//auto_check click listener
         auto_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -100,12 +92,11 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                 }
             }
-        });
+        });*/
 
         login_btn.setOnClickListener(new View.OnClickListener() {  // 로그인 버튼 리스너
             @Override
             public void onClick(View v) {
-                // 사용자가 입력한 id와 pw값을 받아옴 ..... 리스너 안에서 가져와야함 ㅠ
                 sId = id_text.getText().toString();   // id
                 sPw = pw_text.getText().toString();   // password
                 MyLogin(sId, sPw);
@@ -133,12 +124,25 @@ public class LoginActivity extends AppCompatActivity {
 
         if (result.equals("fail")) {
             Toast.makeText(getApplicationContext(), "로그인 실패 입니다.", Toast.LENGTH_LONG).show();
-        } else {
+        }else if(result.equals("noId")){
+            Toast.makeText(getApplicationContext(), "아이디가 존재 하지 않습니다.", Toast.LENGTH_LONG).show();
+        }
+        else if(result.equals("pwError")){
+            Toast.makeText(getApplicationContext(), "비밀번호가 틀립니다.", Toast.LENGTH_LONG).show();
+        }
+        else {
+            editor.putString("ID", id);
+            editor.putString("PW", pw);
+            editor.putBoolean("Login",true);
             client.setType("회원");
             client.setName(result);
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.putExtra("client", client);
-            startActivity(intent);
+            client.setId(id);
+            Log.i("id",loginSetting.getString("ID",""));
+            if(editor.commit()) {
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("client", client);
+                startActivity(intent);
+            }
         }
     }
 
@@ -195,8 +199,9 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e("UserProfile", userProfile.getId() + "");
 
                     long number = userProfile.getId();
-                    client.setName(userProfile.getNickname());
+                    editor.putString("ID", userProfile.getNickname());
                     client.setType("카카오");
+                    sId = loginSetting.getString("ID", "");
 
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.putExtra("client", client);

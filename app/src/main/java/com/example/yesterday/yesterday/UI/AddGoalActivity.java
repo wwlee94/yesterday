@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,8 +36,8 @@ public class AddGoalActivity extends AppCompatActivity {
     int favorite = 0;
     String type = "default";
 
-    //임시
-    String userID = "admin";
+
+    SharedPreferences loginSetting;
 
     Button button;
 
@@ -46,6 +47,8 @@ public class AddGoalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_goal);
+
+        loginSetting = getSharedPreferences("loginSetting", 0);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("목표 추가");
@@ -83,14 +86,14 @@ public class AddGoalActivity extends AppCompatActivity {
 
                 // AsyncTask 객체 생성 -> 목표 정보 DB에 INSERT
                 try {
-                    result = new AddGoalServer(userID, food, count, startDate, endDate, favorite, type).execute().get();
+                    result = new AddGoalServer(loginSetting.getString("ID",""), food, count, startDate, endDate, favorite, type).execute().get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     if (result.equals("success")) {
                         //DB 연동 전 intent로 데이터 전송한 것
                         Intent intent = new Intent();
-                        intent.putExtra("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                        intent.putExtra("USERID", loginSetting.getString("ID",""));//나중에 삭제 예정 전역변수 이용하면 됌.
                         intent.putExtra("FOOD", food);
                         intent.putExtra("COUNT", count);
                         intent.putExtra("STARTDATE", startDate);

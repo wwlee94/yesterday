@@ -1,6 +1,7 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -53,6 +54,8 @@ public class CalendarActivity extends AppCompatActivity {
 
     ArrayList<CalendarDay> dates = new ArrayList<>();
 
+    SharedPreferences loginSetting;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +65,8 @@ public class CalendarActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         foodname = intent.getStringExtra("foodname");
+
+        loginSetting = getSharedPreferences("loginSetting", 0);
 
         if(foodname != null) {
             dateServerConn();
@@ -94,7 +99,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private String dateServerConn(){
         try {
-            dateResult = new DateServer("kim",foodname).execute().get();
+            dateResult = new DateServer(loginSetting.getString("ID",""),foodname).execute().get();
         } catch (Exception e){
             e.getMessage();
         }

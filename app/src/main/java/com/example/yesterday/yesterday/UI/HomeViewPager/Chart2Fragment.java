@@ -1,7 +1,9 @@
 package com.example.yesterday.yesterday.UI.HomeViewPager;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Chart2Fragment extends Fragment {
 
     private ViewGroup rootView;
@@ -39,17 +43,29 @@ public class Chart2Fragment extends Fragment {
 
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
 
+    SharedPreferences loginPre;
+
     public Chart2Fragment() {
         // Required empty public constructor
+       // stringToJSON(serverConn());
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        Log.i("loginPre",loginPre.getString("ID",""));
+
         stringToJSON(serverConn());
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView=(ViewGroup)inflater.inflate(R.layout.fragment_chart2,container,false);
 
         pieChart = (PieChart)rootView.findViewById(R.id.piechart);
+
+        // id 값 가져오기
+        loginPre = getActivity().getSharedPreferences("loginSetting", 0);
 
         DrawChart(pieChart);
 
@@ -59,7 +75,7 @@ public class Chart2Fragment extends Fragment {
 
     private String serverConn(){
         try {
-            result = new BarchartServer("kim").execute().get();
+            result = new BarchartServer(loginPre.getString("ID","")).execute().get();
         } catch (Exception e){
             e.getMessage();
         }

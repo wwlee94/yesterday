@@ -32,7 +32,6 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public ItemTouchHelperCallback(RecyclerViewAdapter adapter, Context context) {
         mAdapter = adapter;
         this.context = context;
-
     }
 
     //RecyclerView에서 드래그 된지 알기 위해서 오버라이드

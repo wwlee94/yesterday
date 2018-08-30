@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -84,6 +85,8 @@ public class StatisticsFragment extends Fragment {
 
     HorizontalBarChart horizontalBarChart;
 
+    SharedPreferences loginPre;
+
     public StatisticsFragment() {
         // Required empty public constructor
     }
@@ -101,7 +104,6 @@ public class StatisticsFragment extends Fragment {
 
         foodcount = 0;
         maxfoodvalue = 0;
-
     }
 
 
@@ -116,6 +118,9 @@ public class StatisticsFragment extends Fragment {
 
         //막대바 차트 생성
         horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.chart);
+
+        // id 값 가져오기
+        loginPre = getActivity().getSharedPreferences("loginSetting", 0);
 
         horizontalBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -147,7 +152,6 @@ public class StatisticsFragment extends Fragment {
         //시작 종료 날짜 보여주는 텍스트
         startDateView = (TextView)rootView.findViewById(R.id.textView);
         endDateView = (TextView)rootView.findViewById(R.id.textView2);
-
 
         // 각각 시작 종료  두가지의 날짜(년,월,일)값을 저장 해두고, 통계를 db값에서 불러온다.
         final Calendar c = Calendar.getInstance();
@@ -297,7 +301,7 @@ public class StatisticsFragment extends Fragment {
     //(ex [{count=5, food=커피}, {count=4, food=초밥}, {count=3, food=술}, {count=2, food=김치찌개}] )
     private String serverConn(String startDate,String endDate){
         try {
-            result = new BarchartServer("kim",startDate,endDate).execute().get();
+            result = new BarchartServer(loginPre.getString("ID",""),startDate,endDate).execute().get();
         } catch (Exception e){
             e.getMessage();
         }
