@@ -1,26 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".UI.HomeFrags.AddFragment"
-    android:layout_marginTop="84dp"
+    android:layout_marginTop="94dp"
     >
 
-    <EditText
+    <com.example.yesterday.yesterday.EditText.BackPressEditText
         android:id="@+id/editSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="검색어를 입력하세요."/>
+        android:hint="검색어를 입력하세요."
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:lines="1"
+        />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/listview_default"
+        android:layout_below="@id/editSearch">
+
+
+        <ListView
+            android:id="@+id/frequentlyListView"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:choiceMode="multipleChoice"/>
+
+        <Button
+            android:id="@+id/rightButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="98dp"
+            android:text="right" />
+
+        <ListView
+            android:id="@+id/selectListView"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:choiceMode="multipleChoice"/>
+
+        <Button
+            android:id="@+id/leftButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="98dp"
+            android:text="delete" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview_search"
+        android:layout_below="@id/editSearch">
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="500dp"
         android:divider="#999999"
         android:dividerHeight="1dp"/>
+    </RelativeLayout>
 
-
-
-</LinearLayout>
+</RelativeLayout>

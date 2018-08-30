@@ -14,8 +14,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
@@ -574,5 +576,13 @@ public class HomeActivity extends AppCompatActivity {
             //시,분,초 곱한 뒤 밀리세컨즈로 만드려고 *1000
             am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
         }
+    }
+    public boolean onKeyPreIme(int KeyCode,KeyEvent event){
+        if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+            Toast.makeText(getApplicationContext(),"back",Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+        return false;
     }
 }
