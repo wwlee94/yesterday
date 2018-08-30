@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,11 +32,10 @@ import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
 import com.example.yesterday.yesterday.server.CheckTypeServer;
 import com.example.yesterday.yesterday.server.DeleteGoalServer;
-import com.example.yesterday.yesterday.server.SelectDateServer;
 import com.example.yesterday.yesterday.server.SelectGoalServer;
+import com.example.yesterday.yesterday.server.SelectDateServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.kakao.auth.Session;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -138,6 +138,9 @@ public class HomeActivity extends AppCompatActivity {
         client = new ClientLoginInfo();
 
         isPush = true;
+
+        //TODO: DB 갱신
+        reNewClientGoal();
 
     }
 
@@ -314,27 +317,21 @@ public class HomeActivity extends AppCompatActivity {
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if (tabId == R.id.tab_home) {
                     replaceFragment(homeFragment, "HOME");
-                    Log.d("HomeFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_add) {
                     replaceFragment(addFragment, "ADD");
-                    //2131296560
-                    Log.d("AddFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_goal) {
                     replaceFragment(goalFragment, "GOAL");
-                    Log.d("GoalFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_statistics) {
                     replaceFragment(statisticsFragment, "STATISTICS");
-                    Log.d("StatisticsFragment", "" + tabId);
                 }
             }
         });
-
 
         //sharedfreference에 items 저장
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
@@ -431,6 +428,7 @@ public class HomeActivity extends AppCompatActivity {
             //jsonArray.length() -> 각각의 {id,food,...} 전체의 갯수
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject list = (JSONObject) jsonArray.get(i);
+
                 String userID = list.getString("USERID");
                 String food = list.getString("FOOD");
                 int count = list.getInt("COUNT");
@@ -572,7 +570,7 @@ public class HomeActivity extends AppCompatActivity {
                         //중복 체크 후 DB 연동 Type 변경 코드
                         //
                         try {
-                            result = new CheckTypeServer(loginSetting.getString("ID",""), items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
+                            result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
                             Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -664,6 +662,14 @@ public class HomeActivity extends AppCompatActivity {
             //시,분,초 곱한 뒤 밀리세컨즈로 만드려고 *1000
             am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
         }
+    }
+    public boolean onKeyPreIme(int KeyCode,KeyEvent event){
+        if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+            Toast.makeText(getApplicationContext(),"back",Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+        return false;
     }
     private void onClickLogout() {
         UserManagement.requestLogout(new LogoutResponseCallback() {
