@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.HomeFrags.AddFragment"
     android:layout_marginTop="94dp"
-    >
+    tools:context=".UI.HomeFrags.AddFragment">
 
     <com.example.yesterday.yesterday.EditText.BackPressEditText
         android:id="@+id/editSearch"
@@ -13,64 +12,70 @@
         android:layout_height="wrap_content"
         android:hint="검색어를 입력하세요."
         android:imeOptions="actionSearch"
-        android:singleLine="true"
         android:lines="1"
-        />
+        android:singleLine="true" />
 
     <RelativeLayout
+        android:id="@+id/listview_default"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:id="@+id/listview_default"
         android:layout_below="@id/editSearch">
 
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:text="자주찾는 메뉴"
+            android:textSize="18sp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentTop="true"
+            />
 
         <ListView
             android:id="@+id/frequentlyListView"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:choiceMode="multipleChoice"/>
-
-        <Button
-            android:id="@+id/rightButton"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="98dp"
-            android:text="right" />
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/text1"
+            android:choiceMode="multipleChoice" />
 
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:text="추가할 메뉴"
+            android:textSize="18sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            />
         <ListView
             android:id="@+id/selectListView"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:choiceMode="multipleChoice"/>
-
-        <Button
-            android:id="@+id/leftButton"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="98dp"
-            android:text="delete" />
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_below="@+id/text2"
+            android:choiceMode="multipleChoice" />
+
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/listview_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listview_search"
         android:layout_below="@id/editSearch">
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:divider="#999999"
-        android:dividerHeight="1dp"/>
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:divider="#999999"
+            android:dividerHeight="1dp" />
     </RelativeLayout>
 
 </RelativeLayout>

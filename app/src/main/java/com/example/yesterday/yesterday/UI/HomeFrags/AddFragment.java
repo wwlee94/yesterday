@@ -41,35 +41,34 @@ public class AddFragment extends Fragment {
     private ViewGroup rootView;
 
     private BackPressEditText editSearch;        // 검색어를 입력할 Input 창
-    
+
     private List<String> searchlist;          // 데이터를 넣은 리스트변수
     private ArrayList<String> searchArrayList;
     private ListView searchListview;                   // 검색을 보여줄 리스트변수    
     private SearchAdapter searchAdapter;               // 리스트뷰에 연결할 아답터
-    
 
-    private List<String>  frequentlyFoodList;
+
+    private List<String> frequentlyFoodList;
     private ArrayList<String> frequentlyArrayList;
     private ListView frequentlyListView;
     private CustomAdapter frequentAdapter;
 
-    private List<String>  selectFoodList;
+    private List<String> selectFoodList;
     private ArrayList<String> selectlyArrayList;
-    private ListView selectListView;    
+    private ListView selectListView;
     private CustomAdapter selectAdapter;
 
     private RelativeLayout listviewDefault;
     private RelativeLayout listviewSearch;
 
-    InputMethodManager imm ;
+    InputMethodManager imm;
 
     public AddFragment() {
 
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -77,21 +76,20 @@ public class AddFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_add,container,false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_add, container, false);
 
-        editSearch = (BackPressEditText)rootView.findViewById(R.id.editSearch);
-        Button rightButton = (Button)rootView.findViewById(R.id.rightButton);
-        Button leftButton = (Button)rootView.findViewById(R.id.leftButton);
-        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        editSearch = (BackPressEditText) rootView.findViewById(R.id.editSearch);
+
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // 리스트를 생성한다.
         searchlist = new ArrayList<String>();
         frequentlyFoodList = new ArrayList<String>();
         selectFoodList = new ArrayList<String>();
 
-        searchListview = (ListView)rootView.findViewById(R.id.listView) ;
-        frequentlyListView = (ListView)rootView.findViewById(R.id.frequentlyListView) ;
-        selectListView = (ListView)rootView.findViewById(R.id.selectListView) ;
+        searchListview = (ListView) rootView.findViewById(R.id.listView);
+        frequentlyListView = (ListView) rootView.findViewById(R.id.frequentlyListView);
+        selectListView = (ListView) rootView.findViewById(R.id.selectListView);
 
         searchListview.setVisibility(View.INVISIBLE);
 
@@ -114,9 +112,9 @@ public class AddFragment extends Fragment {
         selectlyArrayList.addAll(selectFoodList);
 
         // 리스트에 연동될 아답터를 생성한다.
-        searchAdapter = new SearchAdapter(searchlist,getActivity());
-        frequentAdapter = new CustomAdapter(frequentlyArrayList,getActivity(),true) ;
-        selectAdapter = new CustomAdapter(selectlyArrayList,getActivity(),false);
+        searchAdapter = new SearchAdapter(searchlist, getActivity());
+        frequentAdapter = new CustomAdapter(frequentlyFoodList, getActivity(), true);
+        selectAdapter = new CustomAdapter(selectFoodList, getActivity(), false);
 
         // 리스트뷰에 아답터를 연결한다.
         searchListview.setAdapter(searchAdapter);
@@ -144,28 +142,14 @@ public class AddFragment extends Fragment {
             }
         });
 
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
+                if (hasFocus) {
                     searchListview.setVisibility(View.VISIBLE);
                     listviewDefault.setVisibility(View.INVISIBLE);
                     listviewSearch.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     searchListview.setVisibility(View.INVISIBLE);
                     listviewSearch.setVisibility(View.INVISIBLE);
                     listviewDefault.setVisibility(View.VISIBLE);
@@ -208,14 +192,29 @@ public class AddFragment extends Fragment {
             }
         });
 
+        frequentlyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                addSelectFoodList(frequentlyArrayList.get(position));
+            }
+        });
+
+        selectListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                selectFoodList.remove(position);
+                selectAdapter.notifyDataSetChanged();
+            }
+        });
 
 
         // Inflate the layout for this fragment
         return rootView;
     }
 
-    public void addSelectFoodList(String foodstr){
-        selectFoodList.clear();
+    public void addSelectFoodList(String foodstr) {
+        //selectFoodList.clear();
         selectFoodList.add(foodstr);
         selectlyArrayList.addAll(selectFoodList);
         selectAdapter.notifyDataSetChanged();
@@ -233,14 +232,11 @@ public class AddFragment extends Fragment {
             searchlist.addAll(searchArrayList);
         }
         // 문자 입력을 할때..
-        else
-        {
+        else {
             // 리스트의 모든 데이터를 검색한다.
-            for(int i = 0;i < searchArrayList.size(); i++)
-            {
+            for (int i = 0; i < searchArrayList.size(); i++) {
                 // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
-                if (searchArrayList.get(i).toLowerCase().contains(charText))
-                {
+                if (searchArrayList.get(i).toLowerCase().contains(charText)) {
                     // 검색된 데이터를 리스트에 추가한다.
                     searchlist.add(searchArrayList.get(i));
                 }
@@ -251,7 +247,7 @@ public class AddFragment extends Fragment {
     }
 
     // 검색에 사용될 데이터를 리스트에 추가한다.
-    private void settingsearchArrayList(){
+    private void settingsearchArrayList() {
         searchlist.add("abc");
         searchlist.add("bcd");
         searchlist.add("cde");
@@ -279,13 +275,13 @@ public class AddFragment extends Fragment {
         searchlist.add("창모");
         searchlist.add("허영지");
     }
-    
-    public void settingfrequentlyArrayList(String result){
+
+    public void settingfrequentlyArrayList(String result) {
         String food_name = null;
 
         try {
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
-            for (int i = jarray.length()-1 ; i >= 0; i--) {
+            for (int i = jarray.length() - 1; i >= 0; i--) {
                 JSONObject jObject = jarray.getJSONObject(i);
                 food_name = jObject.optString("food");
                 frequentlyFoodList.add(food_name);
@@ -295,16 +291,16 @@ public class AddFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    
-    public void settingselectListView(){
-        
+
+    public void settingselectListView() {
+
     }
 
-    private String serverConn(){
+    private String serverConn() {
         String result = null;
         try {
             result = new BarchartServer("kim").execute().get();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.getMessage();
         }
 
