@@ -40,7 +40,6 @@
         <activity android:name=".UI.JoinActivity" />
         <!-- 메뉴 추가 , 수정 & 오늘,어제 먹은 메뉴 보여주는 Activity -->
         <!-- 달력 누르면 그 날 먹은 메뉴 보여주는 Activity -->
-        <activity android:name=".UI.CalendarActivity" />
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
         <activity android:name=".UI.AddGoalActivity"/>
 

@@ -1,11 +1,13 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
@@ -15,6 +17,7 @@ public class JoinActivity extends AppCompatActivity {
 
     EditText new_id_text,new_pw_text,new_name_text;
     Button join_btn;
+    TextView actionBarHeader;
     String new_id,new_pw,new_name;
     private static final String  WEBIP = "192.168.0.72";
     String result;
@@ -25,6 +28,13 @@ public class JoinActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.actionbar_header);
+
+        actionBarHeader = (TextView) findViewById(R.id.actionbar_text);
+        actionBarHeader.setText("회원 가입");
 
         new_id_text = (EditText) findViewById(R.id.new_id_text);
         new_pw_text = (EditText) findViewById(R.id.new_pw_text);

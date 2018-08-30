@@ -1,11 +1,11 @@
 package com.example.yesterday.yesterday.UI;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -15,25 +15,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
-import com.example.yesterday.yesterday.LoginSharedPreference;
 import com.example.yesterday.yesterday.server.LoginServer;
 import com.example.yesterday.yesterday.R;
 import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
-import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
-import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
-import com.kakao.util.helper.log.Logger;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 public class LoginActivity extends AppCompatActivity {
     EditText id_text, pw_text;
     Button login_btn, join_btn;
+    TextView actionBarHeader;
     SessionCallback callback;
     CheckBox auto_check;
     String sId, sPw;
@@ -57,6 +53,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //카카오 해시키 가져오기
         getHashKey();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.actionbar_header);
+
+        actionBarHeader = (TextView) findViewById(R.id.actionbar_text);
+        actionBarHeader.setText("로그인");
+
 
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
