@@ -138,10 +138,6 @@ public class HomeActivity extends AppCompatActivity {
         client = new ClientLoginInfo();
 
         isPush = true;
-
-        //TODO: DB 갱신
-        reNewClientGoal();
-
     }
 
     @Override
@@ -189,7 +185,10 @@ public class HomeActivity extends AppCompatActivity {
         //SharedPreference
         loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
         editor = loginSetting.edit();
-        Log.i("ID",loginSetting.getString("gggggID",""));
+        Log.i("ID",loginSetting.getString("ID",""));
+
+        //TODO: DB 갱신
+        reNewClientGoal();
 
 
         mContext = this;

@@ -1,18 +1,16 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
-import android.app.Activity;
+
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.Context;
-import android.content.Intent;
+
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,11 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.UI.CalendarActivity;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.BarchartServer;
-import com.example.yesterday.yesterday.server.LoginServer;
-import com.github.mikephil.charting.charts.Chart;
+
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -35,8 +31,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
+
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -49,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+
 
 //통계 화면 Fragment
 public class StatisticsFragment extends Fragment {

@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.UI.CalendarActivity;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.decorators.EventDecorator;
 import com.example.yesterday.yesterday.decorators.OneDayDecorator;
