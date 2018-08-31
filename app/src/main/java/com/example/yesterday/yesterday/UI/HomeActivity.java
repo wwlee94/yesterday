@@ -76,11 +76,12 @@ public class HomeActivity extends AppCompatActivity {
     public SharedPreferences.Editor editor;
 
     //MaterialDrawer
-    private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem home = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
+    private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(2).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem push = new PrimaryDrawerItem().withIdentifier(2).withName("푸시알람설정").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem info = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
+
+
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -190,7 +191,6 @@ public class HomeActivity extends AppCompatActivity {
         //TODO: DB 갱신
         reNewClientGoal();
 
-
         mContext = this;
 
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
@@ -234,7 +234,7 @@ public class HomeActivity extends AppCompatActivity {
                 .withProfileImagesClickable(false)              //프로필이미지선택X
                 //.withSavedInstance(savedInstanceState)
                 .addProfiles(
-                        new ProfileDrawerItem().withName(client.getName()).withIcon(getResources().getDrawable(R.drawable.profile))
+                        new ProfileDrawerItem().withName(loginSetting.getString("ID","")).withIcon(getResources().getDrawable(R.drawable.profile))
                 )
                 .build();
         //create the drawer and remember the `Drawer` result object
@@ -243,18 +243,32 @@ public class HomeActivity extends AppCompatActivity {
                 .withToolbar(toolbar)                           //toolbar에 drawer추가
                 .withAccountHeader(headerResult)                //drawer에 계정 정보 추가
                 .addDrawerItems(                                //drawer에 들어갈 item추가
-                        item1, item2, item3,
-                        new DividerDrawerItem(),
-                        sectionHeader,
-                        item4, logout
+                        home,
+                        //new DividerDrawerItem(),
+                        //sectionHeader,
+                        push,info,
+                         logout
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
+                        //home 버튼을 눌렀을 때 home으로 돌아가기
+                        if(drawerItem == home){
+                            replaceFragment(homeFragment, "HOME");
+                            drawerResult.closeDrawer();
+                        }
+                        // 푸시알람 설정
+                        else if(drawerItem == push){
+
+                        }
+                        // 개인정보 보기 or 수정
+                        else if(drawerItem == info){
+
+                        }
                         //logout clicked
-                        if (drawerItem == logout) {
+                        else if (drawerItem == logout) {
                             if ((client.getType()).equals("회원")) {
                                 editor.clear();
                                 editor.commit();

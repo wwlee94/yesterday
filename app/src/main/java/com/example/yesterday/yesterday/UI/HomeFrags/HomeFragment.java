@@ -132,6 +132,7 @@ public class HomeFragment extends Fragment {
                 return arrFragment.length;
             }
         });
+
         //페이지가 바뀔 때 이벤트 처리
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -191,7 +192,6 @@ public class HomeFragment extends Fragment {
             }
             linearLayout.addView(indicator[i]);
         }
-
 
         //ViewPager의 mScroller를 이용, 권한 허용하여 원하는 myPager에 duration 설정
         /*
