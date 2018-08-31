@@ -318,7 +318,6 @@ public class StatisticsFragment extends Fragment {
                 labels.add(food_name);
                 entries.add(new BarEntry((jarray.length()-1-i)*spaceforBar, Integer.parseInt(food_count)));
 
-               Log.d("TAG","Statics Fragment : JSON test :"+food_name +" : "+ food_count);
                foodcount++;
             }
         } catch (JSONException e) {
