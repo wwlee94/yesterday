@@ -45,9 +45,10 @@
         <!-- 브로드캐스트 리시버 설정 -->
         <receiver
             android:name=".PushAlarm.AlarmProgressReceiver"
-            android:enabled="true"></receiver>
+            android:enabled="true" />
 
-        <activity android:name=".UI.UpdateinfoActivity"></activity>
+        <activity android:name=".UI.UpdateinfoActivity" />
+        <activity android:name=".UI.Update_dialog"/>
     </application>
 
 </manifest>

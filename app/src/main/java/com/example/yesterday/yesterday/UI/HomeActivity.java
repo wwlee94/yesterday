@@ -79,7 +79,7 @@ public class HomeActivity extends AppCompatActivity {
     private PrimaryDrawerItem home = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
     private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(2).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem push = new PrimaryDrawerItem().withIdentifier(2).withName("푸시알람설정").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem info = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem info = new PrimaryDrawerItem().withIdentifier(3).withName("회원정보").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
 
 
 
@@ -265,7 +265,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                         // 개인정보 보기 or 수정
                         else if(drawerItem == info){
-
+                            Intent intent  = new Intent(HomeActivity.this, UpdateinfoActivity.class);
+                            intent.putExtra("client", client);
+                            startActivity(intent);
                         }
                         //logout clicked
                         else if (drawerItem == logout) {

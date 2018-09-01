@@ -74,7 +74,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:gravity="center"
                 android:layout_marginBottom="5dp"
                 />
 
@@ -84,7 +86,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:inputType="textPersonName" />
         </LinearLayout>
@@ -96,20 +100,22 @@
             >
 
             <Button
-                android:id="@+id/id_update"
+                android:id="@+id/id_update_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:textColor="#ffffff"
                 android:background="#000000"
-                android:text="수정" />
+                android:text="수정"
+                android:onClick="onClickView"
+                android:textColor="#ffffff" />
 
             <Button
-                android:id="@+id/name_update"
+                android:id="@+id/name_update_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ffffff"
                 android:background="#000000"
+                android:onClick="onClickView"
                 android:layout_marginBottom="5dp"
                 android:text="수정" />
 
@@ -124,7 +130,7 @@
         >
 
         <Button
-            android:id="@+id/update_pw_btn"
+            android:id="@+id/pw_update_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
@@ -135,7 +141,7 @@
             android:text="password_change"/>
 
     <Button
-        android:id="@+id/update_btn"
+        android:id="@+id/ok_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
