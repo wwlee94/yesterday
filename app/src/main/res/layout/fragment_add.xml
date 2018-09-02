@@ -44,6 +44,7 @@
             android:layout_marginLeft="20dp"
             android:choiceMode="multipleChoice"
             android:background="@drawable/customshape"
+            android:stackFromBottom="true"
             />
 
 
@@ -84,6 +85,7 @@
             >
 
             <RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -174,7 +176,7 @@
     <RelativeLayout
         android:id="@+id/listview_search"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/editSearch">
 
         <ListView

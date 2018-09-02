@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.example.yesterday.yesterday.EditText.BackPressEditText;
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.SearchListView.CustomAdapter;
 import com.example.yesterday.yesterday.SearchListView.SearchAdapter;
+import com.example.yesterday.yesterday.server.AddFoodServer;
 import com.example.yesterday.yesterday.server.BarchartServer;
 
 import org.json.JSONArray;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 //추가 화면 Fragment
@@ -95,6 +98,8 @@ public class AddFragment extends Fragment {
     RadioButton lunchRadio;
     RadioButton dinnerRadio;
     RadioButton snackRadio;
+    RadioButton radioButton;
+    RadioGroup radioGroup;
 
     //음식 추가 버튼
     Button addButton;
@@ -125,6 +130,7 @@ public class AddFragment extends Fragment {
         lunchRadio = (RadioButton)rootView.findViewById(R.id.lunchRadio);
         dinnerRadio = (RadioButton)rootView.findViewById(R.id.dinnerRadio);
         snackRadio = (RadioButton)rootView.findViewById(R.id.snackRadio);
+        radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
         addButton = (Button)rootView.findViewById(R.id.addbutton);
 
         //디폴트 리스트 뷰를 먼저 보여주고 검색 리스트 뷰는 숨겨 놓는다.
@@ -277,6 +283,7 @@ public class AddFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 updateDate(dateTextView,year,month,dayOfMonth);
+
             }
         },year,month,day);
 
@@ -291,7 +298,12 @@ public class AddFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addServer();
+                String result = addServer();
+                if(result.equals("success")){
+                    Toast.makeText(getActivity(),"음식 추가 성공",Toast.LENGTH_SHORT).show();
+
+                    //replaceFragment(homeFragment, "HOME");
+                }
             }
         });
 
@@ -335,20 +347,20 @@ public class AddFragment extends Fragment {
 
     // 검색에 사용될 데이터를 리스트에 추가한다.
     private void settingsearchArrayList() {
-        searchlist.add("abc");
-        searchlist.add("bcd");
-        searchlist.add("cde");
-        searchlist.add("def");
-        searchlist.add("하성운");
-        searchlist.add("크리스탈");
-        searchlist.add("강승윤");
-        searchlist.add("손나은");
-        searchlist.add("남주혁");
-        searchlist.add("루이");
-        searchlist.add("진영");
-        searchlist.add("슬기");
-        searchlist.add("이해인");
-        searchlist.add("고원희");
+        searchlist.add("바나나");
+        searchlist.add("사과");
+        searchlist.add("김치찌개");
+        searchlist.add("된장국");
+        searchlist.add("카레라이스");
+        searchlist.add("피자");
+        searchlist.add("햄버거");
+        searchlist.add("초밥");
+        searchlist.add("쌀국수");
+        searchlist.add("돈까스");
+        searchlist.add("라면");
+        searchlist.add("삼겹살");
+        searchlist.add("목살");
+        searchlist.add("스테이크");
         searchlist.add("설리");
         searchlist.add("공명");
         searchlist.add("김예림");
@@ -394,10 +406,29 @@ public class AddFragment extends Fragment {
     }
 
     private String addServer() {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.KOREA);
+        Date date1 = new Date();
+        String currentDate = formatter.format(date1);
+
         String result = null;
+        String foodString = "";
+        String date = year+ "-"+(month+1) +"-"+day+" "+currentDate;
+        radioButton = (RadioButton)rootView.findViewById(radioGroup.getCheckedRadioButtonId());
+
+
+
         try {
             for(int i = 0;i<selectFoodList.size();i++)
-                Log.d("TAG"," # foodname -> "+selectFoodList.get(i));
+                foodString += (selectFoodList.get(i)+"-");
+
+            result = new AddFoodServer("kim",foodString,radioButton.getText().toString(),date).execute().get();
+
+
+            Log.d("TAG"," # foodname -> "+foodString);
+            Log.d("TAG"," # time -> "+radioButton.getText().toString());
+            Log.d("TAG"," # date -> "+date);
+
 
         } catch (Exception e) {
             e.getMessage();
@@ -406,6 +437,9 @@ public class AddFragment extends Fragment {
     }
 
     private void updateDate(TextView view,int Year,int Month,int Day){
+        this.year = Year;
+        this.month = Month;
+        this.day = Day;
         String str = Year +"년 "+(Month +1)+"월 "+ Day +"일";
         view.setText(str);
     }
@@ -413,16 +447,12 @@ public class AddFragment extends Fragment {
     private void setRadio(String Time){
         int t = Integer.parseInt(Time);
         if(t >= 5 && t <=10){
-            Toast.makeText(getActivity(),"아침",Toast.LENGTH_SHORT).show();
             breakfastRadio.setChecked(true);
         }else if(t >= 11 && t<15){
-            Toast.makeText(getActivity(),"점심",Toast.LENGTH_SHORT).show();
             lunchRadio.setChecked(true);
         }else if(t >= 16 && t<=21){
-            Toast.makeText(getActivity(),"저녁",Toast.LENGTH_SHORT).show();
             dinnerRadio.setChecked(true);
         }else{
-            Toast.makeText(getActivity(),"간식",Toast.LENGTH_SHORT).show();
             snackRadio.setChecked(true);
         }
     }

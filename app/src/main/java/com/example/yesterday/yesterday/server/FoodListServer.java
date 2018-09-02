@@ -19,7 +19,7 @@ public class FoodListServer extends AsyncTask<Void,Void,String> {
     String answer;
     JSONArray JArray;
 
-    private static final String  WEBIP = "117.17.142.207";
+    private static final String  WEBIP = "192.168.35.149";
 
     public FoodListServer(String parent_id, String Date ) { //로그인 id 받기
         this.parent_id = parent_id;

@@ -29,7 +29,7 @@ public class haveBreakfast extends AsyncTask<Void,Void,String> {
     private int endMonth;
     private int endDay;
 
-    private static final String  WEBIP = "117.17.142.207";
+    private static final String  WEBIP = "192.168.35.149";
 
     public haveBreakfast(String parent_id ) {
         final Calendar c = Calendar.getInstance();
