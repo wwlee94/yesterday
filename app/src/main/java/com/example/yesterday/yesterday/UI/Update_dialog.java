@@ -20,7 +20,9 @@ public class Update_dialog extends Dialog {
     String kind;
 
 
-
+    public Update_dialog(Context context){
+        super(context);
+    }
 
     public Update_dialog(Context context,
                          View.OnClickListener dialog_cancle_listener,

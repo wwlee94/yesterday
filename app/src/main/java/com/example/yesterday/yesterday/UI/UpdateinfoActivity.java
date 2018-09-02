@@ -1,6 +1,7 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,13 @@ public class UpdateinfoActivity extends AppCompatActivity {
     String updateText = "";
     String result = "";
     String kind = "";
+
+    public SharedPreferences loginSetting;
+    public SharedPreferences.Editor editor;
+
+    public UpdateinfoActivity(){
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +40,10 @@ public class UpdateinfoActivity extends AppCompatActivity {
         id_update_btn = (Button)findViewById(R.id.id_update_btn);
         name_update_btn = (Button)findViewById(R.id.name_update_btn);
         pw_update_btn = (Button)findViewById(R.id.pw_update_btn);
+        ok_btn = (Button)findViewById(R.id.ok_btn);
 
+        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
+        editor = loginSetting.edit();
 
         //인텐트로 회원 정보 받기 ㅎㅎㅎ
         Intent intent  = getIntent();
@@ -43,15 +54,16 @@ public class UpdateinfoActivity extends AppCompatActivity {
         id_text.setText(client.getId());
         name_text.setText(client.getName());
 
-        /*id_update_btn.setOnClickListener(new View.OnClickListener() {
+        ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                update_dialog = new Update_dialog(,
-                        dialogCancleListener, // dialog cancle button event
-                        dialogOkListener,0); // dialog ok button event
-                update_dialog.show();
+                editor.putString("ID", client.getId());
+                editor.commit();
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("client", client);
+                startActivity(intent);
             }
-        });*/
+        });
     }
 
     public void onClickView(View v) {
@@ -62,7 +74,7 @@ public class UpdateinfoActivity extends AppCompatActivity {
                         dialogCancleListener, // dialog cancle button event
                         dialogOkListener,kind); // dialog ok button event
                 update_dialog.show();
-                Toast.makeText(getApplicationContext(), "id update dialog",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), kind + " update dialog",Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.name_update_btn:
@@ -71,7 +83,7 @@ public class UpdateinfoActivity extends AppCompatActivity {
                         dialogCancleListener, // dialog cancle button event
                         dialogOkListener,kind); // dialog ok button event
                 update_dialog.show();
-                Toast.makeText(getApplicationContext(), "name update dialog",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), kind +"update dialog",Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -88,15 +100,15 @@ public class UpdateinfoActivity extends AppCompatActivity {
             updateText = update_dialog.update_text.getText().toString();
             // id update
             if(update_dialog.kind.equals("id")){
-                ClientUpdateServer clientUpdateServer = new ClientUpdateServer(client.getId(),updateText,"0");
+                //ClientUpdateServer clientUpdateServer = new ClientUpdateServer(client.getId(),updateText,"id");
             }
             // name update
             else if(update_dialog.kind.equals("name")){
-                ClientUpdateServer clientUpdateServer = new ClientUpdateServer(client.getId(),updateText,"1");
+                //ClientUpdateServer clientUpdateServer = new ClientUpdateServer(client.getId(),updateText,"name");
             }
 
             try {
-                result = new ClientUpdateServer(client.getId(), updateText, "0").execute().get();
+                result = new ClientUpdateServer(client.getId(), updateText, update_dialog.kind).execute().get();
             }catch (Exception e){
                 e.getMessage();
             }
@@ -110,9 +122,11 @@ public class UpdateinfoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), kind+" update", Toast.LENGTH_SHORT).show();
                 if(kind.equals("id")){
                     id_text.setText(updateText);
+                    client.setId(updateText);
                 }
                 else if(kind.equals("name")){
                     name_text.setText(updateText);
+                    client.setName(updateText);
                 }
             }else {
                 Toast.makeText(getApplicationContext(), " failed",Toast.LENGTH_SHORT).show();

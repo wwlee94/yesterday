@@ -1,6 +1,7 @@
 package com.example.yesterday.yesterday.server;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -24,6 +25,7 @@ public class ClientUpdateServer extends AsyncTask<Void,Void,String> {
         this.parent_id = parent_id;
         this.updateText = updateText;
         this.kind = kind;
+        Log.i("kind","=========="+kind + "====="+parent_id);
     }
 
     @Override
