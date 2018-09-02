@@ -15,6 +15,13 @@
         android:lines="1"
         android:singleLine="true" />
 
+    <Button
+        android:id="@+id/edit_voice_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="voice"/>
+
     <RelativeLayout
         android:id="@+id/listview_default"
         android:layout_width="match_parent"

@@ -1,7 +1,12 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -34,6 +39,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 //추가 화면 Fragment
 public class AddFragment extends Fragment {
@@ -63,6 +70,12 @@ public class AddFragment extends Fragment {
 
     InputMethodManager imm;
 
+    public SharedPreferences loginPre;
+    //음성인식
+    SpeechRecognizer mRecognizer;
+    Button voiceInputBtn;
+    Intent intent;
+
     public AddFragment() {
 
     }
@@ -79,6 +92,9 @@ public class AddFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_add, container, false);
 
         editSearch = (BackPressEditText) rootView.findViewById(R.id.editSearch);
+        //로그인 정보 가져오기
+        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        voiceInputBtn = (Button) rootView.findViewById(R.id.edit_voice_btn);
 
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -202,9 +218,77 @@ public class AddFragment extends Fragment {
         selectListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 selectFoodList.remove(position);
                 selectAdapter.notifyDataSetChanged();
+            }
+        });
+
+        //음성인식
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity().getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+
+        RecognitionListener listener = new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+
+            }
+
+            @Override
+            public void onError(int error) {
+
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                Log.i("voice","voice=========");
+                String key = "";
+                key = SpeechRecognizer.RESULTS_RECOGNITION;
+                ArrayList<String> mResult = results.getStringArrayList(key);
+                String[] rs = new String[mResult.size()];
+                addSelectFoodList(rs[0]);
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+        };
+
+        mRecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        mRecognizer.setRecognitionListener(listener);
+
+
+        voiceInputBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity().getApplicationContext(), "음성인식", Toast.LENGTH_LONG).show();
+                mRecognizer.startListening(intent);
             }
         });
 
@@ -212,6 +296,8 @@ public class AddFragment extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
+
+
 
     public void addSelectFoodList(String foodstr) {
         //selectFoodList.clear();
@@ -299,7 +385,7 @@ public class AddFragment extends Fragment {
     private String serverConn() {
         String result = null;
         try {
-            result = new BarchartServer("kim").execute().get();
+            result = new BarchartServer(loginPre.getString("ID","")).execute().get();
         } catch (Exception e) {
             e.getMessage();
         }
