@@ -1,14 +1,20 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -72,9 +78,11 @@ public class AddFragment extends Fragment {
 
     public SharedPreferences loginPre;
     //음성인식
+    private RecognitionListener listener;
     SpeechRecognizer mRecognizer;
     Button voiceInputBtn;
     Intent intent;
+    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
 
     public AddFragment() {
 
@@ -93,10 +101,11 @@ public class AddFragment extends Fragment {
 
         editSearch = (BackPressEditText) rootView.findViewById(R.id.editSearch);
         //로그인 정보 가져오기
-        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        loginPre = getActivity().getSharedPreferences("loginSetting", MODE_PRIVATE);
         voiceInputBtn = (Button) rootView.findViewById(R.id.edit_voice_btn);
 
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
 
         // 리스트를 생성한다.
         searchlist = new ArrayList<String>();
@@ -137,165 +146,182 @@ public class AddFragment extends Fragment {
         frequentlyListView.setAdapter(frequentAdapter);
         selectListView.setAdapter(selectAdapter);
 
-        // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
-        editSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.RECORD_AUDIO)) {
+
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.RECORD_AUDIO}, MY_PERMISSIONS_RECORD_AUDIO);
             }
+        }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+            // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
+            editSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // input창에 문자를 입력할때마다 호출된다.
-                // search 메소드를 호출한다.
-                String text = editSearch.getText().toString();
-                search(text);
-            }
-        });
-
-        editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    searchListview.setVisibility(View.VISIBLE);
-                    listviewDefault.setVisibility(View.INVISIBLE);
-                    listviewSearch.setVisibility(View.VISIBLE);
-                } else {
-                    searchListview.setVisibility(View.INVISIBLE);
-                    listviewSearch.setVisibility(View.INVISIBLE);
-                    listviewDefault.setVisibility(View.VISIBLE);
                 }
-            }
-        });
 
-        editSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                //Enter key Action
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    //Enter키눌렀을떄 처리
-                    addSelectFoodList(editSearch.getText().toString());
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    // input창에 문자를 입력할때마다 호출된다.
+                    // search 메소드를 호출한다.
+                    String text = editSearch.getText().toString();
+                    search(text);
+                }
+            });
+
+            editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        searchListview.setVisibility(View.VISIBLE);
+                        listviewDefault.setVisibility(View.INVISIBLE);
+                        listviewSearch.setVisibility(View.VISIBLE);
+                    } else {
+                        searchListview.setVisibility(View.INVISIBLE);
+                        listviewSearch.setVisibility(View.INVISIBLE);
+                        listviewDefault.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            editSearch.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    //Enter key Action
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        //Enter키눌렀을떄 처리
+                        addSelectFoodList(editSearch.getText().toString());
+                        editSearch.setText("");
+                        imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
+
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            editSearch.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    editSearch.setFocusable(true);
+                    editSearch.setFocusableInTouchMode(true);
+                    return false;
+                }
+            });
+
+            searchListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    addSelectFoodList(searchlist.get(position));
                     editSearch.setText("");
                     imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
-
-                    return true;
+                    editSearch.setFocusable(false);
                 }
-                return false;
+            });
+
+            frequentlyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    addSelectFoodList(frequentlyArrayList.get(position));
+                }
+            });
+
+            selectListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    selectFoodList.remove(position);
+                    selectAdapter.notifyDataSetChanged();
+                }
+            });
+            try {
+                //음성인식
+                intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getContext().getPackageName());
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+
+                listener = new RecognitionListener() {
+                    @Override
+                    public void onReadyForSpeech(Bundle params) {
+                        Toast.makeText(getActivity().getApplicationContext(), "음성인식ready=====", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onBeginningOfSpeech() {
+
+                    }
+
+                    @Override
+                    public void onRmsChanged(float rmsdB) {
+
+                    }
+
+                    @Override
+                    public void onBufferReceived(byte[] buffer) {
+
+                    }
+
+                    @Override
+                    public void onEndOfSpeech() {
+
+                    }
+
+                    @Override
+                    public void onError(int error) {
+
+                    }
+
+                    @Override
+                    public void onResults(Bundle results) {
+                        Log.i("voice", "voice=========");
+                        String key = "";
+                        key = SpeechRecognizer.RESULTS_RECOGNITION;
+                        ArrayList<String> rs = results.getStringArrayList(key);
+                        //String[] rs = new String[mResult.size()];
+                        Toast.makeText(getActivity().getApplicationContext(), rs.get(0), Toast.LENGTH_LONG).show();
+                        Log.i("voice", rs.get(0));
+                        addSelectFoodList(rs.get(0));
+                    }
+
+                    @Override
+                    public void onPartialResults(Bundle partialResults) {
+
+                    }
+
+                    @Override
+                    public void onEvent(int eventType, Bundle params) {
+
+                    }
+                };
+
+                mRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
+                mRecognizer.setRecognitionListener(listener);
+
+                voiceInputBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getActivity().getApplicationContext(), "음성인식", Toast.LENGTH_SHORT).show();
+                        mRecognizer.startListening(intent);
+                    }
+                });
+            } catch (Exception e) {
+                Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
-        });
-
-        editSearch.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                editSearch.setFocusable(true);
-                editSearch.setFocusableInTouchMode(true);
-                return false;
-            }
-        });
-
-        searchListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                addSelectFoodList(searchlist.get(position));
-                editSearch.setText("");
-                imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
-                editSearch.setFocusable(false);
-            }
-        });
-
-        frequentlyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                addSelectFoodList(frequentlyArrayList.get(position));
-            }
-        });
-
-        selectListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectFoodList.remove(position);
-                selectAdapter.notifyDataSetChanged();
-            }
-        });
-
-        //음성인식
-        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity().getPackageName());
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
-
-        RecognitionListener listener = new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-
-            }
-
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int error) {
-
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-                Log.i("voice","voice=========");
-                String key = "";
-                key = SpeechRecognizer.RESULTS_RECOGNITION;
-                ArrayList<String> mResult = results.getStringArrayList(key);
-                String[] rs = new String[mResult.size()];
-                addSelectFoodList(rs[0]);
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
-            }
-        };
-
-        mRecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
-        mRecognizer.setRecognitionListener(listener);
-
-
-        voiceInputBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "음성인식", Toast.LENGTH_LONG).show();
-                mRecognizer.startListening(intent);
-            }
-        });
-
-
         // Inflate the layout for this fragment
         return rootView;
-    }
+
+        }
 
 
 
@@ -305,7 +331,6 @@ public class AddFragment extends Fragment {
         selectlyArrayList.addAll(selectFoodList);
         selectAdapter.notifyDataSetChanged();
     }
-
 
     // 검색을 수행하는 메소드
     public void search(String charText) {
