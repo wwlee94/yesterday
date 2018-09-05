@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -27,7 +27,6 @@ import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart1Fragment;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart2Fragment;
 import com.example.yesterday.yesterday.UI.HomeViewPager.Chart3Fragment;
-import com.example.yesterday.yesterday.UI.TodayMenuActivity;
 import com.matthewtamlin.sliding_intro_screen_library.background.BackgroundManager;
 import com.matthewtamlin.sliding_intro_screen_library.background.ColorBlender;
 
@@ -68,6 +67,8 @@ public class HomeFragment extends Fragment {
     private Thread thread;
     private Thread touchThread;
 
+    SharedPreferences loginPre;
+
     //현재 HomeFragment가 화면에 보이면 isrun :true 안보이면 false
     private boolean isRun;
     //터치 or 드래그 중이면 true 아니면 false
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
         arrFragment[0] = new Chart1Fragment();
         arrFragment[1] = new Chart2Fragment();
         arrFragment[2] = new Chart3Fragment();
+
 
         //indicator
         indicator = new ImageView[arrFragment.length];
@@ -142,6 +144,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
 
+                //indicator 설정
                 for (int i = 0; i < arrFragment.length; i++) {
                     if (i == position) {
                         indicator[i].setBackgroundResource(R.drawable.ic_radio_button_checked_black_24dp);
@@ -162,34 +165,6 @@ public class HomeFragment extends Fragment {
                 else if (state == 1) {
                     isTouched = true;
                 }
-            }
-        });
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                //미리 스레드 생성 한 번만 실행되도록
-                if(!isTouched) {
-                    //10초후 isTouch=false 전환 스레드
-                    touchThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(10000);
-                                Log.d("touchThread", "OKOKOKOKOK");
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } finally {
-                                isTouched = false;
-                            }
-                        }
-                    });
-                    touchThread.start();
-                }
-
-                isTouched = true;
-
-                return false;
             }
         });
         //* ViewPager Indicator *
@@ -227,14 +202,6 @@ public class HomeFragment extends Fragment {
         }catch(Exception e){ e.printStackTrace(); }
         */
 
-        menuButton = (Button) rootView.findViewById(R.id.menubutton);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), TodayMenuActivity.class);
-                startActivity(intent);
-            }
-        });
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -269,7 +236,7 @@ public class HomeFragment extends Fragment {
                     Log.d("TAG", "Thread 시작");
                     while (isRun) {
 
-                        Thread.sleep(5000);
+                        Thread.sleep(30000);
 
                         //현재 상태가 드래그가 중이면 화면 전환 X
                         if (!isTouched) {

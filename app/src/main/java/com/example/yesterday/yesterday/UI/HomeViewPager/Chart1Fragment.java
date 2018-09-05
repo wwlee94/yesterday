@@ -1,7 +1,10 @@
 package com.example.yesterday.yesterday.UI.HomeViewPager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.HomeActivity;
+import com.example.yesterday.yesterday.UI.LoginActivity;
 import com.example.yesterday.yesterday.server.BarchartServer;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -27,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Chart1Fragment extends Fragment {
 
     private ViewGroup rootView;
@@ -41,9 +48,20 @@ public class Chart1Fragment extends Fragment {
     ArrayList<BarEntry> entries = new ArrayList<>();
     ArrayList<String> labels = new ArrayList<String>();
 
+    SharedPreferences loginPre ;
+
     public Chart1Fragment() {
         // Required empty public constructor
         //서버와 연동해 데이터를 JSON 형태로 불러온다.
+        //stringToJSON(serverConn());
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        Log.i("loginPre",loginPre.getString("ID",""));
+
         stringToJSON(serverConn());
     }
 
@@ -59,6 +77,8 @@ public class Chart1Fragment extends Fragment {
         //차트 그리기
         DrawChart(horizontalBarChart);
 
+
+
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -68,12 +88,14 @@ public class Chart1Fragment extends Fragment {
     //서버에서 db 쿼리를 보낸후 받은 값을 JSON String 값으로 받아 return한다.
     //(ex [{count=5, food=커피}, {count=4, food=초밥}, {count=3, food=술}, {count=2, food=김치찌개}] )
     private String serverConn(){
+        // id 값 가져오기
+
         try {
-            result = new BarchartServer("kim").execute().get();
+            result = new BarchartServer(loginPre.getString("ID","")).execute().get();
+            Log.i("char1Fragment result",result);
         } catch (Exception e){
             e.getMessage();
         }
-
         return result;
     }
 
@@ -85,6 +107,7 @@ public class Chart1Fragment extends Fragment {
         String food_count = null;
         float spaceforBar = 1f;
         try {
+
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
             for (int i = jarray.length()-1 ; i >= 0; i--) {
                 JSONObject jObject = jarray.getJSONObject(i);
@@ -115,7 +138,7 @@ public class Chart1Fragment extends Fragment {
         BarData data = new BarData(dataset);
 
         //Design 막대 랜덤 색상 지정
-        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         //각각 막대 값을 가리키는 숫자의 textsize 지정
         data.setValueTextSize(10f);
@@ -136,7 +159,6 @@ public class Chart1Fragment extends Fragment {
         //y축 최대 최소값 지정 !
         y.setAxisMaxValue(maxfoodvalue);
         y.setAxisMinValue(0);
-
 
         //차트 위쪽의 grid lines, 음식 개수 true:visible false:invisible
         horizontalBarChart.getAxisLeft().setEnabled(true);

@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.server.AddGoalServer;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AddGoalActivity extends AppCompatActivity {
@@ -24,10 +27,10 @@ public class AddGoalActivity extends AppCompatActivity {
     //이거 EditText 인데 TextView로 가져와도 잘되네..
     TextView foodView;
     TextView countView;
-    TextView endDateView;  //마감일
-    //TextView favoriteView; //즐겨찾기
+    TextView actionBarHeader;
 
-    String goalType; //목표 설정 타입
+    DatePicker datePicker;
+
     String food;
     int count;
     String endDate;
@@ -35,8 +38,8 @@ public class AddGoalActivity extends AppCompatActivity {
     int favorite = 0;
     String type = "default";
 
-    //임시
-    String userID = "admin";
+
+    SharedPreferences loginSetting;
 
     Button button;
 
@@ -47,28 +50,32 @@ public class AddGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_goal);
 
+        loginSetting = getSharedPreferences("loginSetting", 0);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("목표 추가");
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.actionbar_header);
 
         foodView = (TextView) findViewById(R.id.goal_edit_food);
         countView = (TextView) findViewById(R.id.goal_edit_count);
-        endDateView = (TextView) findViewById(R.id.goal_edit_date);
 
 
-        //라디오 버튼 TODO: layout은 존재하지만 사용은 안하는 중
-        RadioGroup goalGroup = (RadioGroup) findViewById(R.id.goal_radioGroup);
-        int GroupID = goalGroup.getCheckedRadioButtonId();
-        goalType = ((RadioButton) findViewById(GroupID)).getText().toString();
+        datePicker = (DatePicker) findViewById(R.id.goal_datepicker);
+        Calendar calendar = Calendar.getInstance();
+        //오늘 날짜로 default 설정
+        datePicker.updateDate(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        //최소
+        datePicker.setMinDate(System.currentTimeMillis());
+        /*
+        //최대 (오늘날짜 + 12개월후)
+        calendar.add(Calendar.MONTH,12);
+        datePicker.setMaxDate(calendar.getTimeInMillis());
+        */
 
-        //라디오 버튼 바꾸었을 때
-        goalGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton) findViewById(checkedId);
-                goalType = radioButton.getText().toString();
-            }
-        });
+        //액션바
+        actionBarHeader = (TextView) findViewById(R.id.actionbar_text);
+        actionBarHeader.setText("목표 추가");
 
         //저장 버튼
         button = (Button) findViewById(R.id.goal_add_button);
@@ -78,19 +85,19 @@ public class AddGoalActivity extends AppCompatActivity {
 
                 food = foodView.getText().toString();
                 count = Integer.parseInt(countView.getText().toString());
-                endDate = endDateView.getText().toString();
+                endDate = String.format("%d-%d-%d",datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
                 startDate = getDate();
 
                 // AsyncTask 객체 생성 -> 목표 정보 DB에 INSERT
                 try {
-                    result = new AddGoalServer(userID, food, count, startDate, endDate, favorite, type).execute().get();
+                    result = new AddGoalServer(loginSetting.getString("ID",""), food, count, startDate, endDate, favorite, type).execute().get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     if (result.equals("success")) {
                         //DB 연동 전 intent로 데이터 전송한 것
                         Intent intent = new Intent();
-                        intent.putExtra("USERID", userID);//나중에 삭제 예정 전역변수 이용하면 됌.
+                        intent.putExtra("USERID", loginSetting.getString("ID",""));//나중에 삭제 예정 전역변수 이용하면 됌.
                         intent.putExtra("FOOD", food);
                         intent.putExtra("COUNT", count);
                         intent.putExtra("STARTDATE", startDate);

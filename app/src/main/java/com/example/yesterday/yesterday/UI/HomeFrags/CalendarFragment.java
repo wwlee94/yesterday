@@ -1,27 +1,30 @@
-package com.example.yesterday.yesterday.UI;
+package com.example.yesterday.yesterday.UI.HomeFrags;
+
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CalendarView;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.decorators.EventDecorator;
 import com.example.yesterday.yesterday.decorators.OneDayDecorator;
 import com.example.yesterday.yesterday.decorators.SaturdayDecorator;
 import com.example.yesterday.yesterday.decorators.SundayDecorator;
-import com.example.yesterday.yesterday.server.BarchartServer;
 import com.example.yesterday.yesterday.server.DateServer;
 import com.example.yesterday.yesterday.server.FoodListServer;
-import com.example.yesterday.yesterday.server.haveBreakfast;
-import com.github.mikephil.charting.data.BarEntry;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -30,15 +33,21 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.Executors;
 
-public class CalendarActivity extends AppCompatActivity {
+import static android.content.Context.MODE_PRIVATE;
+
+public class CalendarFragment extends Fragment {
+
+    ViewGroup root;
+    private FragmentManager fragmentManager;
+
+    private AddFragment addFragment;
+
+    private Button button;
 
     TextView breakfastText ;
     TextView lunchText;
@@ -51,17 +60,44 @@ public class CalendarActivity extends AppCompatActivity {
 
     String foodname;
 
+    SharedPreferences loginPre;
+
     ArrayList<CalendarDay> dates = new ArrayList<>();
 
+    public CalendarFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
 
-        materialCalendarView = (MaterialCalendarView )findViewById(R.id.calendarView);
+        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
+        Log.i("loginPre",loginPre.getString("ID",""));
 
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+        root = (ViewGroup) inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        materialCalendarView = (MaterialCalendarView )root.findViewById(R.id.calendar_calendarView);
+
+        /*
         Intent intent = getIntent();
         foodname = intent.getStringExtra("foodname");
+        */
+
+        Bundle bundle = getArguments();
+
+        if(bundle!=null) {
+            foodname = bundle.getString("foodname");
+            //bundle.remove("foodname");
+            bundle.clear();
+        }
 
         if(foodname != null) {
             dateServerConn();
@@ -79,9 +115,9 @@ public class CalendarActivity extends AppCompatActivity {
                 new SaturdayDecorator(),
                 new OneDayDecorator());
 
-        breakfastText = (TextView)findViewById(R.id.breakfastText);
-        lunchText = (TextView)findViewById(R.id.lunchText);
-        dinnerText = (TextView)findViewById(R.id.dinnerText);
+        breakfastText = (TextView)root.findViewById(R.id.calendar_breakfastText);
+        lunchText = (TextView)root.findViewById(R.id.calendar_lunchText);
+        dinnerText = (TextView)root.findViewById(R.id.calendar_dinnerText);
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener(){
             @Override
@@ -90,11 +126,24 @@ public class CalendarActivity extends AppCompatActivity {
                 stringToJSON(result);
             }
         });
-    }
 
+        fragmentManager = this.getFragmentManager();
+        addFragment = ((HomeActivity)getActivity()).getAddFragment();
+
+        //수정 버튼
+        button = root.findViewById(R.id.calendar_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"버튼 클릭",Toast.LENGTH_SHORT).show();
+                ((HomeActivity)getActivity()).bottomBar.selectTabAtPosition(1);
+            }
+        });
+        return root;
+    }
     private String dateServerConn(){
         try {
-            dateResult = new DateServer("kim",foodname).execute().get();
+            dateResult = new DateServer(loginPre.getString("ID",""),foodname).execute().get();
         } catch (Exception e){
             e.getMessage();
         }
@@ -127,8 +176,7 @@ public class CalendarActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,CalendarActivity.this));
-
+        materialCalendarView.addDecorator(new EventDecorator(Color.BLACK, dates,getActivity()));
     }
 
     //int 형 년월일 을 날짜 데이터 포멧으로 변경한다.

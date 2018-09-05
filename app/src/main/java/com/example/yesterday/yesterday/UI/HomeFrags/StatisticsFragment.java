@@ -1,16 +1,16 @@
 package com.example.yesterday.yesterday.UI.HomeFrags;
 
+
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.Context;
-import android.content.Intent;
+
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,10 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.UI.CalendarActivity;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.BarchartServer;
-import com.example.yesterday.yesterday.server.LoginServer;
-import com.github.mikephil.charting.charts.Chart;
+
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -32,8 +31,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
+
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -46,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+
 
 //통계 화면 Fragment
 public class StatisticsFragment extends Fragment {
@@ -82,6 +80,8 @@ public class StatisticsFragment extends Fragment {
 
     HorizontalBarChart horizontalBarChart;
 
+    SharedPreferences loginPre;
+
     public StatisticsFragment() {
         // Required empty public constructor
     }
@@ -99,7 +99,6 @@ public class StatisticsFragment extends Fragment {
 
         foodcount = 0;
         maxfoodvalue = 0;
-
     }
 
 
@@ -115,15 +114,24 @@ public class StatisticsFragment extends Fragment {
         //막대바 차트 생성
         horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.chart);
 
+        // id 값 가져오기
+        loginPre = getActivity().getSharedPreferences("loginSetting", 0);
+
         horizontalBarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
                 //Toast.makeText(getActivity(),""+labels.get((int)e.getX()),Toast.LENGTH_LONG).show();
-
+                /*
                 Intent intent = new Intent(getActivity(),CalendarActivity.class);
                 intent.putExtra("foodname",labels.get((int)e.getX()));
                 startActivity(intent);
+                */
+                HomeActivity activity = (HomeActivity)getActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("foodname",labels.get((int)e.getX()));
+                activity.getCalendarFragment().setArguments(bundle);
+                activity.replaceFragment(activity.getCalendarFragment(),"달력");
             }
 
             @Override
@@ -139,7 +147,6 @@ public class StatisticsFragment extends Fragment {
         //시작 종료 날짜 보여주는 텍스트
         startDateView = (TextView)rootView.findViewById(R.id.textView);
         endDateView = (TextView)rootView.findViewById(R.id.textView2);
-
 
         // 각각 시작 종료  두가지의 날짜(년,월,일)값을 저장 해두고, 통계를 db값에서 불러온다.
         final Calendar c = Calendar.getInstance();
@@ -289,7 +296,7 @@ public class StatisticsFragment extends Fragment {
     //(ex [{count=5, food=커피}, {count=4, food=초밥}, {count=3, food=술}, {count=2, food=김치찌개}] )
     private String serverConn(String startDate,String endDate){
         try {
-            result = new BarchartServer("kim",startDate,endDate).execute().get();
+            result = new BarchartServer(loginPre.getString("ID",""),startDate,endDate).execute().get();
         } catch (Exception e){
             e.getMessage();
         }
@@ -353,7 +360,7 @@ public class StatisticsFragment extends Fragment {
 
 
         //Design 막대 랜덤 색상 지정
-        dataset.setColors(ColorTemplate.PASTEL_COLORS);
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         //각각 막대 값을 가리키는 숫자의 textsize 지정
         data.setValueTextSize(20f);

@@ -15,15 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
 import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.UI.HomeFrags.AddFragment;
+import com.example.yesterday.yesterday.UI.HomeFrags.CalendarFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.GoalFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.HomeFragment;
 import com.example.yesterday.yesterday.UI.HomeFrags.StatisticsFragment;
@@ -33,6 +36,8 @@ import com.example.yesterday.yesterday.server.SelectGoalServer;
 import com.example.yesterday.yesterday.server.SelectDateServer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -43,6 +48,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import org.json.JSONArray;
@@ -65,13 +71,16 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     //FragmentManager
     private FragmentManager fragmentManager;
+    //SharedPreferences
+    public SharedPreferences loginSetting;
+    public SharedPreferences.Editor editor;
 
     //MaterialDrawer
     private PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("홈").withIcon(R.drawable.ic_home_solid_white).withIconTintingEnabled(true);
     private PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("홈_첫번째").withIcon(R.drawable.ic_wb_sunny_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("홈_두번째").withIcon(R.drawable.ic_help_outline_black_24dp).withIconTintingEnabled(true);
     private PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("섹션_첫번째").withIcon(R.drawable.ic_settings_black_24dp).withIconTintingEnabled(true);
-    private PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("우엉우엉이짱").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
+    private PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName("로그아웃").withIcon(R.drawable.ic_playlist_add_black_24dp).withIconTintingEnabled(true);
 
     private SecondaryDrawerItem sectionHeader = new SecondaryDrawerItem().withName("section_header");
 
@@ -80,12 +89,13 @@ public class HomeActivity extends AppCompatActivity {
     //private Handler handler;
 
     //BottomBar
-    BottomBar bottomBar;
+    public BottomBar bottomBar;
     //Fragment
     private HomeFragment homeFragment;
     private AddFragment addFragment;
     private GoalFragment goalFragment;
     private StatisticsFragment statisticsFragment;
+    private CalendarFragment calendarFragment;
     //Canlendar Icon
     private ImageView calendarView;
 
@@ -96,6 +106,11 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<RecyclerItem> itemsGoal;
     private ArrayList<RecyclerItem> itemsSuccess;
     private ArrayList<RecyclerItem> itemsFail;
+
+    //
+    String name;
+    //client
+    ClientLoginInfo client;
 
     boolean isPush;
 
@@ -113,17 +128,16 @@ public class HomeActivity extends AppCompatActivity {
         addFragment = new AddFragment();
         goalFragment = new GoalFragment();
         statisticsFragment = new StatisticsFragment();
+        calendarFragment = new CalendarFragment();
 
         items = new ArrayList<RecyclerItem>();
         itemsGoal = new ArrayList<RecyclerItem>();
         itemsSuccess = new ArrayList<RecyclerItem>();
         itemsFail = new ArrayList<RecyclerItem>();
 
+        client = new ClientLoginInfo();
+
         isPush = true;
-
-        //TODO: DB 갱신
-        reNewClientGoal();
-
     }
 
     @Override
@@ -168,6 +182,15 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //SharedPreference
+        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
+        editor = loginSetting.edit();
+        Log.i("ID",loginSetting.getString("ID",""));
+
+        //TODO: DB 갱신
+        reNewClientGoal();
+
+
         mContext = this;
 
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
@@ -181,14 +204,24 @@ public class HomeActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setTitle("어제 점심 뭐 먹었지 ?");
 
+        //Intent로 client가져오기  -> client 아직 안쓰임
+        Intent intent  = getIntent();
+        client = (ClientLoginInfo) intent.getSerializableExtra("client");
+        Log.i("ID",client.getId());
+        Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
+
+        //TODO: DB 갱신
+        reNewClientGoal();
+
+        //logout listener
+        //item5.set
         //Calendar
         //Calendar View로 넘어가면 밑에 바텀바 focus 어케 해결!?
         calendarView = (ImageView) findViewById(R.id.toolbar_calendar_button);
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-                startActivity(intent);
+                replaceFragment(calendarFragment, "달력");
             }
         });
 
@@ -201,7 +234,7 @@ public class HomeActivity extends AppCompatActivity {
                 .withProfileImagesClickable(false)              //프로필이미지선택X
                 //.withSavedInstance(savedInstanceState)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("woowonLee").withEmail("wwlee94@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
+                        new ProfileDrawerItem().withName(client.getName()).withIcon(getResources().getDrawable(R.drawable.profile))
                 )
                 .build();
         //create the drawer and remember the `Drawer` result object
@@ -213,13 +246,27 @@ public class HomeActivity extends AppCompatActivity {
                         item1, item2, item3,
                         new DividerDrawerItem(),
                         sectionHeader,
-                        item4, item5
+                        item4, logout
                 )
                 //drawer를 클릭 했을 때 이벤트 처리
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
+                        //logout clicked
+                        if (drawerItem == logout) {
+                            if ((client.getType()).equals("회원")) {
+                                editor.clear();
+                                editor.commit();
+                            } else if ((client.getType()).equals("카카오")) {
+                                onClickLogout();
+                                editor.clear();
+                                editor.commit();
+                            }
+                            Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
+                            Intent intent  = new Intent(HomeActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
                         return true;
                     }
                 })
@@ -233,6 +280,34 @@ public class HomeActivity extends AppCompatActivity {
 
         //bottomBar를 tab했을 때 id를 구분해 해당 내부코드를 실행하여 Fragment의 전환이 이루어짐
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(int tabId) {
+
+                //transaction 객체를 가져옴
+                //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
+                if (tabId == R.id.tab_home) {
+                    replaceFragment(homeFragment, "HOME");
+                    Log.d("HomeFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_add) {
+                    replaceFragment(addFragment, "ADD");
+                    //2131296560
+                    Log.d("AddFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_goal) {
+                    replaceFragment(goalFragment, "GOAL");
+                    Log.d("GoalFragment", "" + tabId);
+                }
+                //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
+                else if (tabId == R.id.tab_statistics) {
+                    replaceFragment(statisticsFragment, "STATISTICS");
+                    Log.d("StatisticsFragment", "" + tabId);
+                }
+            }
+        });
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(int tabId) {
@@ -281,6 +356,15 @@ public class HomeActivity extends AppCompatActivity {
         transaction.detach(goalFragment).attach(goalFragment).commit();
     }
 
+    public AddFragment getAddFragment() {
+        return addFragment;
+    }
+
+    public CalendarFragment getCalendarFragment() {
+        return calendarFragment;
+    }
+
+
     public void reNewClientGoal() {
         items.clear();
         itemsGoal.clear();
@@ -321,7 +405,8 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectGoalServer("admin").execute().get();
+            result = new SelectGoalServer(loginSetting.getString("ID","")).execute().get();
+            Log.i("ID",client.getId());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -366,7 +451,7 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //fooddata 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectDateServer("admin").execute().get();
+            result = new SelectDateServer(loginSetting.getString("ID","")).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -397,8 +482,8 @@ public class HomeActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }//try
-                Log.d("가져온 음식 ",food);
-                Log.d("가져온 음식 기간 ",dateStr);
+                Log.d("가져온 음식 ", food);
+                Log.d("가져온 음식 기간 ", dateStr);
                 for (int k = 0; k < items.size(); k++) {
                     //type 은 default 와 success만 비교
                     if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
@@ -414,9 +499,9 @@ public class HomeActivity extends AppCompatActivity {
 
                             //startDate <= date <= endDate 범위
                             if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                                Log.d("음식종류","clientgoal 음식: "+items.get(k).getFood()+" /타입: "+items.get(k).getType());
-                                Log.d("시간범위","startDate:"+items.get(k).getStartDate()+" <= Date:"+dateStr+" <= endDate:"+items.get(k).getEndDate());
-                                items.get(k).setCurrentCount(items.get(k).getCurrentCount()+1);
+                                Log.d("음식종류", "clientgoal 음식: " + items.get(k).getFood() + " /타입: " + items.get(k).getType());
+                                Log.d("시간범위", "startDate:" + items.get(k).getStartDate() + " <= Date:" + dateStr + " <= endDate:" + items.get(k).getEndDate());
+                                items.get(k).setCurrentCount(items.get(k).getCurrentCount() + 1);
                             }
 
                         }
@@ -463,7 +548,7 @@ public class HomeActivity extends AppCompatActivity {
 
                                     //success 가 존재 한다면 지워
                                     try {
-                                        result = new DeleteGoalServer("admin", items.get(k).getFood(), items.get(k).getType()).execute().get();
+                                        result = new DeleteGoalServer(loginSetting.getString("ID",""), items.get(k).getFood(), items.get(k).getType()).execute().get();
                                         Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -584,5 +669,13 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    private void onClickLogout() {
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                Toast.makeText(getApplicationContext(), "카카오톡 로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
