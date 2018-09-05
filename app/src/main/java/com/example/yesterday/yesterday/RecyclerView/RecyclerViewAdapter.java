@@ -82,7 +82,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void headerBindInit(final RecyclerView.ViewHolder holder, final int position) {
         final HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
-        viewHolder.headerTitle.setTextColor(Color.parseColor("#FD5523"));
+        //#FEEAE6 연핑크
+        viewHolder.headerTitle.setTextColor(Color.parseColor("#FEEAE6"));
         viewHolder.headerTitle.setText(items.get(position).title);
 
     }
