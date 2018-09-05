@@ -3,7 +3,6 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
@@ -27,15 +25,16 @@ import android.widget.Toast;
 
 import com.example.yesterday.yesterday.EditText.BackPressEditText;
 import com.example.yesterday.yesterday.R;
-import com.example.yesterday.yesterday.SearchListView.CustomAdapter;
+import com.example.yesterday.yesterday.SearchListView.ChangeAdapter;
 import com.example.yesterday.yesterday.SearchListView.SearchAdapter;
+import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.AddFoodServer;
 import com.example.yesterday.yesterday.server.BarchartServer;
+import com.example.yesterday.yesterday.server.SetFoodServer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,13 +62,13 @@ public class AddFragment extends Fragment {
     private List<String> frequentlyFoodList;
     private ArrayList<String> frequentlyArrayList;
     private ListView frequentlyListView;
-    private CustomAdapter frequentAdapter;
+    private ChangeAdapter frequentAdapter;
 
     //고른 메뉴 리스트 뷰를 보여주고 갱신 하기 위한
     private List<String> selectFoodList;
     private ArrayList<String> selectlyArrayList;
     private ListView selectListView;
-    private CustomAdapter selectAdapter;
+    private ChangeAdapter selectAdapter;
 
     //검색창 선택시 다른 리스트 뷰를 보여주기 위해 레이아웃을 2가지로 나눔
     private RelativeLayout listviewDefault;
@@ -175,8 +174,8 @@ public class AddFragment extends Fragment {
         selectlyArrayList.addAll(selectFoodList);
         // 리스트에 연동될 아답터를 생성한다.
         searchAdapter = new SearchAdapter(searchlist, getActivity());
-        frequentAdapter = new CustomAdapter(frequentlyFoodList, getActivity(), true);
-        selectAdapter = new CustomAdapter(selectFoodList, getActivity(), false);
+        frequentAdapter = new ChangeAdapter(frequentlyFoodList, getActivity(), true);
+        selectAdapter = new ChangeAdapter(selectFoodList, getActivity(), false);
         // 리스트뷰에 아답터를 연결한다.
         searchListview.setAdapter(searchAdapter);
         frequentlyListView.setAdapter(frequentAdapter);
@@ -299,10 +298,11 @@ public class AddFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String result = addServer();
-                if(result.equals("success")){
+                if(selectFoodList.isEmpty()){
+                    Toast.makeText(getActivity(),"선택된 음식이 없습니다.",Toast.LENGTH_SHORT).show();
+                }else if(result.equals("success")){
                     Toast.makeText(getActivity(),"음식 추가 성공",Toast.LENGTH_SHORT).show();
-
-                    //replaceFragment(homeFragment, "HOME");
+                    ((HomeActivity)getActivity()).bottomBar.selectTabAtPosition(0);
                 }
             }
         });
@@ -347,32 +347,28 @@ public class AddFragment extends Fragment {
 
     // 검색에 사용될 데이터를 리스트에 추가한다.
     private void settingsearchArrayList() {
-        searchlist.add("바나나");
-        searchlist.add("사과");
-        searchlist.add("김치찌개");
-        searchlist.add("된장국");
-        searchlist.add("카레라이스");
-        searchlist.add("피자");
-        searchlist.add("햄버거");
-        searchlist.add("초밥");
-        searchlist.add("쌀국수");
-        searchlist.add("돈까스");
-        searchlist.add("라면");
-        searchlist.add("삼겹살");
-        searchlist.add("목살");
-        searchlist.add("스테이크");
-        searchlist.add("설리");
-        searchlist.add("공명");
-        searchlist.add("김예림");
-        searchlist.add("혜리");
-        searchlist.add("박혜수");
-        searchlist.add("카이");
-        searchlist.add("진세연");
-        searchlist.add("동호");
-        searchlist.add("박세완");
-        searchlist.add("도희");
-        searchlist.add("창모");
-        searchlist.add("허영지");
+        String foodstring = null;
+        String foodname = null;
+        try {
+            foodstring = new SetFoodServer().execute().get();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+
+        try {
+            JSONArray jarray = new JSONObject(foodstring).getJSONArray("food");
+            for (int i = 0 ; i < jarray.length(); i++) {
+                JSONObject jObject = jarray.getJSONObject(i);
+                foodname = jObject.optString("food");
+                searchlist.add(foodname);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
     public void settingfrequentlyArrayList(String result) {
@@ -380,7 +376,7 @@ public class AddFragment extends Fragment {
 
         try {
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
-            for (int i = jarray.length() - 1; i >= 0; i--) {
+            for (int i = 0 ; i < jarray.length(); i++) {
                 JSONObject jObject = jarray.getJSONObject(i);
                 food_name = jObject.optString("food");
                 frequentlyFoodList.add(food_name);

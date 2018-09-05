@@ -23,7 +23,7 @@ public class AddFoodServer extends AsyncTask<Void,Void,String> {
 
     String answer;
 
-    private static final String  WEBIP = "192.168.35.149";
+    private static final String  WEBIP = "117.17.142.207";
 
     public AddFoodServer(String parent_id,String foodString, String foodTime,String date) {
         this.parent_id = parent_id;

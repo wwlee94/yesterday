@@ -154,10 +154,10 @@ public class StatisticsFragment extends Fragment {
         Calendar maxDate = Calendar.getInstance();
         startYear = c.get(Calendar.YEAR);
         startMonth = c.get(Calendar.MONTH) -1;
-        startDay = c.get(Calendar.DATE);
+        startDay = c.get(Calendar.DATE)-1;
         endYear = c.get(Calendar.YEAR);
         endMonth = c.get(Calendar.MONTH);
-        endDay = c.get(Calendar.DATE);
+        endDay = c.get(Calendar.DATE)+1;
 
         //시작날짜를 입력 하기위한 버튼 이벤트
         startDatePickerDialog = new DatePickerDialog(getActivity(), new OnDateSetListener() {
@@ -379,7 +379,7 @@ public class StatisticsFragment extends Fragment {
         YAxis y = horizontalBarChart.getAxisLeft ();
 
         //y축 최대 최소값 지정 !
-        y.setAxisMaxValue(maxfoodvalue);
+        y.setAxisMaxValue(maxfoodvalue+1);
         y.setAxisMinValue(0);
 
 
@@ -419,11 +419,12 @@ public class StatisticsFragment extends Fragment {
         //horizontalBarChart.getAxisLeft().setDrawGridLines(false);
         horizontalBarChart.getAxisRight().setDrawGridLines(false);
 
+
         horizontalBarChart.setTouchEnabled(true);
-        horizontalBarChart.setDragEnabled(false);// : 차트의 끌기 (이동)를 활성화 / 비활성화합니다.
-        horizontalBarChart.setScaleEnabled(false); // : 두 축의 차트에 대한 배율을 설정 / 해제합니다.
-        horizontalBarChart.setScaleXEnabled(false); // : x 축에서 크기 조절을 활성화 / 비활성화합니다.
-        horizontalBarChart.setScaleYEnabled(false); // : Y 축에서 크기 조절을 활성화 / 비활성화합니다.
+        horizontalBarChart.setDragEnabled(true);// : 차트의 끌기 (이동)를 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleEnabled(true); // : 두 축의 차트에 대한 배율을 설정 / 해제합니다.
+        horizontalBarChart.setScaleXEnabled(true); // : x 축에서 크기 조절을 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleYEnabled(true); // : Y 축에서 크기 조절을 활성화 / 비활성화합니다.
 
         //막대 애니메이션 속도(숫자 클수록 느리게)
         horizontalBarChart.animateY(2000);

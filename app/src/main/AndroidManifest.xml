@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 진동 허용-->
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- 잠금 화면 깨우기 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 부팅시 원하는 서비스 실행 시키기 위한 권한 (사용 X) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".GlobalApplication"
@@ -22,9 +26,8 @@
             android:value="@string/kakao_app_key" />
 
         <activity
-            android:name=".UI.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-           >
+            android:name=".UI.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,20 +35,32 @@
             </intent-filter>
         </activity>
         <!-- HomeActivity -->
-        <activity android:name=".UI.MainActivity"
-
-           />
+        <activity
+            android:name=".UI.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <!-- 로그인 , 회원 가입 -->
         <activity android:name=".UI.LoginActivity" />
         <activity android:name=".UI.JoinActivity" />
         <!-- 메뉴 추가 , 수정 & 오늘,어제 먹은 메뉴 보여주는 Activity -->
         <!-- 달력 누르면 그 날 먹은 메뉴 보여주는 Activity -->
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
-        <activity android:name=".UI.AddGoalActivity"/>
+        <activity android:name=".UI.AddGoalActivity" />
 
         <!-- 브로드캐스트 리시버 설정 -->
-        <receiver android:name=".PushAlarm.AlarmProgressReceiver"
+        <receiver
+            android:name=".PushAlarm.AlarmProgressReceiver"
             android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".PushAlarm.AlarmIsResisterReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
         </receiver>
     </application>
 

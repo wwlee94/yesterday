@@ -15,7 +15,7 @@ import com.example.yesterday.yesterday.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomAdapter extends BaseAdapter {
+public class ChangeAdapter extends BaseAdapter {
 
     // 문자열을 보관 할 ArrayList
     private Context context;
@@ -24,7 +24,7 @@ public class CustomAdapter extends BaseAdapter {
     private Boolean bool;
 
     // 생성자
-    public CustomAdapter(List<String> list, Context context, Boolean bool) {
+    public ChangeAdapter(List<String> list, Context context, Boolean bool) {
         this.list = list;
         this.context = context;
         this.inflate = LayoutInflater.from(context);
