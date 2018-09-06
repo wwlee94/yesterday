@@ -44,6 +44,7 @@ public class Chart2Fragment extends Fragment {
     ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
 
     SharedPreferences loginPre;
+    Boolean flag=true;
 
     public Chart2Fragment() {
         // Required empty public constructor
@@ -55,7 +56,10 @@ public class Chart2Fragment extends Fragment {
         loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
         Log.i("loginPre",loginPre.getString("ID",""));
 
-        stringToJSON(serverConn());
+        if(flag) {
+            stringToJSON(serverConn());
+            flag = false;
+        }
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +93,8 @@ public class Chart2Fragment extends Fragment {
     private void stringToJSON(String result){
         String food_name = null;
         String food_count = null;
-        float spaceforBar = 1f;
+
+        int count = 0;
         try {
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
             for (int i = jarray.length()-1 ; i >= 0; i--) {
@@ -101,12 +106,12 @@ public class Chart2Fragment extends Fragment {
                     maxfoodvalue = Integer.parseInt(food_count);
                 }
 
-                yValues.add(new PieEntry(Integer.parseInt(food_count),food_name));
-                Log.d("TAG","Statics Fragment : JSON test :"+food_name +" : "+ food_count);
+                if(i < 5) {
+                    yValues.add(new PieEntry(Integer.parseInt(food_count), food_name));
+                }
+
                 foodcount++;
             }
-            yValues.add(new PieEntry(Integer.parseInt(food_count),food_name));
-            yValues.add(new PieEntry(Integer.parseInt(food_count),food_name));
         } catch (JSONException e) {
             e.printStackTrace();
         }

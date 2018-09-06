@@ -35,10 +35,10 @@ public class BarchartServer extends AsyncTask<Void,Void,String> {
         final Calendar c = Calendar.getInstance();
         startYear = c.get(Calendar.YEAR);
         startMonth = c.get(Calendar.MONTH) -1;
-        startDay = c.get(Calendar.DATE);
+        startDay = c.get(Calendar.DATE)-1;
         endYear = c.get(Calendar.YEAR);
         endMonth = c.get(Calendar.MONTH);
-        endDay = c.get(Calendar.DATE);
+        endDay = c.get(Calendar.DATE)+1;
         stringToDateFormat(startYear,startMonth,startDay,true);
         stringToDateFormat(endYear,endMonth,endDay,false);
         this.parent_id = parent_id;

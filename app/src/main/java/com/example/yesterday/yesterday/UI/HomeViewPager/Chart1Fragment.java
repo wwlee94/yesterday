@@ -48,7 +48,9 @@ public class Chart1Fragment extends Fragment {
     ArrayList<BarEntry> entries = new ArrayList<>();
     ArrayList<String> labels = new ArrayList<String>();
 
-    SharedPreferences loginPre ;
+    SharedPreferences loginPre;
+
+    Boolean flag = true;
 
     public Chart1Fragment() {
         // Required empty public constructor
@@ -59,24 +61,25 @@ public class Chart1Fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
-        Log.i("loginPre",loginPre.getString("ID",""));
+        loginPre = getActivity().getSharedPreferences("loginSetting", MODE_PRIVATE);
 
-        stringToJSON(serverConn());
+        if (flag) {
+            stringToJSON(serverConn());
+            flag = false;
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView=(ViewGroup)inflater.inflate(R.layout.fragment_chart1,container,false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_chart1, container, false);
 
         //막대바 차트 생성
-        horizontalBarChart = (HorizontalBarChart)rootView.findViewById(R.id.fixedchart);
+        horizontalBarChart = (HorizontalBarChart) rootView.findViewById(R.id.fixedchart);
 
         //차트 그리기
         DrawChart(horizontalBarChart);
-
 
 
         // Inflate the layout for this fragment
@@ -87,13 +90,13 @@ public class Chart1Fragment extends Fragment {
     //파라미터로 로그인한 사용자 아이디, 시작 날짜 , 종료 날짜를 입력 받는다.
     //서버에서 db 쿼리를 보낸후 받은 값을 JSON String 값으로 받아 return한다.
     //(ex [{count=5, food=커피}, {count=4, food=초밥}, {count=3, food=술}, {count=2, food=김치찌개}] )
-    private String serverConn(){
+    private String serverConn() {
         // id 값 가져오기
 
         try {
-            result = new BarchartServer(loginPre.getString("ID","")).execute().get();
-            Log.i("char1Fragment result",result);
-        } catch (Exception e){
+            result = new BarchartServer(loginPre.getString("ID", "")).execute().get();
+            Log.i("char1Fragment result", result);
+        } catch (Exception e) {
             e.getMessage();
         }
         return result;
@@ -102,35 +105,47 @@ public class Chart1Fragment extends Fragment {
     //JSON 형식 String 데이터를 파라미터로 받는다.
     //JSON형식 데이터를 받은 후 파싱 해준 후
     //각각의 데이터를 막댈그래프에 보여주기 위해 값을 입력 해준다.
-    private void stringToJSON(String result){
+    private void stringToJSON(String result) {
         String food_name = null;
         String food_count = null;
-        float spaceforBar = 1f;
         try {
 
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
-            for (int i = jarray.length()-1 ; i >= 0; i--) {
+
+            foodcount = 0;
+            labels.clear();
+            int count=0;
+
+            for (int i = jarray.length() - 1; i >= 0; i--) {
                 JSONObject jObject = jarray.getJSONObject(i);
+
                 food_name = jObject.optString("food");
                 food_count = jObject.optString("count");
 
-                if(Integer.parseInt(food_count) > maxfoodvalue){
+                if (Integer.parseInt(food_count) > maxfoodvalue) {
                     maxfoodvalue = Integer.parseInt(food_count);
                 }
 
-                labels.add(food_name);
-                entries.add(new BarEntry((jarray.length()-1-i)*spaceforBar, Integer.parseInt(food_count)));
+                if (i < 5) {
+                    labels.add(food_name);
+                    entries.add(new BarEntry((4 - i), Integer.parseInt(food_count)));
+                    Log.i("BarEntry",""+(jarray.length() - i-7));
 
-                Log.d("TAG","Statics Fragment : JSON test :"+food_name +" : "+ food_count);
-                foodcount++;
+                    foodcount++;
+                }
             }
+            for(int i=0;i<entries.size();i++){
+                Log.i("Check",entries.get(i).toString());
+                Log.i("Check",labels.get(i).toString());
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     // horizontalBarChart에 레이블 추가 , 디자인, 값 입력 , y축 최대 최소값 등등 .
-    private void DrawChart(HorizontalBarChart horizontalBarChart){
+    private void DrawChart(HorizontalBarChart horizontalBarChart) {
 
         BarDataSet dataset = new BarDataSet(entries, "# of Colls");
         dataset.setDrawValues(true);
@@ -154,10 +169,10 @@ public class Chart1Fragment extends Fragment {
         horizontalBarChart.getXAxis().setLabelCount(foodcount);
         horizontalBarChart.getXAxis().setTextColor(Color.BLACK);
 
-        YAxis y = horizontalBarChart.getAxisLeft ();
+        YAxis y = horizontalBarChart.getAxisLeft();
 
         //y축 최대 최소값 지정 !
-        y.setAxisMaxValue(maxfoodvalue);
+        y.setAxisMaxValue(maxfoodvalue + 1);
         y.setAxisMinValue(0);
 
         //차트 위쪽의 grid lines, 음식 개수 true:visible false:invisible
@@ -182,12 +197,18 @@ public class Chart1Fragment extends Fragment {
         horizontalBarChart.getXAxis().setXOffset(-10);
 
         //라벨값이 들어갈 수 있게 도표 위치 살짝 오른쪽으로 이동
-        horizontalBarChart.setExtraOffsets(50,0,0,0);
+        horizontalBarChart.setExtraOffsets(50, 0, 0, 0);
 
         //깔끔한 design 을 위해 지워줍니다.
         horizontalBarChart.getXAxis().setDrawAxisLine(false);
         //아래 gideline 숫자값 제거 .(위 gideline 과 중복 )
-        horizontalBarChart.getAxisRight().setDrawLabels(false);
+        //horizontalBarChart.getAxisRight().setDrawLabels(false);
+
+        horizontalBarChart.setTouchEnabled(false);
+        horizontalBarChart.setDragEnabled(false);// : 차트의 끌기 (이동)를 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleEnabled(false); // : 두 축의 차트에 대한 배율을 설정 / 해제합니다.
+        horizontalBarChart.setScaleXEnabled(false); // : x 축에서 크기 조절을 활성화 / 비활성화합니다.
+        horizontalBarChart.setScaleYEnabled(false); // : Y 축에서 크기 조절을 활성화 / 비활성화합니다.
 
         horizontalBarChart.getAxisRight().setDrawGridLines(false);
 
