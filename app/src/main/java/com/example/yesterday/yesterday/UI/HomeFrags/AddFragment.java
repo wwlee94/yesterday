@@ -2,6 +2,7 @@ package com.example.yesterday.yesterday.UI.HomeFrags;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -24,12 +25,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.EditText.BackPressEditText;
+import com.example.yesterday.yesterday.PushAlarm.AlarmUtils;
 import com.example.yesterday.yesterday.R;
+import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
 import com.example.yesterday.yesterday.SearchListView.ChangeAdapter;
 import com.example.yesterday.yesterday.SearchListView.SearchAdapter;
 import com.example.yesterday.yesterday.UI.HomeActivity;
 import com.example.yesterday.yesterday.server.AddFoodServer;
 import com.example.yesterday.yesterday.server.BarchartServer;
+import com.example.yesterday.yesterday.server.CheckTypeServer;
 import com.example.yesterday.yesterday.server.SetFoodServer;
 
 import org.json.JSONArray;
@@ -42,6 +46,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 //추가 화면 Fragment
@@ -103,9 +110,14 @@ public class AddFragment extends Fragment {
     //음식 추가 버튼
     Button addButton;
 
+    SharedPreferences loginPre;
+    ArrayList<RecyclerItem> items;
+    String value;
+
+
     //생성자
     public AddFragment() {
-
+        items = new ArrayList<RecyclerItem>();
     }
 
     @Override
@@ -118,19 +130,20 @@ public class AddFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_add, container, false);
 
+        loginPre = getActivity().getSharedPreferences("loginSetting", MODE_PRIVATE);
 
         editSearch = (BackPressEditText) rootView.findViewById(R.id.editSearch);
-        dateButton = (Button)rootView.findViewById(R.id.datebutton);
-        dateTextView = (TextView)rootView.findViewById(R.id.datetextView);
+        dateButton = (Button) rootView.findViewById(R.id.datebutton);
+        dateTextView = (TextView) rootView.findViewById(R.id.datetextView);
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         listviewDefault = (RelativeLayout) rootView.findViewById(R.id.listview_default);
         listviewSearch = (RelativeLayout) rootView.findViewById(R.id.listview_search);
-        breakfastRadio = (RadioButton)rootView.findViewById(R.id.breakfastRadio);
-        lunchRadio = (RadioButton)rootView.findViewById(R.id.lunchRadio);
-        dinnerRadio = (RadioButton)rootView.findViewById(R.id.dinnerRadio);
-        snackRadio = (RadioButton)rootView.findViewById(R.id.snackRadio);
+        breakfastRadio = (RadioButton) rootView.findViewById(R.id.breakfastRadio);
+        lunchRadio = (RadioButton) rootView.findViewById(R.id.lunchRadio);
+        dinnerRadio = (RadioButton) rootView.findViewById(R.id.dinnerRadio);
+        snackRadio = (RadioButton) rootView.findViewById(R.id.snackRadio);
         radioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroup);
-        addButton = (Button)rootView.findViewById(R.id.addbutton);
+        addButton = (Button) rootView.findViewById(R.id.addbutton);
 
         //디폴트 리스트 뷰를 먼저 보여주고 검색 리스트 뷰는 숨겨 놓는다.
         listviewDefault.setVisibility(View.VISIBLE);
@@ -138,7 +151,7 @@ public class AddFragment extends Fragment {
 
         //현재 시간을 받아와 라디오 버튼에 눌러 둔다.
         long now = System.currentTimeMillis();
-        Date date =new Date(now);
+        Date date = new Date(now);
         SimpleDateFormat sdfNow = new SimpleDateFormat("HH");
         time = sdfNow.format(date);
 
@@ -151,7 +164,7 @@ public class AddFragment extends Fragment {
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DATE);
         //년월일 텍스트에 업데이트
-        updateDate(dateTextView,year,month,day);
+        updateDate(dateTextView, year, month, day);
 
 
         // 리스트를 생성한다.
@@ -185,9 +198,13 @@ public class AddFragment extends Fragment {
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             // input창에 문자를 입력할때마다 호출된다.
             @Override
             public void afterTextChanged(Editable editable) {
@@ -231,7 +248,6 @@ public class AddFragment extends Fragment {
                 return false;
             }
         });
-
 
         editSearch.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -281,10 +297,10 @@ public class AddFragment extends Fragment {
         startDatePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                updateDate(dateTextView,year,month,dayOfMonth);
+                updateDate(dateTextView, year, month, dayOfMonth);
 
             }
-        },year,month,day);
+        }, year, month, day);
 
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,11 +314,52 @@ public class AddFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String result = addServer();
-                if(selectFoodList.isEmpty()){
-                    Toast.makeText(getActivity(),"선택된 음식이 없습니다.",Toast.LENGTH_SHORT).show();
-                }else if(result.equals("success")){
-                    Toast.makeText(getActivity(),"음식 추가 성공",Toast.LENGTH_SHORT).show();
-                    ((HomeActivity)getActivity()).bottomBar.selectTabAtPosition(0);
+                if (selectFoodList.isEmpty()) {
+                    Toast.makeText(getActivity(), "선택된 음식이 없습니다.", Toast.LENGTH_SHORT).show();
+                } else if (result.equals("success")) {
+
+                    Toast.makeText(getActivity(), "음식 추가 성공", Toast.LENGTH_SHORT).show();
+                    ((HomeActivity) getActivity()).bottomBar.selectTabAtPosition(0);
+
+                    //갱신 한 번 해주고!
+                    items = ((HomeActivity) getActivity()).reNewClientGoal();
+                    //목표치 80% 넘으면 알림, 실패면 알림
+                    for (int x = 0; x < selectFoodList.size(); x++) {
+                        for (int i = 0; i < items.size(); i++) {
+                            //추가한 음식의 이름과 목표 아이템의 이름이 같다면
+                            if (selectFoodList.get(x).equals(items.get(i).getFood())) {
+                                if (items.get(i).getType().equals("default")) {
+                                    int current = items.get(i).getCurrentCount();
+                                    int limit = items.get(i).getCount();
+                                    float cautionLimit = limit * ((float) 8 / (float) 10);
+                                    //80% 넘겼을 때 한 번
+                                    if (Math.ceil(cautionLimit) == current) {
+                                        new AlarmUtils(getActivity()).AlarmOverRegister(5000, "주의", items.get(i).getFood());
+                                    }
+                                    //100% 될 때 한 번
+                                    else if (limit == current) {
+                                        new AlarmUtils(getActivity()).AlarmOverRegister(5000, "실패", items.get(i).getFood());
+                                        try {
+                                            value = new CheckTypeServer(loginPre.getString("ID",""),items.get(i).getFood(),items.get(i).getFavorite(),items.get(i).getType(),"fail").execute().get();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        } catch (ExecutionException e) {
+                                            e.printStackTrace();
+                                        }finally {
+                                            if(value.equals("success")){
+                                                Log.d("CheckTypeServer","음식 추가 후 목표설정치 초과한 음식 타입 변경 완료");
+                                                //디비 갱신보다 items 바꿔줌 -> 진행중 목표에 실패한 목표가 뜸 -> 사용자에게 내가 실패한 목록이 뭔지 보여줌
+                                                items.get(i).setType("fail");
+                                            }
+                                            else{
+                                                Log.d("CheckTypeServer","음식 추가 후 목표설정치 초과한 음식 타입 변경 실패");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -357,7 +414,7 @@ public class AddFragment extends Fragment {
 
         try {
             JSONArray jarray = new JSONObject(foodstring).getJSONArray("food");
-            for (int i = 0 ; i < jarray.length(); i++) {
+            for (int i = 0; i < jarray.length(); i++) {
                 JSONObject jObject = jarray.getJSONObject(i);
                 foodname = jObject.optString("food");
                 searchlist.add(foodname);
@@ -368,7 +425,6 @@ public class AddFragment extends Fragment {
         }
 
 
-
     }
 
     public void settingfrequentlyArrayList(String result) {
@@ -376,7 +432,7 @@ public class AddFragment extends Fragment {
 
         try {
             JSONArray jarray = new JSONObject(result).getJSONArray("data");
-            for (int i = 0 ; i < jarray.length(); i++) {
+            for (int i = 0; i < jarray.length(); i++) {
                 JSONObject jObject = jarray.getJSONObject(i);
                 food_name = jObject.optString("food");
                 frequentlyFoodList.add(food_name);
@@ -394,7 +450,7 @@ public class AddFragment extends Fragment {
     private String serverConn() {
         String result = null;
         try {
-            result = new BarchartServer("kim").execute().get();
+            result = new BarchartServer(loginPre.getString("ID", "")).execute().get();
         } catch (Exception e) {
             e.getMessage();
         }
@@ -409,22 +465,15 @@ public class AddFragment extends Fragment {
 
         String result = null;
         String foodString = "";
-        String date = year+ "-"+(month+1) +"-"+day+" "+currentDate;
-        radioButton = (RadioButton)rootView.findViewById(radioGroup.getCheckedRadioButtonId());
-
+        String date = year + "-" + (month + 1) + "-" + day + " " + currentDate;
+        radioButton = (RadioButton) rootView.findViewById(radioGroup.getCheckedRadioButtonId());
 
 
         try {
-            for(int i = 0;i<selectFoodList.size();i++)
-                foodString += (selectFoodList.get(i)+"-");
+            for (int i = 0; i < selectFoodList.size(); i++)
+                foodString += (selectFoodList.get(i) + "-");
 
-            result = new AddFoodServer("kim",foodString,radioButton.getText().toString(),date).execute().get();
-
-
-            Log.d("TAG"," # foodname -> "+foodString);
-            Log.d("TAG"," # time -> "+radioButton.getText().toString());
-            Log.d("TAG"," # date -> "+date);
-
+            result = new AddFoodServer(loginPre.getString("ID", ""), foodString, radioButton.getText().toString(), date).execute().get();
 
         } catch (Exception e) {
             e.getMessage();
@@ -432,23 +481,23 @@ public class AddFragment extends Fragment {
         return result;
     }
 
-    private void updateDate(TextView view,int Year,int Month,int Day){
+    private void updateDate(TextView view, int Year, int Month, int Day) {
         this.year = Year;
         this.month = Month;
         this.day = Day;
-        String str = Year +"년 "+(Month +1)+"월 "+ Day +"일";
+        String str = Year + "년 " + (Month + 1) + "월 " + Day + "일";
         view.setText(str);
     }
 
-    private void setRadio(String Time){
+    private void setRadio(String Time) {
         int t = Integer.parseInt(Time);
-        if(t >= 5 && t <=10){
+        if (t >= 5 && t <= 10) {
             breakfastRadio.setChecked(true);
-        }else if(t >= 11 && t<15){
+        } else if (t >= 11 && t < 15) {
             lunchRadio.setChecked(true);
-        }else if(t >= 16 && t<=21){
+        } else if (t >= 16 && t <= 21) {
             dinnerRadio.setChecked(true);
-        }else{
+        } else {
             snackRadio.setChecked(true);
         }
     }

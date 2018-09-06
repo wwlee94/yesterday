@@ -13,7 +13,8 @@ import java.util.Calendar;
 public class AlarmUtils {
 
     static final int PROGRESSCODE = 0;
-    static final int RESISTERCODE = 1;
+    static final int ISRESISTERCODE = 1;
+    static final int OVERREGISTERCODE = 2;
 
     Context context;
 
@@ -57,15 +58,15 @@ public class AlarmUtils {
 
     }
 
-    //알람을 추가했는지 21시에 알림보냄
+    //알람을 추가했는지 21시에 알림
     public void AlarmIsRegister(int delay) {
         Log.d("AlarmResister", "진행 상황 알림 설정 시작");
 
         SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd / HH시 mm분 ss초");
 
-        Intent intent = new Intent(context, AlarmIsResisterReceiver.class);
+        Intent intent = new Intent(context, AlarmIsRegisterReceiver.class);
 
-        PendingIntent sender = PendingIntent.getBroadcast(context, RESISTERCODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(context, ISRESISTERCODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar calendar = Calendar.getInstance();
 
@@ -85,6 +86,26 @@ public class AlarmUtils {
 
         //알람 예약 Doze모드에서도 알림 작동하도록
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + delay, sender);
-        Log.d("AlarmResister", "Resister 알림 설정 완료");
+        Log.d("AlarmResister", "OverRegister 알림 설정 완료");
+    }
+
+    //음식 추가시 80% 넘겼으면 알림
+    public void AlarmOverRegister(int delay,String flag,String food){
+
+        Log.d("AlarmOverRegister", "진행 상황 알림 설정 시작");
+
+        SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd / HH시 mm분 ss초");
+
+        Intent intent = new Intent(context, AlarmOverRegisterReceiver.class);
+        intent.putExtra("FLAG",flag);
+        intent.putExtra("FOOD",food);
+
+        PendingIntent sender = PendingIntent.getBroadcast(context, OVERREGISTERCODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //알람 예약 Doze모드에서도 알림 작동하도록
+        //추가 버튼 클릭 시 over됬으면 현재시각에 알림 발생
+        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delay, sender);
+        Log.d("AlarmOverRegister", "OverResister 알림 설정 완료");
+
     }
 }

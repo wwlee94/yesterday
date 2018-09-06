@@ -334,7 +334,6 @@ public class StatisticsFragment extends Fragment {
 
     private void renewChart(HorizontalBarChart horizontalBarChart){
         labels.clear();
-        Log.d("TAG","Statics Fragment "+ labels);
         entries.clear();
 
         foodcount = 0;

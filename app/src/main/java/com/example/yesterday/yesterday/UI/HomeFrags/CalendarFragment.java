@@ -205,6 +205,9 @@ public class CalendarFragment extends Fragment {
                         list.remove(position);
                         Adapter.notifyDataSetChanged();
 
+                        //목표 item 업데이트
+                        ((HomeActivity)getActivity()).reNewClientGoal();
+
                         // delete break;
                         break;
                 }

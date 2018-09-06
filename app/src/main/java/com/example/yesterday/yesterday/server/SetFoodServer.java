@@ -12,7 +12,6 @@ import okhttp3.Response;
 //로그인 서버와 연결하는 클래스
 public class SetFoodServer extends AsyncTask<Void,Void,String> {
     String answer;
-    private static final String  WEBIP = "117.17.142.207";
 
     public SetFoodServer() {
     }
@@ -26,7 +25,7 @@ public class SetFoodServer extends AsyncTask<Void,Void,String> {
         requestBody = new FormBody.Builder().build();
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/SetFood")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/SetFood")
                 .post(requestBody)
                 .build();
         try {

@@ -15,9 +15,6 @@ public class SelectDateServer extends AsyncTask<Void,Void,String> {
     private String userID;
 
     private String result;
-    //owl wifi 로컬 -> 192.168.0.75
-    //조교서버 -> 117.17.142.207
-    private static final String  WEBIP = "117.17.142.207";
 
     //addGoalActivity에서 등록한 정보 생성자로 받는다.
     public SelectDateServer(String userID) {
@@ -36,7 +33,7 @@ public class SelectDateServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/selectDate")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/selectDate")
                 .post(requestBody)
                 .build();
         try {

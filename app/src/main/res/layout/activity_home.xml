@@ -34,13 +34,13 @@
             android:layout_height="match_parent"
             android:background="@drawable/purple_sunset"/>
 
-        <!-- TODO: BottomBar 홈,추가,목표,통계 지우고 아이콘만 보이게 가능!! -->
+        <!-- TODO: BottomBar 홈,추가,목표,통계 지우고 아이콘만 보이게 가능!! 기존/6e4d7a-->
         <com.roughike.bottombar.BottomBar
             android:id="@+id/bottomBar"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="bottom"
-            android:background="#6e4d7a"
+            android:background="#FA6e4d7a"
             android:elevation="8dp"
             app:bb_activeTabColor="#FFFFFF"
             app:bb_behavior="shy"
@@ -57,13 +57,5 @@
         android:layout_height="4dp"
         android:layout_below="@+id/toolbar"
         android:background="@drawable/shadow_270" />
-
-    <!-- BottomBar 위에 그림자 효과 -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/shadow_90" />
 
 </RelativeLayout>

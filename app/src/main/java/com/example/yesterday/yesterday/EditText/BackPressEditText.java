@@ -39,7 +39,7 @@ public class BackPressEditText extends EditText {
 
             //이벤트
             editSearch = (BackPressEditText)((HomeActivity) getContext()).findViewById(R.id.editSearch);
-//            editSearch.setFocusable(false);
+            editSearch.setFocusable(false);
         }
         return super.onKeyPreIme(keyCode, event);
     }

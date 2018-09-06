@@ -54,7 +54,6 @@ public class Chart2Fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
-        Log.i("loginPre",loginPre.getString("ID",""));
 
         if(flag) {
             stringToJSON(serverConn());

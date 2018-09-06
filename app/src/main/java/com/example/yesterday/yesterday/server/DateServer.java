@@ -21,8 +21,6 @@ public class DateServer extends AsyncTask<Void,Void,String> {
     String answer;
     String foodname;
 
-    private static final String  WEBIP = "117.17.142.207";
-
     public DateServer(String parent_id,String foodname) {
         this.parent_id = parent_id;
         this.foodname = foodname;
@@ -40,7 +38,7 @@ public class DateServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/DateServer")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/DateServer")
                 .post(requestBody)
                 .build();
         try {

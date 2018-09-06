@@ -2,6 +2,8 @@ package com.example.yesterday.yesterday.server;
 
 import android.os.AsyncTask;
 
+import com.example.yesterday.yesterday.UI.HomeActivity;
+
 import org.json.JSONArray;
 
 import java.io.IOException;
@@ -23,8 +25,6 @@ public class AddFoodServer extends AsyncTask<Void,Void,String> {
 
     String answer;
 
-    private static final String  WEBIP = "117.17.142.207";
-
     public AddFoodServer(String parent_id,String foodString, String foodTime,String date) {
         this.parent_id = parent_id;
         this.foodString = foodString;
@@ -44,7 +44,7 @@ public class AddFoodServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/AddFood")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/AddFood")
                 .post(requestBody)
                 .build();
         try {
@@ -64,4 +64,5 @@ public class AddFoodServer extends AsyncTask<Void,Void,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
     }
+
 }

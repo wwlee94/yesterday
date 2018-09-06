@@ -120,7 +120,6 @@ public class GoalFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d("TAG", "Press TabLayout");
                 //tab 변경 시 bottombar 없어져 있어도 show()해줌
                 BottomBar bottomBar = getActivity().findViewById(R.id.bottomBar);
                 bottomBar.getShySettings().showBar();

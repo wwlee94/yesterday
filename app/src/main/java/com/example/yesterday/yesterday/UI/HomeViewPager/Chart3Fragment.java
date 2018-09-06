@@ -51,7 +51,6 @@ public class Chart3Fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
-        Log.i("loginPre",loginPre.getString("ID",""));
         if(flag) {
             serverConn();
             stringToJSON(result);
@@ -101,7 +100,6 @@ public class Chart3Fragment extends Fragment {
                 calendar.set(year,month-1,dayy);
                 day = CalendarDay.from(calendar);
                 dates.add(day);
-                Log.d("TAG","JSON test :"+year+";"+month+";"+dayy);
             }
         } catch (JSONException e) {
             e.printStackTrace();

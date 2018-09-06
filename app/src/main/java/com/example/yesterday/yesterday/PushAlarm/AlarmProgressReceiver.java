@@ -26,8 +26,6 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
 
     public static boolean isPush = true;
 
-    String INTENT_ACTION = Intent.ACTION_BOOT_COMPLETED;
-
     ArrayList<RecyclerItem> items = new ArrayList<RecyclerItem>();
 
     int favoriteCount = 0;
@@ -58,9 +56,8 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
         //Notification 객체 생성 및 푸시 알림에 대한 각종 설정
         Notification.Builder progressBuilder = new Notification.Builder(context);
         progressBuilder.setSmallIcon(R.drawable.ic_wb_sunny_black_24dp)
-                .setTicker("Ticker")
+                .setTicker("Yesterday")
                 .setWhen(System.currentTimeMillis())
-                .setNumber(1)
                 .setContentTitle("목표 진행 상황")
                 .setContentText("진행상황을 보려면 더 보기를 클릭하세요.")
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
@@ -101,7 +98,7 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
         progressBuilder.setStyle(inboxStyle);
 
         //NotificationManager를 이용하여 푸시 알림 보내기
-        notificationmanager.notify(1, progressBuilder.build());
+        notificationmanager.notify(AlarmUtils.PROGRESSCODE, progressBuilder.build());
 
         //알람 재등록
         new AlarmUtils(mContext).AlarmProgress(10000);

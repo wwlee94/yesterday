@@ -14,7 +14,7 @@ public class DeleteFoodServer extends AsyncTask<Void,Void,String> {
     String foodTime;
     String date;
     String answer;
-    private static final String  WEBIP = "117.17.142.207";
+
     public DeleteFoodServer(String parent_id,String foodname, String foodTime,String date) {
         this.parent_id = parent_id;
         this.foodname= foodname;
@@ -31,7 +31,7 @@ public class DeleteFoodServer extends AsyncTask<Void,Void,String> {
         requestBody = new FormBody.Builder().add("parent_id",parent_id).add("foodname",foodname).add("foodTime",foodTime).add("date",date).build();
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/DeleteFoodServer")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/DeleteFoodServer")
                 .post(requestBody)
                 .build();
         try {

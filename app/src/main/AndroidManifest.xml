@@ -46,7 +46,7 @@
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
         <activity android:name=".UI.AddGoalActivity" />
 
-        <!-- 브로드캐스트 리시버 설정 -->
+        <!-- 브로드캐스트 리시버 진행 상황 알림 -->
         <receiver
             android:name=".PushAlarm.AlarmProgressReceiver"
             android:enabled="true">
@@ -55,12 +55,18 @@
             </intent-filter>
         </receiver>
 
+        <!-- 브로드캐스트 리시버 추가 안했으면 추가 요청 알림 -->
         <receiver
-            android:name=".PushAlarm.AlarmIsResisterReceiver"
+            android:name=".PushAlarm.AlarmIsRegisterReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
+        </receiver>
+
+        <!-- 브로드캐스트 리시버 추가 시 90% 초과 했으면 알림 -->
+        <receiver android:name=".PushAlarm.AlarmOverRegisterReceiver"
+            android:enabled="true">
         </receiver>
     </application>
 

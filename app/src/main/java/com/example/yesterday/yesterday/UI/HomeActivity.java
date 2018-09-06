@@ -186,7 +186,7 @@ public class HomeActivity extends AppCompatActivity {
         Log.i("ID", loginSetting.getString("ID", ""));
 
         //TODO: DB 갱신
-        reNewClientGoal();
+        items = reNewClientGoal();
 
 
         mContext = this;
@@ -195,11 +195,10 @@ public class HomeActivity extends AppCompatActivity {
 
         //10시 진행 상황 푸시 알림
         //위에서 item 데이터 가져온 것으로 알림
-        Log.d("Start_isPush", "" + isPush);
+
         if (AlarmProgressReceiver.isPush) {
             new AlarmUtils(getApplicationContext()).AlarmProgress(0);
             new AlarmUtils(getApplicationContext()).AlarmIsRegister(0);
-            Log.d("End_isPush", "" + isPush);
         }
 
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
@@ -209,7 +208,6 @@ public class HomeActivity extends AppCompatActivity {
         //Intent로 client가져오기  -> client 아직 안쓰임
         Intent intent = getIntent();
         client = (ClientLoginInfo) intent.getSerializableExtra("client");
-        Log.i("ID", client.getId());
         Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
 
         //TODO: DB 갱신
@@ -290,23 +288,18 @@ public class HomeActivity extends AppCompatActivity {
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if (tabId == R.id.tab_home) {
                     replaceFragment(homeFragment, "HOME");
-                    Log.d("HomeFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_add) {
                     replaceFragment(addFragment, "ADD");
-                    //2131296560
-                    Log.d("AddFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_goal) {
                     replaceFragment(goalFragment, "GOAL");
-                    Log.d("GoalFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_statistics) {
                     replaceFragment(statisticsFragment, "STATISTICS");
-                    Log.d("StatisticsFragment", "" + tabId);
                 }
             }
         });
@@ -367,7 +360,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    public void reNewClientGoal() {
+    public ArrayList<RecyclerItem> reNewClientGoal() {
         items.clear();
         itemsGoal.clear();
         itemsSuccess.clear();
@@ -398,6 +391,8 @@ public class HomeActivity extends AppCompatActivity {
                 itemsFail.add(items.get(i));
             }
         }
+
+        return items;
     }
 
     // DB 연동해서 Select
@@ -408,7 +403,6 @@ public class HomeActivity extends AppCompatActivity {
         //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
             result = new SelectGoalServer(loginSetting.getString("ID", "")).execute().get();
-            Log.i("ID", client.getId());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -417,7 +411,6 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("ClientGoal", "데이터 조회 실패");
             } else {
                 Log.d("ClientGoal", "데이터 조회 성공");
-                Log.d("ClientGoal", result);
             }
         }
         //result -> json - String 형태
@@ -462,7 +455,6 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("ClientGoal", "음식 개수 조회 실패");
             } else {
                 Log.d("ClientGoal", "음식 개수 조회 성공");
-                Log.d("ClientGoal", result);
             }
         }
 
@@ -484,8 +476,6 @@ public class HomeActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }//try
-                Log.d("가져온 음식 ", food);
-                Log.d("가져온 음식 기간 ", dateStr);
                 for (int k = 0; k < items.size(); k++) {
                     //type 은 default 와 success만 비교
                     if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
@@ -501,8 +491,6 @@ public class HomeActivity extends AppCompatActivity {
 
                             //startDate <= date <= endDate 범위
                             if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                                Log.d("음식종류", "clientgoal 음식: " + items.get(k).getFood() + " /타입: " + items.get(k).getType());
-                                Log.d("시간범위", "startDate:" + items.get(k).getStartDate() + " <= Date:" + dateStr + " <= endDate:" + items.get(k).getEndDate());
                                 items.get(k).setCurrentCount(items.get(k).getCurrentCount() + 1);
                             }
 
@@ -528,7 +516,6 @@ public class HomeActivity extends AppCompatActivity {
 
         //오늘 날짜
         Date currentDate = new Date();
-        Log.d("currentDate", format.format(currentDate));
 
         //검사 날짜
         for (int i = 0; i < items.size(); i++) {
@@ -540,7 +527,6 @@ public class HomeActivity extends AppCompatActivity {
                     int check = currentDate.compareTo(checkDate);
                     //마감일이 지난 item들 currentDate > checkDate
                     if (check > 0) {
-                        Log.d("currentDate > checkDate", format.format(checkDate));
 
                         //Type 변경 전 해당 음식의 type이 중복되는 지 Check!!
                         for (int k = 0; k < items.size(); k++) {
@@ -551,7 +537,6 @@ public class HomeActivity extends AppCompatActivity {
                                     //success 가 존재 한다면 지워
                                     try {
                                         result = new DeleteGoalServer(loginSetting.getString("ID", ""), items.get(k).getFood(), items.get(k).getType()).execute().get();
-                                        Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     } finally {
@@ -571,8 +556,7 @@ public class HomeActivity extends AppCompatActivity {
                         //중복 체크 후 DB 연동 Type 변경 코드
                         //
                         try {
-                            result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
-                            Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
+                            result = new CheckTypeServer(loginSetting.getString("ID",""), items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType(),"success").execute().get();
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -594,7 +578,6 @@ public class HomeActivity extends AppCompatActivity {
                         //TODO: FOR문 밖에서 처리해야 할 수도
                         if (index != -1) {
                             //앞서 중복되는 success 타입의 데이터 items에서 제거
-                            Log.d("index", "" + index);
                             items.remove(index);
                         }
 

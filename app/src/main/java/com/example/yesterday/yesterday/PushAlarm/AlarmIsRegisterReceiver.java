@@ -21,7 +21,7 @@ import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class AlarmIsResisterReceiver extends BroadcastReceiver{
+public class AlarmIsRegisterReceiver extends BroadcastReceiver{
 
     String result;
 
@@ -47,21 +47,20 @@ public class AlarmIsResisterReceiver extends BroadcastReceiver{
             Intent Activity = new Intent(context, LoginActivity.class);
 
             // # requestSender
-            PendingIntent requestSender = PendingIntent.getActivity(context, AlarmUtils.RESISTERCODE, Activity, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent requestSender = PendingIntent.getActivity(context, AlarmUtils.ISRESISTERCODE, Activity, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //Notification 객체 생성 및 푸시 알림에 대한 각종 설정
             Notification.Builder requestBuilder = new Notification.Builder(context);
             requestBuilder.setSmallIcon(R.drawable.ic_help_outline_black_24dp)
-                    .setTicker("Test")
+                    .setTicker("Yesterday")
                     .setWhen(System.currentTimeMillis())
-                    .setNumber(2)
                     .setContentTitle("음식 추가 알림")
                     .setContentText("오늘 음식을 추가하셨나요 ? *^^*")
                     .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
                     .setContentIntent(requestSender)
                     .setAutoCancel(true);
 
-            notificationmanager.notify(2, requestBuilder.build());
+            notificationmanager.notify(AlarmUtils.ISRESISTERCODE, requestBuilder.build());
         }
         else {
             Log.d("AlarmIsRegisterReceiver","Count: "+count+" 이므로 IsRegister 알림 사용 X");

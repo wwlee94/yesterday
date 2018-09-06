@@ -16,18 +16,16 @@ public class CheckTypeServer extends AsyncTask<Void, Void, String> {
     private String food;
     private int favorite;
     private String type;
+    private String changeType;
 
     private String result;
 
-    //owl wifi 로컬 -> 192.168.0.75
-    //조교서버 -> 117.17.142.207
-    private static final String WEBIP = "117.17.142.207";
-
-    public CheckTypeServer(String userID, String food, int favorite, String type) {
+    public CheckTypeServer(String userID, String food, int favorite, String type,String changeType) {
         this.userID = userID;
         this.food = food;
         this.favorite = favorite;
         this.type = type;
+        this.changeType = changeType;
     }
 
     @Override
@@ -37,11 +35,11 @@ public class CheckTypeServer extends AsyncTask<Void, Void, String> {
         RequestBody requestBody = null;
 
         requestBody = new FormBody.Builder().add("USERID",userID).add("FOOD",food)
-                .add("FAVORITE",""+favorite).add("TYPE",type)
+                .add("FAVORITE",""+favorite).add("TYPE",type).add("CHANGETYPE",changeType)
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://"+WEBIP+":80/skuniv/checkType")
+                .url("http://"+Server.WEBIP()+":80/skuniv/changeType")
                 .post(requestBody)
                 .build();
 

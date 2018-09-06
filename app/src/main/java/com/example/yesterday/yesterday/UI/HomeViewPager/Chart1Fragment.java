@@ -95,7 +95,6 @@ public class Chart1Fragment extends Fragment {
 
         try {
             result = new BarchartServer(loginPre.getString("ID", "")).execute().get();
-            Log.i("char1Fragment result", result);
         } catch (Exception e) {
             e.getMessage();
         }
@@ -114,7 +113,6 @@ public class Chart1Fragment extends Fragment {
 
             foodcount = 0;
             labels.clear();
-            int count=0;
 
             for (int i = jarray.length() - 1; i >= 0; i--) {
                 JSONObject jObject = jarray.getJSONObject(i);
@@ -129,14 +127,9 @@ public class Chart1Fragment extends Fragment {
                 if (i < 5) {
                     labels.add(food_name);
                     entries.add(new BarEntry((4 - i), Integer.parseInt(food_count)));
-                    Log.i("BarEntry",""+(jarray.length() - i-7));
 
                     foodcount++;
                 }
-            }
-            for(int i=0;i<entries.size();i++){
-                Log.i("Check",entries.get(i).toString());
-                Log.i("Check",labels.get(i).toString());
             }
 
         } catch (JSONException e) {
