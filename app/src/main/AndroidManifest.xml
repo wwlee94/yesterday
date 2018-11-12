@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.yesterday.yesterday">
+    package="com.example.yesterday.yesterday"> 
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 진동 허용 -->
+    <!-- 진동 허용-->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- 잠금 화면 깨우기 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 부팅시 원하는 서비스 실행 시키기 위한 권한 (사용 X) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
@@ -42,13 +46,28 @@
         <!-- 목표 & 다짐을 추가하기 위해 넘어가는 Activity -->
         <activity android:name=".UI.AddGoalActivity" />
 
-        <!-- 브로드캐스트 리시버 설정 -->
+        <!-- 브로드캐스트 리시버 진행 상황 알림 -->
         <receiver
             android:name=".PushAlarm.AlarmProgressReceiver"
-            android:enabled="true" />
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
-        <activity android:name=".UI.UpdateinfoActivity" />
-        <activity android:name=".UI.Update_dialog"/>
+        <!-- 브로드캐스트 리시버 추가 안했으면 추가 요청 알림 -->
+        <receiver
+            android:name=".PushAlarm.AlarmIsRegisterReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 브로드캐스트 리시버 추가 시 90% 초과 했으면 알림 -->
+        <receiver android:name=".PushAlarm.AlarmOverRegisterReceiver"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

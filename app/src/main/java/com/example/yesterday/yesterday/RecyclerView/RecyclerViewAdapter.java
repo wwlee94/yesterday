@@ -82,7 +82,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void headerBindInit(final RecyclerView.ViewHolder holder, final int position) {
         final HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
-        viewHolder.headerTitle.setTextColor(Color.parseColor("#FD5523"));
+        //#FEEAE6 연핑크
+        viewHolder.headerTitle.setTextColor(Color.parseColor("#FFFFFF"));
         viewHolder.headerTitle.setText(items.get(position).title);
 
     }
@@ -148,8 +149,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             int current = items.get(position).getCurrentCount();
             int limit = items.get(position).getCount();
-            // 70% 이상 빨간색
-            if (((float) current / (float) limit) * 100 >= 70) {
+            // 80% 이상 빨간색
+            if (((float) current / (float) limit) * 100 >= 80) {
                 //pink:FF0266
                 //주황:FD5523
                 viewHolder.currentCount.setTextColor(Color.parseColor("#FF0266"));

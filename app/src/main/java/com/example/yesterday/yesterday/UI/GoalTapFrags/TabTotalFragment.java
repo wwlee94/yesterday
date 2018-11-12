@@ -169,10 +169,6 @@ public class TabTotalFragment extends Fragment {
         failCount = failItems.size();
         successCount = successItems.size();
 
-        Log.d("GoalCount",""+goalCount);
-        Log.d("FailCount",""+failCount);
-        Log.d("SuccessCount",""+successCount);
-
         //비워주고
         items.clear();
         //넣어준다.

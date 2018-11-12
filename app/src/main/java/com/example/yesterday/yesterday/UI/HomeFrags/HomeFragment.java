@@ -221,7 +221,6 @@ public class HomeFragment extends Fragment {
                 posit++;
                 viewPager.setCurrentItem(posit, true);
             }
-            Log.d("TAG", "**** Thread : setAutoChangeViewPager ****");
         }
     }
 
@@ -233,7 +232,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Log.d("TAG", "Thread 시작");
                     while (isRun) {
 
                         Thread.sleep(30000);
@@ -247,7 +245,6 @@ public class HomeFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    Log.d("TAG", "Thread 종료");
                     isRun = true;
                 }
             }
@@ -264,7 +261,6 @@ public class HomeFragment extends Fragment {
             //즐겨찾기로 설정된 목표의 개수를 구하는 코드
             if (k == 0) {
                 for (int i = 0; i < items.size(); i++) {
-                    Log.d("HomeFragment's itmes", "음식: " + items.get(i).getFood());
                     if (items.get(i).getFavorite() == 1) {
                         favoriteCount++;
                     }
@@ -273,7 +269,6 @@ public class HomeFragment extends Fragment {
             //k==1일때 한 번만 실행
             //즐겨찾기로 설정된 item의 인덱스를 구하는 코드
             else if (k == 1) {
-                Log.d("favoriteCount", "" + favoriteCount);
                 favoriteIndex = new int[favoriteCount];
                 int x = 0;
                 for (int i = 0; i < items.size(); i++) {
@@ -325,15 +320,15 @@ public class HomeFragment extends Fragment {
                 horizontallayout[i].setGravity(Gravity.CENTER_VERTICAL);
 
                 //값 설정
-                textViews[i].setTextColor(Color.parseColor("#FEEAE6"));//#FEEAE6
-                textCount[i].setTextColor(Color.parseColor("#FEEAE6"));
+                textViews[i].setTextColor(Color.parseColor("#FFFFFF"));//#FEEAE6
+                textCount[i].setTextColor(Color.parseColor("#FFFFFF"));
                 textViews[i].setText("음식 : " + items.get(favoriteIndex[i]).getFood());
 
                 int current = items.get(favoriteIndex[i]).getCurrentCount();
                 int limit = items.get(favoriteIndex[i]).getCount();
-                if (((float) current / (float) limit) * 100 >= 70) {
+                if (((float) current / (float) limit) * 100 >= 80) {
                     //textViews[i].setTextColor(Color.parseColor("#FF0266"));
-                    textCount[i].setTextColor(Color.parseColor("#000000"));//B00020
+                    textCount[i].setTextColor(Color.parseColor("#FFDE03"));//B00020,버건디 //owlYellow,FFDE03
                 }
                 textCount[i].setText("마감일: " + items.get(favoriteIndex[i]).getEndDate() + "  "
                         + " 횟수: " + items.get(favoriteIndex[i]).getCurrentCount() + " / " + items.get(favoriteIndex[i]).getCount());

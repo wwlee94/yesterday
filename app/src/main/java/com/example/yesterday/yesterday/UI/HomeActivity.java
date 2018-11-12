@@ -1,8 +1,6 @@
 package com.example.yesterday.yesterday.UI;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,13 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.yesterday.yesterday.ClientLoginInfo;
 import com.example.yesterday.yesterday.PushAlarm.AlarmProgressReceiver;
+import com.example.yesterday.yesterday.PushAlarm.AlarmUtils;
 import com.example.yesterday.yesterday.R;
 
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
@@ -59,14 +57,13 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
     public static Context mContext;
     //Activity
-    Activity mActivity;
+    public Activity mActivity;
     //toolbar
     private Toolbar toolbar;
     //FragmentManager
@@ -176,6 +173,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("TAG", "HomeActivity onDestroy / 종료");
+
     }
 
     @Override
@@ -184,30 +182,32 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         //SharedPreference
-        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE );
+        loginSetting = getSharedPreferences("loginSetting", MODE_PRIVATE);
         editor = loginSetting.edit();
-        Log.i("ID",loginSetting.getString("ID",""));
+        Log.i("ID", loginSetting.getString("ID", ""));
 
         //TODO: DB 갱신
-        reNewClientGoal();
+        items = reNewClientGoal();
 
         mContext = this;
 
         Log.d("TAG", "onCreate / 앱 생성(초기화)");
 
-        //10시 푸시 알림
-        if (isPush) {
-            new AlarmProgress(getApplicationContext()).Alarm();
-            isPush = false;
+        //10시 진행 상황 푸시 알림
+        //위에서 item 데이터 가져온 것으로 알림
+
+        if (AlarmProgressReceiver.isPush) {
+            new AlarmUtils(getApplicationContext()).AlarmProgress(0);
+            new AlarmUtils(getApplicationContext()).AlarmIsRegister(0);
         }
+
         //MaterialDrawer 쓰기위해 toolbar의 id를 가져와 객체 생성
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setTitle("어제 점심 뭐 먹었지 ?");
 
         //Intent로 client가져오기  -> client 아직 안쓰임
-        Intent intent  = getIntent();
+        Intent intent = getIntent();
         client = (ClientLoginInfo) intent.getSerializableExtra("client");
-        Log.i("ID",client.getId());
         Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_LONG).show();
 
         //TODO: DB 갱신
@@ -280,7 +280,7 @@ public class HomeActivity extends AppCompatActivity {
                                 editor.commit();
                             }
                             Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG).show();
-                            Intent intent  = new Intent(HomeActivity.this, LoginActivity.class);
+                            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         }
                         return true;
@@ -304,23 +304,18 @@ public class HomeActivity extends AppCompatActivity {
                 //if 가져온 tabId가 tab_home일때 homeFragment화면으로 전환
                 if (tabId == R.id.tab_home) {
                     replaceFragment(homeFragment, "HOME");
-                    Log.d("HomeFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_add일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_add) {
                     replaceFragment(addFragment, "ADD");
-                    //2131296560
-                    Log.d("AddFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_goal일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_goal) {
                     replaceFragment(goalFragment, "GOAL");
-                    Log.d("GoalFragment", "" + tabId);
                 }
                 //if 가져온 tabId가 tab_statistics일때 해당 화면으로 전환
                 else if (tabId == R.id.tab_statistics) {
                     replaceFragment(statisticsFragment, "STATISTICS");
-                    Log.d("StatisticsFragment", "" + tabId);
                 }
             }
         });
@@ -381,7 +376,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    public void reNewClientGoal() {
+    public ArrayList<RecyclerItem> reNewClientGoal() {
         items.clear();
         itemsGoal.clear();
         itemsSuccess.clear();
@@ -412,6 +407,8 @@ public class HomeActivity extends AppCompatActivity {
                 itemsFail.add(items.get(i));
             }
         }
+
+        return items;
     }
 
     // DB 연동해서 Select
@@ -421,8 +418,7 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //ClientGoal 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectGoalServer(loginSetting.getString("ID","")).execute().get();
-            Log.i("ID",client.getId());
+            result = new SelectGoalServer(loginSetting.getString("ID", "")).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -431,7 +427,6 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("ClientGoal", "데이터 조회 실패");
             } else {
                 Log.d("ClientGoal", "데이터 조회 성공");
-                Log.d("ClientGoal", result);
             }
         }
         //result -> json - String 형태
@@ -467,7 +462,7 @@ public class HomeActivity extends AppCompatActivity {
         result = null;
         //fooddata 데이터베이스에 접속해 JSONObject 결과값 받아오는 코드
         try {
-            result = new SelectDateServer(loginSetting.getString("ID","")).execute().get();
+            result = new SelectDateServer(loginSetting.getString("ID", "")).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -476,7 +471,6 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("ClientGoal", "음식 개수 조회 실패");
             } else {
                 Log.d("ClientGoal", "음식 개수 조회 성공");
-                Log.d("ClientGoal", result);
             }
         }
 
@@ -498,8 +492,6 @@ public class HomeActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }//try
-                Log.d("가져온 음식 ", food);
-                Log.d("가져온 음식 기간 ", dateStr);
                 for (int k = 0; k < items.size(); k++) {
                     //type 은 default 와 success만 비교
                     if (items.get(k).getType().equals("default") || items.get(k).getType().equals("success")) {
@@ -515,8 +507,6 @@ public class HomeActivity extends AppCompatActivity {
 
                             //startDate <= date <= endDate 범위
                             if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
-                                Log.d("음식종류", "clientgoal 음식: " + items.get(k).getFood() + " /타입: " + items.get(k).getType());
-                                Log.d("시간범위", "startDate:" + items.get(k).getStartDate() + " <= Date:" + dateStr + " <= endDate:" + items.get(k).getEndDate());
                                 items.get(k).setCurrentCount(items.get(k).getCurrentCount() + 1);
                             }
 
@@ -542,7 +532,6 @@ public class HomeActivity extends AppCompatActivity {
 
         //오늘 날짜
         Date currentDate = new Date();
-        Log.d("currentDate", format.format(currentDate));
 
         //검사 날짜
         for (int i = 0; i < items.size(); i++) {
@@ -554,7 +543,6 @@ public class HomeActivity extends AppCompatActivity {
                     int check = currentDate.compareTo(checkDate);
                     //마감일이 지난 item들 currentDate > checkDate
                     if (check > 0) {
-                        Log.d("currentDate > checkDate", format.format(checkDate));
 
                         //Type 변경 전 해당 음식의 type이 중복되는 지 Check!!
                         for (int k = 0; k < items.size(); k++) {
@@ -564,8 +552,7 @@ public class HomeActivity extends AppCompatActivity {
 
                                     //success 가 존재 한다면 지워
                                     try {
-                                        result = new DeleteGoalServer(loginSetting.getString("ID",""), items.get(k).getFood(), items.get(k).getType()).execute().get();
-                                        Log.d("delete 하는 items 값", items.get(k).getFood() + items.get(k).getType());
+                                        result = new DeleteGoalServer(loginSetting.getString("ID", ""), items.get(k).getFood(), items.get(k).getType()).execute().get();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     } finally {
@@ -585,8 +572,7 @@ public class HomeActivity extends AppCompatActivity {
                         //중복 체크 후 DB 연동 Type 변경 코드
                         //
                         try {
-                            result = new CheckTypeServer("admin", items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType()).execute().get();
-                            Log.d("DB Update 하는 items값", items.get(i).getFood() + items.get(i).getFavorite() + items.get(i).getType());
+                            result = new CheckTypeServer(loginSetting.getString("ID",""), items.get(i).getFood(), items.get(i).getFavorite(), items.get(i).getType(),"success").execute().get();
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -608,7 +594,6 @@ public class HomeActivity extends AppCompatActivity {
                         //TODO: FOR문 밖에서 처리해야 할 수도
                         if (index != -1) {
                             //앞서 중복되는 success 타입의 데이터 items에서 제거
-                            Log.d("index", "" + index);
                             items.remove(index);
                         }
 
@@ -644,48 +629,17 @@ public class HomeActivity extends AppCompatActivity {
         return itemsFail;
     }
 
-    //매일 10시에 알람
-    public class AlarmProgress {
-        Context context;
-
-        public AlarmProgress(Context context) {
-            this.context = context;
-        }
-
-        public void Alarm() {
-            Log.d("AlarmProgress", "진행 상황 알림 설정");
-            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(context, AlarmProgressReceiver.class);
-
-            PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-            Calendar calendar = Calendar.getInstance();
-
-            //알람시간 calendar에 set해주기
-            //현재 시각이 오전 10시를 지나지 않았다면
-            if (calendar.get(Calendar.HOUR_OF_DAY) < 11) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 11, 0, 0);
-                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " < 10 [ 10시 이전 ]");
-            }
-            //현재 시각이 오전10시 이후라면 다음날 10시로
-            else if (calendar.get(Calendar.HOUR_OF_DAY) >= 11) {
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE + 1), 11, 0, 0);
-                Log.d("시간", "" + calendar.get(Calendar.HOUR_OF_DAY) + " >= 10 [ 10시 이후 ]");
-            }
-
-            //알람 예약
-            //시,분,초 곱한 뒤 밀리세컨즈로 만드려고 *1000
-            am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
-        }
-    }
-    public boolean onKeyPreIme(int KeyCode,KeyEvent event){
-        if(event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-            Toast.makeText(getApplicationContext(),"back",Toast.LENGTH_SHORT).show();
+    //백 버튼 눌렀을 때
+    public boolean onKeyPreIme(int KeyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+            Toast.makeText(getApplicationContext(), "back", Toast.LENGTH_SHORT).show();
 
             return true;
         }
         return false;
     }
+
+    //로그아웃 메소드
     private void onClickLogout() {
         UserManagement.requestLogout(new LogoutResponseCallback() {
             @Override

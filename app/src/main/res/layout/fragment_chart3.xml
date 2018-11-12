@@ -5,7 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".UI.HomeViewPager.Chart3Fragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        >
+
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendarView"
@@ -13,6 +19,6 @@
         android:layout_height="match_parent"
         app:mcv_selectionColor="#F9AA33"
         app:mcv_showOtherDates="defaults" />
-
+    </RelativeLayout>
 
 </FrameLayout>

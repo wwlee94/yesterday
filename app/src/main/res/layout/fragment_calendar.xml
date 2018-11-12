@@ -19,76 +19,18 @@
         app:mcv_selectionColor="#a9dbf0cb"
         app:mcv_showOtherDates="defaults" />
 
-    <ScrollView
-        android:layout_width="368dp"
-        android:layout_height="157dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="346dp">
-
-        <LinearLayout
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/ListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="아침 메뉴"
-                android:textColor="@color/bb_darkBackgroundColor"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/calendar_breakfastText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="20sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="점심 메뉴"
-                android:textColor="@color/bb_darkBackgroundColor"
-                android:textSize="30sp"
-                />
-            <TextView
-                android:id="@+id/calendar_lunchText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="20sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="저녁 메뉴"
-                android:textColor="@color/bb_darkBackgroundColor"
-                android:textSize="30sp"
-                />
-            <TextView
-                android:id="@+id/calendar_dinnerText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="20sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="간식 메뉴"
-                android:textColor="@color/bb_darkBackgroundColor"
-                android:textSize="30sp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="20sp"
-                />
+            android:layout_height="match_parent"
+            android:background="@drawable/customshape">
 
 
-        </LinearLayout>
-    </ScrollView>
+
+
+        </com.baoyz.swipemenulistview.SwipeMenuListView>
+
+
 
     <Button
         android:layout_width="wrap_content"

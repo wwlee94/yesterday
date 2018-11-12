@@ -11,7 +11,8 @@ import android.util.Log;
 
 import com.example.yesterday.yesterday.R;
 import com.example.yesterday.yesterday.RecyclerView.RecyclerItem;
-import com.example.yesterday.yesterday.UI.HomeActivity;
+
+import com.example.yesterday.yesterday.UI.LoginActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -23,7 +24,7 @@ import static android.content.Context.MODE_PRIVATE;
 //AlarmProgress의 리시버
 public class AlarmProgressReceiver extends BroadcastReceiver {
 
-    String INTENT_ACTION = Intent.ACTION_BOOT_COMPLETED;
+    public static boolean isPush = true;
 
     ArrayList<RecyclerItem> items = new ArrayList<RecyclerItem>();
 
@@ -37,29 +38,31 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //알람 시간이 되었을때 onReceive를 호출함
-        Log.d("AlarmReceiver", "Progress 호출 받음");
+        Log.d("AlarmReceiver", "Progress 호출 받음 -> 푸시 알림 완료");
+
+        final Context mContext = context;
+
+        isPush = false;
 
         //푸시 알림을 보내기위해 시스템에 권한을 요청하여 생성
         NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         //알림을 클릭 했을 때 전환되는 화면
-        Intent Activity = new Intent(context, HomeActivity.class);
+        Intent Activity = new Intent(context, LoginActivity.class);
 
         //Notification 객체에 파라미터로 담기 위한 PendingIntent 객체 생성
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, Activity, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent progressSender = PendingIntent.getActivity(context, AlarmUtils.PROGRESSCODE, Activity, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Notification 객체 생성 및 푸시 알림에 대한 각종 설정
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setSmallIcon(R.drawable.ic_wb_sunny_black_24dp)
-                .setTicker("Ticker")
+        Notification.Builder progressBuilder = new Notification.Builder(context);
+        progressBuilder.setSmallIcon(R.drawable.ic_wb_sunny_black_24dp)
+                .setTicker("Yesterday")
                 .setWhen(System.currentTimeMillis())
-                .setNumber(1)
-                .setContentTitle("목표 진행상황")
+                .setContentTitle("목표 진행 상황")
                 .setContentText("진행상황을 보려면 더 보기를 클릭하세요.")
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setOngoing(true);      //알림을 지속적으로 띄움
+                .setContentIntent(progressSender)
+                .setAutoCancel(true);
 
         //SharedPreferences로 데이터를 객체로 가져오기
         items = getSharedPreferencesItems(context);
@@ -81,7 +84,7 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
         }
 
         //드래그 후 알림창에 최종 보여질 텍스트
-        Notification.InboxStyle inboxStyle = new Notification.InboxStyle(builder);
+        Notification.InboxStyle inboxStyle = new Notification.InboxStyle(progressBuilder);
         inboxStyle.setSummaryText("더 보기");
         //favorite의 개수에 따라 텍스트 개수 다르게
         if(favoriteCount==0){
@@ -92,10 +95,13 @@ public class AlarmProgressReceiver extends BroadcastReceiver {
                 inboxStyle.addLine(favorite[i]);
             }
         }
-        builder.setStyle(inboxStyle);
+        progressBuilder.setStyle(inboxStyle);
 
         //NotificationManager를 이용하여 푸시 알림 보내기
-        notificationmanager.notify(1, builder.build());
+        notificationmanager.notify(AlarmUtils.PROGRESSCODE, progressBuilder.build());
+
+        //알람 재등록
+        new AlarmUtils(mContext).AlarmProgress(10000);
     }
 
     //SharedPreferences에 저장된 데이터 가져오는 메서드

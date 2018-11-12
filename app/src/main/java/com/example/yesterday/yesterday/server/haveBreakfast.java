@@ -29,8 +29,6 @@ public class haveBreakfast extends AsyncTask<Void,Void,String> {
     private int endMonth;
     private int endDay;
 
-    private static final String  WEBIP = "117.17.142.207";
-
     public haveBreakfast(String parent_id ) {
         final Calendar c = Calendar.getInstance();
         startYear = c.get(Calendar.YEAR);
@@ -62,7 +60,7 @@ public class haveBreakfast extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/haveBreakfast")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/haveBreakfast")
                 .post(requestBody)
                 .build();
         try {

@@ -29,16 +29,14 @@ public class BarchartServer extends AsyncTask<Void,Void,String> {
     private int endMonth;
     private int endDay;
 
-    private static final String  WEBIP = "117.17.142.207";
-
     public BarchartServer(String parent_id ) {
         final Calendar c = Calendar.getInstance();
         startYear = c.get(Calendar.YEAR);
         startMonth = c.get(Calendar.MONTH) -1;
-        startDay = c.get(Calendar.DATE);
+        startDay = c.get(Calendar.DATE)-1;
         endYear = c.get(Calendar.YEAR);
         endMonth = c.get(Calendar.MONTH);
-        endDay = c.get(Calendar.DATE);
+        endDay = c.get(Calendar.DATE)+1;
         stringToDateFormat(startYear,startMonth,startDay,true);
         stringToDateFormat(endYear,endMonth,endDay,false);
         this.parent_id = parent_id;
@@ -62,7 +60,7 @@ public class BarchartServer extends AsyncTask<Void,Void,String> {
 
         // post형식으로 url로 만든 body를 보냄
         Request request = new Request.Builder()
-                .url("http://"+ WEBIP + ":80/skuniv/DrawChart")
+                .url("http://"+ Server.WEBIP() + ":80/skuniv/DrawChart")
                 .post(requestBody)
                 .build();
         try {

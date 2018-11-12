@@ -39,6 +39,8 @@ public class Chart3Fragment extends Fragment {
     MaterialCalendarView materialCalendarView;
     SharedPreferences loginPre;
 
+    Boolean flag = true;
+
     public Chart3Fragment() {
         // Required empty public constructor
         //serverConn();
@@ -49,10 +51,11 @@ public class Chart3Fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loginPre = getActivity().getSharedPreferences("loginSetting",MODE_PRIVATE);
-        Log.i("loginPre",loginPre.getString("ID",""));
-        serverConn();
-        stringToJSON(result);
-
+        if(flag) {
+            serverConn();
+            stringToJSON(result);
+            flag = false;
+        }
     }
 
     @Override
@@ -97,7 +100,6 @@ public class Chart3Fragment extends Fragment {
                 calendar.set(year,month-1,dayy);
                 day = CalendarDay.from(calendar);
                 dates.add(day);
-                Log.d("TAG","JSON test :"+year+";"+month+";"+dayy);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -107,12 +109,12 @@ public class Chart3Fragment extends Fragment {
     private void DrawCalendar() {
         materialCalendarView.state().edit()
                 .setMinimumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth()-3, 1))
-                .setMaximumDate(CalendarDay.today())
+                .setMaximumDate(CalendarDay.from(CalendarDay.today().getYear(), CalendarDay.today().getMonth(), 31))
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
         materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#80000000"), dates,getActivity()));
-
+        materialCalendarView.setSelectedDate(CalendarDay.today());
         materialCalendarView.setPagingEnabled(false);
 
         materialCalendarView.addDecorators(
