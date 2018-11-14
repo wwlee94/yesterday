@@ -110,7 +110,7 @@ public class CalendarFragment extends Fragment {
         list = new ArrayList<String>();
         ArrayList = new ArrayList<String>();
         ArrayList.addAll(list);
-        Adapter = new ChangeAdapter(list, getActivity(), true);
+        Adapter = new ChangeAdapter(list,timelist, getActivity(), true,true);
 
         listView.setAdapter(Adapter);
         listView.setMenuCreator(creator);
@@ -134,7 +134,7 @@ public class CalendarFragment extends Fragment {
 
         materialCalendarView.state().edit()
                 .setMinimumDate(CalendarDay.from(2018, 0, 1))
-                .setMaximumDate(CalendarDay.from(2018, 9, 20))
+                .setMaximumDate(CalendarDay.from(2018, 11, 30))
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
         materialCalendarView.setSelectedDate(CalendarDay.today());
@@ -246,7 +246,7 @@ public class CalendarFragment extends Fragment {
                 int month = Integer.parseInt(time[1]);
                 int dayy = Integer.parseInt(time[2].split(" ")[0]);
 
-                calendar.set(year, month - 1, dayy);
+                calendar.set(year, month-1, dayy);
                 day = CalendarDay.from(calendar);
                 dates.add(day);
 
@@ -337,6 +337,10 @@ public class CalendarFragment extends Fragment {
             deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
                     0x3F, 0x25)));
             // set item width
+            deleteItem.setTitle("delete");
+            deleteItem.setTitleSize(18);
+            // set item title font color
+            deleteItem.setTitleColor(Color.WHITE);
             deleteItem.setWidth(200);
             // set a icon
             //deleteItem.setIcon(R.drawable.delete_btn);

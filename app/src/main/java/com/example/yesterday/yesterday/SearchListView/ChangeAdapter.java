@@ -20,15 +20,19 @@ public class ChangeAdapter extends BaseAdapter {
     // 문자열을 보관 할 ArrayList
     private Context context;
     private List<String> list;
+    private List<String> timelist;
     private LayoutInflater inflate;
     private Boolean bool;
+    private Boolean frag;
 
     // 생성자
-    public ChangeAdapter(List<String> list, Context context, Boolean bool) {
+    public ChangeAdapter(List<String> list, List<String> timelist, Context context, Boolean bool,Boolean frag) {
         this.list = list;
+        this.timelist=timelist;
         this.context = context;
         this.inflate = LayoutInflater.from(context);
         this.bool = bool;
+        this.frag=frag;
     }
 
 
@@ -53,7 +57,7 @@ public class ChangeAdapter extends BaseAdapter {
         final Context context = parent.getContext();
 
         TextView text = null;
-        ImageView btn = null;
+        TextView btn = null;
         CustomHolder holder = null;
 
         // 리스트가 길어지면서 현재 화면에 보이지 않는 아이템은 converView가 null인 상태로 들어 옴
@@ -66,7 +70,7 @@ public class ChangeAdapter extends BaseAdapter {
             }
 
             text = (TextView) convertView.findViewById(R.id.text);
-            btn = (ImageView) convertView.findViewById(R.id.btn_test);
+            btn = (TextView) convertView.findViewById(R.id.text2);
 
             // 홀더 생성 및 Tag로 등록
             holder = new CustomHolder();
@@ -82,6 +86,19 @@ public class ChangeAdapter extends BaseAdapter {
         // Text 등록
         text.setText(list.get(position));
 
+        if(frag==true) {
+            if (timelist.get(position).equals("B")) {
+                btn.setText("아침");
+            } else if (timelist.get(position).equals("L")) {
+                btn.setText("점심");
+            } else if (timelist.get(position).equals("D")) {
+                btn.setText("저녁");
+            } else if (timelist.get(position).equals("S")) {
+                btn.setText("간식");
+            }
+        }
+
+
 
 
         return convertView;
@@ -89,7 +106,7 @@ public class ChangeAdapter extends BaseAdapter {
 
     private class CustomHolder {
         TextView m_TextView;
-        ImageView m_Btn;
+        TextView m_Btn;
     }
 
 }
