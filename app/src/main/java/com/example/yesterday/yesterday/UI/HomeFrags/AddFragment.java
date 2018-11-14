@@ -187,8 +187,8 @@ public class AddFragment extends Fragment {
         selectlyArrayList.addAll(selectFoodList);
         // 리스트에 연동될 아답터를 생성한다.
         searchAdapter = new SearchAdapter(searchlist, getActivity());
-        frequentAdapter = new ChangeAdapter(frequentlyFoodList, getActivity(), true);
-        selectAdapter = new ChangeAdapter(selectFoodList, getActivity(), false);
+        frequentAdapter = new ChangeAdapter(frequentlyFoodList,null,getActivity(), true,false);
+        selectAdapter = new ChangeAdapter(selectFoodList,null,getActivity(), false,false);
         // 리스트뷰에 아답터를 연결한다.
         searchListview.setAdapter(searchAdapter);
         frequentlyListView.setAdapter(frequentAdapter);

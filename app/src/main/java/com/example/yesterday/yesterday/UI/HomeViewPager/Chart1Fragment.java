@@ -63,10 +63,12 @@ public class Chart1Fragment extends Fragment {
         super.onCreate(savedInstanceState);
         loginPre = getActivity().getSharedPreferences("loginSetting", MODE_PRIVATE);
 
-        if (flag) {
+    //    if (flag) {
+        entries.clear();
+        labels.clear();
             stringToJSON(serverConn());
-            flag = false;
-        }
+    //        flag = false;
+    //    }
     }
 
     @Override

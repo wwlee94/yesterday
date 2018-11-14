@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -59,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
 
         actionBarHeader = (TextView) findViewById(R.id.actionbar_text);
         actionBarHeader.setText("로그인");
-
 
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
@@ -112,6 +112,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), JoinActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        pw_text.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                //Enter key Action
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    //Enter키눌렀을떄 처리
+                    login_btn.callOnClick();
+                    return true;
+                }
+                return false;
             }
         });
     }
